@@ -1,0 +1,70 @@
+import { setIcon } from "obsidian";
+import type { NestedPropertiesEditorView } from "views/NestedPropertiesEditor";
+import type { NestedPropertiesEditorCodeBlockView } from "views/NestedPropertiesEditor";
+import { renderObject } from "./renderObject";
+import { addToggleEvent } from "./addToggleEvent";
+import { updateProperties } from "./updateProperties";
+import { getPropertyIcon } from "./getPropertyIcon";
+import { renderPrimitive } from "./renderPrimitive";
+
+export function renderObjectOfArray(
+    view: NestedPropertiesEditorView | NestedPropertiesEditorCodeBlockView,
+    key: string,
+    item: Record<string, any>,
+    index: number,
+    parent: HTMLElement,
+    level: number,
+    fullKey: string,
+    filterKeys: string[]
+): void {
+    // --- Array Item Container ---
+    const itemContainer = parent.createDiv({
+        cls: "npe-array npe-object-container",
+        attr: { "data-key": fullKey }
+    });
+
+    // --- Key Container ---
+    const keyContainer = itemContainer.createDiv({
+        cls: "npe-object-key-container",
+        attr: { style: `--npe-data-level: ${level + 1};` }
+    });
+
+    // --- Icon ---
+    const icon = getPropertyIcon(key, "object");
+    const iconDiv = keyContainer.createDiv({ cls: "npe-icon-container" });
+    setIcon(iconDiv, icon);
+
+    // --- Key Label ---
+    const keyLabelDiv = keyContainer.createDiv({ cls: "npe-object-key-label", text: `${key} ${index + 1}` });
+
+    // --- Add Property Button ---
+    const addPropertyButton = keyContainer.createDiv({ cls: "npe-button npe-button--add", text: "+" });
+    view.registerDomEvent(addPropertyButton, "click", () => {
+        // Add a new property to this object
+        const newKey = `new key`;
+        const newValue = "new value";
+        const newFullKey = `${fullKey}.${newKey}`;
+        // Update the parent object with the new property
+        updateProperties(view, newFullKey, newValue, "string");
+        // Re-render the object to include the new property
+        renderPrimitive(view, newKey, newValue, propertiesContainer, level + 2, newFullKey, true);
+    });
+    // --- Remove Button ---
+    const removeButton = keyContainer.createDiv({ cls: "npe-button npe-button--remove", text: "×" });
+    view.registerDomEvent(removeButton, "click", () => {
+        // Remove this item from the array in the parent object
+        const arr = parent.parentElement ? Array.from(parent.parentElement.children).filter(child => child !== itemContainer) : [];
+        itemContainer.remove();
+        // You may want to update the parent array in your data model here as well
+        updateProperties(view, fullKey, undefined, "undefined");
+    });
+
+    // --- Properties Container (foldable) ---
+    const propertiesContainer = itemContainer.createDiv({ cls: "npe-object-properties-container hidden" });
+
+    // --- Toggle Fold/Unfold ---
+    addToggleEvent(view, iconDiv, keyLabelDiv, propertiesContainer);
+
+    // --- Render the object properties ---
+    renderObject(view, item, propertiesContainer, filterKeys, level + 2, fullKey);
+}
