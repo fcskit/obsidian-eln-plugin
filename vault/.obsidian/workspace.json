@@ -36,20 +36,6 @@
             }
           },
           {
-            "id": "0b5449e75f7b5f79",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Daily Notes/2025/06 Juni/7.6.2025 - Samstag, 7. Juni.md",
-                "mode": "preview",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "7.6.2025 - Samstag, 7. Juni"
-            }
-          },
-          {
             "id": "93cf80928d70e6f7",
             "type": "leaf",
             "state": {
@@ -61,6 +47,48 @@
               },
               "icon": "lucide-file",
               "title": "NMP"
+            }
+          },
+          {
+            "id": "5dae1405088dd872",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Experiments/Analyses/Dummy Sample/Dummy Analysis/Dummy Analysis.md",
+                "mode": "preview",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Dummy Analysis"
+            }
+          },
+          {
+            "id": "8dd995cbfb71913d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Meetings/2025/05 Mai/Demo Meeting.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Demo Meeting"
+            }
+          },
+          {
+            "id": "8c817f931dcc545d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Periodic Table of Elements.md",
+                "mode": "preview",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Periodic Table of Elements"
             }
           },
           {
@@ -76,51 +104,9 @@
               "icon": "lucide-file",
               "title": "List of List Test"
             }
-          },
-          {
-            "id": "5df47fcead310d26",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Resources/Chemicals/current collector/New Chemical Note.md",
-                "mode": "preview",
-                "source": true
-              },
-              "icon": "lucide-file",
-              "title": "New Chemical Note"
-            }
-          },
-          {
-            "id": "5dae1405088dd872",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Experiments/Analyses/Dummy Sample/Dummy Analysis/Dummy Analysis.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Dummy Analysis"
-            }
-          },
-          {
-            "id": "8dd995cbfb71913d",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Meetings/2025/05 Mai/Demo Meeting.md",
-                "mode": "source",
-                "source": true
-              },
-              "icon": "lucide-file",
-              "title": "Demo Meeting"
-            }
           }
         ],
-        "currentTab": 4
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -177,7 +163,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "b3994d4bc654696d",
@@ -289,7 +276,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 432.5
+    "width": 339.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -304,16 +292,17 @@
       "pexels-banner:🚩 Pixel Banner Menu": false
     }
   },
-  "active": "fb6f7ac40e5798b2",
+  "active": "5dae1405088dd872",
   "lastOpenFiles": [
-    "Meetings/2025/05 Mai/Demo Meeting.md",
-    "List of List Test.md",
-    "Experiments/Analyses/Dummy Sample/Dummy Analysis/Dummy Analysis.md",
-    "Resources/Chemicals/solvent/NMP.md",
-    "Resources/Chemicals/current collector/New Chemical Note.md",
     "Periodic Table of Elements.md",
-    "Resources/Chemicals/current collector",
     "Daily Notes/2025/06 Juni/7.6.2025 - Samstag, 7. Juni.md",
+    "Experiments/Analyses/Dummy Sample/Dummy Analysis/Dummy Analysis.md",
+    "Meetings/2025/05 Mai/Demo Meeting.md",
+    "Resources/Contacts/Anne Anybody.md",
+    "Resources/Chemicals/solvent/NMP.md",
+    "List of List Test.md",
+    "Resources/Chemicals/current collector/New Chemical Note.md",
+    "Resources/Chemicals/current collector",
     "Test.md",
     "Daily Notes/2025/05 Mai/16.5.2025 - Freitag, 16. Mai.md",
     "Home.md",
@@ -329,7 +318,6 @@
     "Resources/Devices/Another Fancy Device.md",
     "Resources/Devices/Fancy Device.md",
     "Resources/Devices/Test Device.md",
-    "Resources/Contacts/Anne Anybody.md",
     "Resources/Chemicals/metal/Test Metal.md",
     "Resources/Chemicals/polymer/Polyethylene.md",
     "Resources/Chemicals/solvent/Isopropanol.md",

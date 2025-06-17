@@ -10,6 +10,6 @@ export class PeriodicTableView extends MarkdownRenderChild {
     }
 
     async onload() {
-        renderPeriodicTable(this.containerEl);
+        renderPeriodicTable(this, this.containerEl);
     }
 }

@@ -866,6 +866,13 @@ div.navmenu-header>h2 {
      padding-bottom: 1rem;
 }
 
+.image-viewer-parent {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 5px;
+    border: 2px solid var(--background-modifier-border);
+}
+
 /* Image Viewer fade effect */
 .image-viewer-container {
     position: relative;
@@ -910,6 +917,11 @@ div.navmenu-header>h2 {
 .image-viewer-thumb.active {
     opacity: 1;
     border: 2px solid var(--interactive-accent, #8bdaa9);
+}
+
+.image-viewer-thumbnails {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 .image-viewer-thumbnails button {
@@ -964,7 +976,7 @@ div.navmenu-header>h2 {
  .npe-array-container.npe-object-array {
      flex-wrap: wrap;
      /* margin-left: var(--npe-key-indent); */
-     /* border-left: 1px solid var(--nav-indentation-guide-color); */
+     /* border-left: 1px solid var(--npe-indentation-guide-color); */
      /* padding-left: var(--npe-key-indent); */
      margin-top: 3px;
      margin-bottom: 5px;
@@ -991,7 +1003,7 @@ div.navmenu-header>h2 {
  .npe-array-objects-container {
      width: 100%;
      margin-left: var(--npe-key-indent);
-     border-left: 1px solid var(--nav-indentation-guide-color);
+     border-left: 1px solid var(--npe-indentation-guide-color);
      padding-left: var(--npe-key-indent);
      margin-top: 3px;
      margin-bottom: 5px;
@@ -1024,6 +1036,7 @@ div.navmenu-header>h2 {
   --npe-value-field-width: calc(var(--file-line-width, 40rem) - var(--npe-key-width) - var(--npe-button-remove-width));
   --npe-value-padding-left: 5px;
   --npe-row-height: 32px; /* or whatever fits your design */
+  --npe-indentation-guide-color: var(--nav-indentation-guide-color);
   min-width: 400px;
   max-width: 55rem;
   overflow: auto;
@@ -1212,7 +1225,7 @@ div.navmenu-header>h2 {
 .npe-array-objects-container {
   width: 100%;
   margin-left: var(--npe-key-indent-margin);
-  border-left: var(--npe-key-indent-border) solid var(--nav-indentation-guide-color);
+  border-left: var(--npe-key-indent-border) solid var(--npe-indentation-guide-color);
   padding-left: var(--npe-key-indent-padding);
   margin-top: 3px;
   margin-bottom: 5px;
@@ -1377,7 +1390,7 @@ div.navmenu-header>h2 {
 
 .npe-object-properties-container {
   margin-left: var(--npe-key-indent-margin);
-  border-left: var(--npe-key-indent-border) solid var(--nav-indentation-guide-color);
+  border-left: var(--npe-key-indent-border) solid var(--npe-indentation-guide-color);
   padding-left: var(--npe-key-indent-padding);
   /* margin-top: 3px; */
   /* margin-bottom: 5px; */

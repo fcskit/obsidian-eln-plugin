@@ -31,74 +31,15 @@ meeting:
 project:
   name: Test
 ---
-
 ## Meeting Info
 
 ```eln-properties
 key: meeting
-excludeKeys: meeting.date
+// excludeKeys: meeting.type
+actionButtons: false
+cssclasses: npe-meeting
 ```
 
 
 ## Agenda & Minutes
-
-```dataviewjs
-await dv.view("/assets/javascript/dataview/views/meeting_topics", {  });
-```
-
-
-```dataviewjs
-await dv.view("/assets/javascript/dataview/views/meeting_topics", {  });
-```
-
-
-```dataviewjs
-await dv.view("/assets/javascript/dataview/views/meeting_topics", {  });
-```
-
-
-```dataviewjs
-await dv.view("/assets/javascript/dataview/views/meeting_topics", {  });
-```
-
-
-```dataviewjs
-await dv.view("/assets/javascript/dataview/views/meeting_topics", {  });
-```
-
-
-```dataviewjs
-await dv.view("/assets/javascript/dataview/views/meeting_topics", {  });
-```
-
-
-```dataviewjs
-await dv.view("/assets/javascript/dataview/views/meeting_topics", {  });
-```
-
-
-```dataviewjs
-await dv.view("/assets/javascript/dataview/views/meeting_topics", {  });
-```
-
-
-```dataviewjs
-await dv.view("/assets/javascript/dataview/views/meeting_topics", {  });
-```
-
-
-```dataviewjs
-await dv.view("/assets/javascript/dataview/views/meeting_topics", {  });
-```
-
-
-```dataviewjs
-await dv.view("/assets/javascript/dataview/views/meeting_topics", {  });
-```
-
-
-```dataviewjs
-await dv.view("/assets/javascript/dataview/views/meeting_topics", {  });
-```
-
 

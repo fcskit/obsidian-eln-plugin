@@ -2608,21 +2608,21 @@ export const elements = {
         "group": 5,
         "groupName": "transition metal",
         "period": 7,
-        "atomicMass": 270,
+        "atomicMass": 268.126,
         "stability": "Radioactive",
         "isotopes": [
-            "Db-270"
+            "Db-268"
         ],
         "electronegativity": null,
         "ionizationEnergies": [
-            6.1
+            null
         ],
         "xrayAbsorptionEnergies": {
-            "K": 240000
+            "K": null
         },
         "xrayEmissionEnergies": {
-            "Kα": 188000,
-            "Kβ": 240000
+            "Kα": null,
+            "Kβ": null
         }
     },
     "Sg": {

@@ -1,0 +1,42 @@
+.npe-meeting.npe-view-container {
+  --npe-key-width: 250px;
+  --npe-key-indent-margin: 0px;
+  --npe-key-indent-padding: 0px;
+  --npe-key-indent-border: 1px;
+  --npe-key-value-outline: 1px;
+  --npe-icon-width: 27px;
+  --npe-prop-line-spacing: 5px;
+  --npe-button-remove-width: 25px;
+  --npe-key-font-size: 1rem;
+  --npe-key-font-weight: 400;
+  --npe-value-font-size: 1rem;
+  --npe-value-font-weight: 400;
+  --npe-value-padding-left: 5px;
+  --npe-row-height: 32px; /* or whatever fits your design */
+  --npe-indentation-guide-color: transparent;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1rem;
+}
+
+.npe-meeting .npe-icon-container {
+  display: none;
+}
+
+.npe-meeting .npe-key-icon {
+    display: none; }
+
+.npe-meeting .npe-object-key-label {
+  text-transform: capitalize;
+  font-size: calc(1.2rem - var(--npe-data-level, 0) * 0.2rem);
+}
+
+.npe-meeting .npe-key-label {
+    text-transform: capitalize;
+}
+
+.npe-meeting .npe-array.npe-object-container {
+    background-color: var(--background-secondary);
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+}
