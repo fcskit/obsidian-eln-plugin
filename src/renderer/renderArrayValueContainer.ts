@@ -13,9 +13,14 @@ export function renderArrayValueContainer(
     fullKey: string
 ) {
     const app = view.app;
+    const key = fullKey.split('.').pop();
+
     array.forEach((item, index) => {
         const itemDataType = getDataType(item);
         const itemContainer = valueContainer.createDiv({ cls: 'npe-list-item' });
+        if (key === 'tags' || key === 'tag') {
+            itemContainer.addClass('npe-tag-item');
+        }
 
         if (itemDataType === 'link') {
             createInternalLinkElement(view, item.slice(2, -2), itemContainer, `${fullKey}.${index}`);

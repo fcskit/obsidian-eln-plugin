@@ -27,35 +27,33 @@ export function renderFrontMatter(
     const propertiesContainer = container.createDiv({ cls: "npe-properties-container" });
 
     // Create a toggle button at the top of the container
-    if (view.currentFile) {
-        const frontMatter = app.metadataCache.getFileCache(view.currentFile)?.frontmatter as FrontMatterCache;
-        if (frontMatter) {
-            let parentKey = "";
-            let fm = frontMatter;
-            // If a subKey is provided, navigate to that key in the frontmatter
-            if (subKey !== "") {
-                subKey.split(".").forEach((key) => (fm = fm[key]));
-                parentKey = subKey;
-            }
-            if (buttonContainer) {
-                // Create an add property button at the top of the container
-                createAddPropertyButton(view, buttonContainer, propertiesContainer);
-                // Create a toggle button to show/hide the properties
-                createToggleButton(view, buttonContainer, propertiesContainer);
-                // Create a reload button at the top of the container
-                createReloadButton(view, buttonContainer, propertiesContainer, parentKey, excludeKeys);
-            }
-        
-            renderObject(view, fm, propertiesContainer, excludeKeys, 0, parentKey);
+    if (view.currentFile && view.currentFile.extension === "md") {
+        const frontMatter = app.metadataCache.getFileCache(view.currentFile)?.frontmatter as FrontMatterCache | object;
+
+        let parentKey = "";
+        let fm = frontMatter;
+        // If a subKey is provided, navigate to that key in the frontmatter
+
+        if (frontMatter && typeof frontMatter === "object" && subKey !== "") {
+            subKey.split(".").forEach((key) => (fm = (fm as any)[key]));
+            parentKey = subKey;
         }
+        if (buttonContainer) {
+            // Create an add property button at the top of the container
+            createAddPropertyButton(view, buttonContainer, propertiesContainer);
+            // Create a toggle button to show/hide the properties
+            createToggleButton(view, buttonContainer, propertiesContainer);
+            // Create a reload button at the top of the container
+            createReloadButton(view, buttonContainer, propertiesContainer, parentKey, excludeKeys);
+        }
+    
+        renderObject(view, fm, propertiesContainer, excludeKeys, 0, parentKey);
     } else {
         const infoContainer = propertiesContainer.createDiv({ cls: "npe-info-container" });
         const infoIcon = infoContainer.createDiv({ cls: "npe-info-icon" });
         setIcon(infoIcon, "info");
         const infoMessage = infoContainer.createDiv({ cls: "npe-info-message" });
-        infoMessage.textContent = `No frontmatter found. This may happen when the view is loaded 
-                   before Obsidian has built the metadata cache. Try to reload 
-                   the properties by clicking the reload button.`;
+        infoMessage.textContent = `The current file is not a valid markdown file. Please open a markdown file to view and edit its frontmatter.`;
     }
     return container;
 }

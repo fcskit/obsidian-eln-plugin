@@ -8,8 +8,10 @@ import { updateProperties } from "./updateProperties";
 import { getFrontmatterValue } from "./getFrontmatterValue";
 import { renderPrimitive } from "./renderPrimitive";
 import { renderArray } from "./renderArray";
+import { renderPrimitiveArray } from "./renderPrimitiveArray";
 import { renderObjectOfArray } from "./renderObjectOfArray";
-import { renderArrayValueContainer } from "./renderArrayValueContainer";
+import { addKeyWrapperResizeHandle } from "./addKeyWrapperResizeHandle";
+
 
 const specialKeys = [
     "tags", "tag", "cssclass", "cssclasses", "author", "series",
@@ -38,12 +40,15 @@ export function renderObjectArray(
         cls: "npe-object-key-container",
         attr: { style: `--npe-data-level: ${level};` }
     });
-    const keyWrapper = keyContainer.createDiv({ cls: "npe-object-key-wrapper" });
+    const keyWrapper = keyContainer.createDiv({
+        cls: "npe-key-wrapper npe-object",
+        attr: { "style": `--npe-data-level: ${level};`}
+    });
     const keyDiv = keyWrapper.createDiv({ cls: "npe-object-key" });
     const iconContainer = keyDiv.createDiv({ cls: "npe-icon-container" });
     setIcon(iconContainer, icon);
 
-    const keyLabelDiv = keyDiv.createDiv({ cls: "npe-object-key-label", text: key });
+    const keyLabelDiv = keyDiv.createDiv({ cls: "npe-key-label npe-object", text: key });
     const editableDiv = keyDiv.createDiv({ cls: "npe-make-editable" });
     view.registerDomEvent(editableDiv, "click", (evt: MouseEvent) => {
         keyLabelDiv.contentEditable = "true";
@@ -103,6 +108,12 @@ export function renderObjectArray(
         updateProperties(view, fullKey, arr, "array");
     });
 
+    // --- Add resize handle for key wrapper ---
+    const npeViewContainer = container.closest(".npe-view-container");
+    if (npeViewContainer) {
+        addKeyWrapperResizeHandle(view, keyWrapper, npeViewContainer as HTMLElement);
+    }
+
     keyContainer.createDiv({ cls: "npe-object-value-spacer" });
 
     // --- Remove Button ---
@@ -117,29 +128,11 @@ export function renderObjectArray(
         if (Array.isArray(item) && item.every(value => typeof value !== "object" || value === null)) {
             console.debug(`renderObjectArray: Rendering primitive array for key: ${key}, index: ${index}`);
             // It's a nested primitive array, render with a virtual key
-            const arrayContainer = arrayObjectsContainer.createDiv({
-                cls: "npe-array-container npe-primitive-array",
-                attr: { "data-key": `${fullKey}.${index}`, "data-level": level }
-            });
-            const keyWrapper = arrayContainer.createDiv({
-                cls: "npe-key-wrapper npe-array",
-                attr: { style: `--npe-data-level: ${level};` }
-            });
-            const keyContainer = keyWrapper.createDiv({ cls: "npe-key npe-array" });
-            const keyIcon = getPropertyIcon(key, "list");
-            const iconDiv = keyContainer.createDiv({ cls: "npe-key-icon" });
-            setIcon(iconDiv, keyIcon);
-            const keyLabel = keyContainer.createDiv({ cls: "npe-key-label npe-array", text: `${key} [${index}]` });
-            const resizeHandle = arrayContainer.createDiv({ cls: "npe-resize-handle" });
-            const valueContainer = arrayContainer.createDiv({
-                cls: "npe-array-value-container",
-                attr: { style: `--npe-data-level: ${level};` },
-            });
-            renderArrayValueContainer(view, valueContainer, item, `${parentKey}.${index}`);
+            renderPrimitiveArray(view, `${key} #${index + 1}`, item, arrayObjectsContainer, level + 1, `${fullKey}.${index}`, filterKeys, false);
         } else if (Array.isArray(item) && item.every(value => Array.isArray(value))) {
             console.debug(`renderObjectArray: Rendering nested array for key: ${key}, index: ${index}`);
             // Nested array of objects or mixed, call renderArray recursively
-            renderArray(view, `[${index}]`, item, arrayObjectsContainer, level + 1, `${parentKey}.${index}`, filterKeys, false);
+            renderArray(view, `${key} #${index + 1}`, item, arrayObjectsContainer, level + 1, `${parentKey}.${index}`, filterKeys, false);
         } else {
             // Array may contain mixed item types
             if (typeof item === "object" && item !== null) {
@@ -147,10 +140,10 @@ export function renderObjectArray(
                 renderObjectOfArray(view, key, item, index, arrayObjectsContainer, level, `${fullKey}.${index}`, filterKeys);
             } else if (Array.isArray(item)) {
                 console.debug(`renderObjectArray: Rendering nested array for key: ${key}, index: ${index}`);
-                renderArray(view, `[${index}]`, item, arrayObjectsContainer, level + 1, `${parentKey}.${index}`, filterKeys, false);
+                renderArray(view, `${key} #${index + 1}`, item, arrayObjectsContainer, level + 1, `${parentKey}.${index}`, filterKeys, false);
             } else if (typeof item === "string" || typeof item === "number" || typeof item === "boolean") {
                 console.debug(`renderObjectArray: Rendering primitive for key: ${key}, index: ${index}`);
-                renderPrimitive(view, key, item, arrayObjectsContainer, level + 1, `${fullKey}.${index}`, false);
+                renderPrimitive(view, `${key} #${index + 1}`, item, arrayObjectsContainer, level + 1, `${fullKey}.${index}`, false);
             } else {
                 console.warn(`renderObjectArray: Unsupported item type ${typeof item} for key: ${key}, index: ${index}`, item);
             }

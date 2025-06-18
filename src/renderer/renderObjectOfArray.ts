@@ -1,11 +1,12 @@
 import { setIcon } from "obsidian";
-import type { NestedPropertiesEditorView } from "views/NestedPropertiesEditor";
-import type { NestedPropertiesEditorCodeBlockView } from "views/NestedPropertiesEditor";
+import type { NestedPropertiesEditorView } from "../views/NestedPropertiesEditor";
+import type { NestedPropertiesEditorCodeBlockView } from "../views/NestedPropertiesEditor";
 import { renderObject } from "./renderObject";
 import { addToggleEvent } from "./addToggleEvent";
 import { updateProperties } from "./updateProperties";
 import { getPropertyIcon } from "./getPropertyIcon";
 import { renderPrimitive } from "./renderPrimitive";
+import { addKeyWrapperResizeHandle } from "./addKeyWrapperResizeHandle";
 
 export function renderObjectOfArray(
     view: NestedPropertiesEditorView | NestedPropertiesEditorCodeBlockView,
@@ -29,16 +30,22 @@ export function renderObjectOfArray(
         attr: { style: `--npe-data-level: ${level + 1};` }
     });
 
+    const keyWrapper = keyContainer.createDiv({
+        cls: "npe-key-wrapper npe-object",
+        attr: { "style": `--npe-data-level: ${level + 1};` }
+    });
+    const keyDiv = keyWrapper.createDiv({ cls: "npe-key npe-object" });
     // --- Icon ---
     const icon = getPropertyIcon(key, "object");
-    const iconDiv = keyContainer.createDiv({ cls: "npe-icon-container" });
+    const iconDiv = keyDiv.createDiv({ cls: "npe-key-icon" });
     setIcon(iconDiv, icon);
 
     // --- Key Label ---
-    const keyLabelDiv = keyContainer.createDiv({ cls: "npe-object-key-label", text: `${key} ${index + 1}` });
+    const keyLabelDiv = keyDiv.createDiv({ cls: "npe-key-label npe-object", text: key });
+    keyLabelDiv.createSpan({ text: ` #${index + 1}`, cls: 'npe-array-index' });
 
     // --- Add Property Button ---
-    const addPropertyButton = keyContainer.createDiv({ cls: "npe-button npe-button--add", text: "+" });
+    const addPropertyButton = keyWrapper.createDiv({ cls: "npe-button npe-button--add", text: "+" });
     view.registerDomEvent(addPropertyButton, "click", () => {
         // Add a new property to this object
         const newKey = `new key`;
@@ -49,6 +56,13 @@ export function renderObjectOfArray(
         // Re-render the object to include the new property
         renderPrimitive(view, newKey, newValue, propertiesContainer, level + 2, newFullKey, true);
     });
+
+    // --- Add resize handle for key wrapper ---
+    const npeViewContainer = parent.closest(".npe-view-container");
+    if (npeViewContainer) {
+        addKeyWrapperResizeHandle(view, keyWrapper, npeViewContainer as HTMLElement);
+    }
+
     // --- Remove Button ---
     const removeButton = keyContainer.createDiv({ cls: "npe-button npe-button--remove", text: "×" });
     view.registerDomEvent(removeButton, "click", () => {

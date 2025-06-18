@@ -1,6 +1,6 @@
 import { FrontMatterCache } from "obsidian";
-import type { NestedPropertiesEditorView } from "views/NestedPropertiesEditor";
-import type { NestedPropertiesEditorCodeBlockView } from "views/NestedPropertiesEditor";
+import type { NestedPropertiesEditorView } from "../views/NestedPropertiesEditor";
+import type { NestedPropertiesEditorCodeBlockView } from "../views/NestedPropertiesEditor";
 import { renderArray } from "./renderArray";
 import { renderPrimitive } from "./renderPrimitive";
 import { renderObjectContainer } from "./renderObjectContainer";
@@ -14,6 +14,11 @@ export function renderObject(
     parentKey: string = "",
     isArrayItem: boolean = false
 ): void {
+
+    if (!obj || typeof obj !== "object") {
+        return;
+    }
+
     Object.entries(obj).forEach(([key, value]) => {
         const fullKey = parentKey ? `${parentKey}.${key}` : key;
 

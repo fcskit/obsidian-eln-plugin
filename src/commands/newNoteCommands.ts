@@ -1,8 +1,7 @@
 import { Plugin } from "obsidian";
-import { ELNSettings, DEFAULT_SETTINGS } from "settings/settings";
-import { NewNoteModal } from "modals/notes/NewNoteModal";
-import { ChemicalNoteModal } from "modals/notes/ChemicalNoteModal";
-import { DailyNoteModal } from "modals/notes/DailyNoteModal";
+import { NewNoteModal } from "../modals/notes/NewNoteModal";
+import { ChemicalNoteModal } from "../modals/notes/ChemicalNoteModal";
+import { DailyNoteModal } from "../modals/notes/DailyNoteModal";
 
 export function addNewNoteCommands(plugin: Plugin) {
     // Register the command to create a new chemical note
@@ -34,7 +33,6 @@ export function addNewNoteCommands(plugin: Plugin) {
                 modalTitle: "New Note",
                 noteTitle: "New Note",
                 noteType: "default",
-                metadataTemplatePath: `${plugin.app.vault.configDir}/plugins/obsidian-eln/templates/metadata/default.json`,
             });
             modal.open();
         },

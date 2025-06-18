@@ -1,17 +1,14 @@
 import { NewNoteModal, NewNoteModalOptions } from "./NewNoteModal";
-import ElnPlugin from "main";
+import ElnPlugin from "../../main";
 import { SampleListNoteModal } from "./SampleListNoteModal";
 
 export class ProjectNoteModal extends NewNoteModal {
     constructor(plugin: ElnPlugin, options?: Partial<NewNoteModalOptions>) {
-        const pluginRoot = `${plugin.app.vault.configDir}/plugins/obsidian-eln`;
 
         super(plugin, {
             ...options,
             modalTitle: options?.modalTitle || "New Project",
             noteType: options?.noteType || "project",
-            metadataTemplatePath: options?.metadataTemplatePath || `${pluginRoot}/templates/metadata/project.json`,
-            markdownTemplatePath: options?.markdownTemplatePath || `${pluginRoot}/templates/markdown/project.md`,
             resolve: async (result) => {
                 if (result) {
                     console.log("Project note created successfully:", result);
@@ -25,8 +22,6 @@ export class ProjectNoteModal extends NewNoteModal {
                         const sampleListModal = new SampleListNoteModal(plugin, {
                             modalTitle: "New Sample List",
                             noteType: "sample-list",
-                            metadataTemplatePath: `${pluginRoot}/templates/metadata/sample_list.json`,
-                            markdownTemplatePath: `${pluginRoot}/templates/markdown/sample_list.md`,
                             folderPath: plugin.settings.note.sample.folder || "Experiment/Samples",
                             resolve: (sampleListResult) => {
                                 if (sampleListResult) {

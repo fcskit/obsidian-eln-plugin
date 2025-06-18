@@ -1,6 +1,6 @@
 import { setIcon } from "obsidian";
-import type { NestedPropertiesEditorView } from "views/NestedPropertiesEditor";
-import type { NestedPropertiesEditorCodeBlockView } from "views/NestedPropertiesEditor";
+import type { NestedPropertiesEditorView } from "../views/NestedPropertiesEditor";
+import type { NestedPropertiesEditorCodeBlockView } from "../views/NestedPropertiesEditor";
 import { getPropertyIcon } from "./getPropertyIcon";
 import { getPropertyInputType } from "./getPropertyInputType";
 import { updateProperties } from "./updateProperties";
@@ -113,7 +113,7 @@ export function renderPrimitive(
             if (isKeyOfArrayObject && key === "name") {
                 const objectFullKey = fullKey.split(".").slice(0, -1).join(".");
                 const objectItemContainer = parent.closest(`.npe-object-container[data-key="${objectFullKey}"]`);
-                const objectKeyLabelDiv = objectItemContainer?.querySelector('.npe-object-key-label');
+                const objectKeyLabelDiv = objectItemContainer?.querySelector('.npe-key-label.npe-object');
                 if (objectKeyLabelDiv) (objectKeyLabelDiv as HTMLElement).textContent = input.value;
             }
         });

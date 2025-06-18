@@ -1,6 +1,6 @@
 import { setIcon } from "obsidian";
-import type { NestedPropertiesEditorView } from "views/NestedPropertiesEditor";
-import type { NestedPropertiesEditorCodeBlockView } from "views/NestedPropertiesEditor";
+import type { NestedPropertiesEditorView } from "../views/NestedPropertiesEditor";
+import type { NestedPropertiesEditorCodeBlockView } from "../views/NestedPropertiesEditor";
 import { getPropertyIcon } from "./getPropertyIcon";
 import { addToggleEvent } from "./addToggleEvent";
 import { changeKeyName } from "./changeKeyName";
@@ -38,7 +38,7 @@ export function renderObjectContainer(
     const iconContainer = keyDiv.createDiv({ cls: "npe-icon-container" });
     setIcon(iconContainer, icon);
 
-    const keyLabelDiv = keyDiv.createDiv({ cls: "npe-object-key-label", text: key });
+    const keyLabelDiv = keyDiv.createDiv({ cls: "npe-key-label npe-object", text: key });
     const editableDiv = keyDiv.createDiv({ cls: "npe-make-editable" });
 
     // --- Editable Key Event ---

@@ -28,7 +28,7 @@
               "type": "markdown",
               "state": {
                 "file": "Daily Notes/2025/05 Mai/16.5.2025 - Freitag, 16. Mai.md",
-                "mode": "source",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
@@ -78,20 +78,6 @@
             }
           },
           {
-            "id": "8c817f931dcc545d",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Periodic Table of Elements.md",
-                "mode": "preview",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Periodic Table of Elements"
-            }
-          },
-          {
             "id": "fb6f7ac40e5798b2",
             "type": "leaf",
             "state": {
@@ -106,7 +92,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -163,8 +149,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "b3994d4bc654696d",
@@ -276,8 +261,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 339.5,
-    "collapsed": true
+    "width": 473.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -292,20 +276,21 @@
       "pexels-banner:🚩 Pixel Banner Menu": false
     }
   },
-  "active": "5dae1405088dd872",
+  "active": "ee95baef599068b0",
   "lastOpenFiles": [
-    "Periodic Table of Elements.md",
-    "Daily Notes/2025/06 Juni/7.6.2025 - Samstag, 7. Juni.md",
-    "Experiments/Analyses/Dummy Sample/Dummy Analysis/Dummy Analysis.md",
+    "Home.md",
+    "Daily Notes/2025/05 Mai/16.5.2025 - Freitag, 16. Mai.md",
     "Meetings/2025/05 Mai/Demo Meeting.md",
-    "Resources/Contacts/Anne Anybody.md",
+    "Experiments/Analyses/Dummy Sample/Dummy Analysis/Dummy Analysis.md",
     "Resources/Chemicals/solvent/NMP.md",
     "List of List Test.md",
+    "assets/images/Motivation/attitude_is_a_little_thing.png",
+    "Test.md",
+    "Periodic Table of Elements.md",
+    "Daily Notes/2025/06 Juni/7.6.2025 - Samstag, 7. Juni.md",
+    "Resources/Contacts/Anne Anybody.md",
     "Resources/Chemicals/current collector/New Chemical Note.md",
     "Resources/Chemicals/current collector",
-    "Test.md",
-    "Daily Notes/2025/05 Mai/16.5.2025 - Freitag, 16. Mai.md",
-    "Home.md",
     "Daily Notes/2025/06 Juni",
     "Unbenannt.base",
     "Daily Notes/12.5.2025 - Montag, 12. Mai.md",
@@ -322,7 +307,6 @@
     "Resources/Chemicals/polymer/Polyethylene.md",
     "Resources/Chemicals/solvent/Isopropanol.md",
     "Resources/Chemicals/solvent/NMP 2.md",
-    "Resources/Chemicals/solvent/NMP 1.md",
     "Experiments/Analyses/Dummy Sample/Dummy Analysis/plots/MM-DP-el001 - GCPL_01_v_vs_cap.png",
     "Experiments/Analyses/Dummy Sample/Dummy Analysis/plots/MM-DP-el001 - GCPL_01_dq_dv_vs_v.png",
     "Experiments/Analyses/Dummy Sample/Dummy Analysis/plots/MM-DP-el001 - GCPL_01_cap_vs_cyc.png",
@@ -338,7 +322,6 @@
     "assets/images/Instruments/dummy-image-instrument.png",
     "assets/images/Devices/dummy-image-device.png",
     "assets/images/Motivation/wind_it_up.png",
-    "assets/images/Motivation/pave_a_new_road.png",
-    "assets/images/Motivation/make_the_days_count.png"
+    "assets/images/Motivation/pave_a_new_road.png"
   ]
 }
