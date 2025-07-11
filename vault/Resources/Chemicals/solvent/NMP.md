@@ -6,7 +6,7 @@ date created: 2025-04-29
 author: Anne Anybody
 note type: chemical
 tags:
-  - "#chemical/unknown"
+  - chemical/solvent
 chemical:
   type: solvent
   field of use:

@@ -1,4 +1,4 @@
-import { MetaDataTemplate } from "utils/types";
+import { MetaDataTemplate } from "../../utils/types";
 
 const sampleListMetadataTemplate : MetaDataTemplate = {
   "ELN version": {
@@ -32,7 +32,7 @@ const sampleListMetadataTemplate : MetaDataTemplate = {
   "tags": {
     "query": false,
     "inputType": "list",
-    "default": ["#list/samples"],
+    "default": ["list/samples"],
     "callback": "(value) => value.trim()"
   },
   "project": {

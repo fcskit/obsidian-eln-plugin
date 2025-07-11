@@ -1,8 +1,11 @@
-import { setIcon, FrontMatterCache } from "obsidian";
+import { setIcon, FrontMatterCache, Notice } from "obsidian";
 import { renderObject } from "./renderObject";
 import { createToggleButton } from "./createToggleButton";
 import { createReloadButton } from "./createReloadButton";
 import { createAddPropertyButton } from "./createAddPropertyButton";
+import { createFixDepricatedPropertiesButton } from "./createFixDepricatedPropertiesButton";
+import { createOptionsMenuButton } from "./createOptionsMenuButton";
+import { fixAllDeprecatedKeysInVault } from "../utils/fixDeprecatedKey";
 import type { NestedPropertiesEditorView } from "../views/NestedPropertiesEditor";
 import type { NestedPropertiesEditorCodeBlockView } from "../views/NestedPropertiesEditor";
 
@@ -39,12 +42,25 @@ export function renderFrontMatter(
             parentKey = subKey;
         }
         if (buttonContainer) {
+            
             // Create an add property button at the top of the container
             createAddPropertyButton(view, buttonContainer, propertiesContainer);
             // Create a toggle button to show/hide the properties
             createToggleButton(view, buttonContainer, propertiesContainer);
             // Create a reload button at the top of the container
             createReloadButton(view, buttonContainer, propertiesContainer, parentKey, excludeKeys);
+            // Create a fix tags button at the top of the container
+            createFixDepricatedPropertiesButton(view, buttonContainer, propertiesContainer, parentKey, excludeKeys);
+            // Add options menu button
+            createOptionsMenuButton(app, buttonContainer, [
+                {
+                    label: "Fix all deprecated keys in vault",
+                    callback: async () => {
+                        await fixAllDeprecatedKeysInVault(app);
+                        new Notice("All deprecated keys in vault have been fixed.");
+                    }
+                }
+            ]);            
         }
     
         renderObject(view, fm, propertiesContainer, excludeKeys, 0, parentKey);

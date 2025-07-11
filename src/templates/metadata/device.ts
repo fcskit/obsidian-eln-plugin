@@ -33,7 +33,7 @@ const deviceMetadataTemplate : MetaDataTemplate = {
   "tags": {
     "query": false,
     "inputType": "list",
-    "default": "(userInput) => [`#device/${(userInput['device.type'] || 'unknown').replace(/\\s/g, '_')}`]",
+    "default": "(userInput) => [`device/${(userInput['device.type'] || 'unknown').replace(/\\s/g, '_')}`]",
     "callback": "(value) => value.trim()"
   },
   "device": {

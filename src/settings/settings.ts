@@ -1,5 +1,5 @@
 import { PathTemplate, MetaDataTemplate } from "../utils/types";
-import { metadataTemplates } from "../templates/metadataTemplates";
+import { metadataTemplates, subClassMetadataTemplates } from "../templates/metadataTemplates";
 import { markdownTemplates } from "../templates/markdownTemplates";
 
 export interface ELNSettings {
@@ -22,7 +22,7 @@ export interface ELNSettings {
             markdownTemplate: string;
         };
         chemical: {
-            type: string[];
+            type: { name: string; subClassMetadataTemplate: MetaDataTemplate }[];
             fieldOfUse: string[];
             supplier: { name: string; web: string }[];
             manufacturer: { name: string; web: string }[];
@@ -91,7 +91,7 @@ export interface ELNSettings {
             markdownTemplate: string;
         };
         project: {
-            type: { name: string; category: string[] }[];
+            type: { name: string; category: string[]; subClassMetadataTemplate: MetaDataTemplate }[];
             titleTemplate: PathTemplate;
             folderTemplate: PathTemplate;
             customMetadataTemplate: boolean;
@@ -102,7 +102,7 @@ export interface ELNSettings {
             markdownTemplate: string;
         };
         sample: {
-            type: string[];
+            type: { name: string; subClassMetadataTemplate: MetaDataTemplate }[];
             titleTemplate: PathTemplate;
             folderTemplate: PathTemplate;
             customMetadataTemplate: boolean;
@@ -172,18 +172,54 @@ export const DEFAULT_SETTINGS: ELNSettings = {
         },
         chemical: {
             type: [
-                "active material",
-                "binder",
-                "conductive additive",
-                "current collector",
-                "electrolyte",
-                "inorganic compound",
-                "metal",
-                "organic compound",
-                "polymer",
-                "semiconductor",
-                "separator",
-                "solvent",
+                {
+                    name: "active material",
+                    subClassMetadataTemplate: subClassMetadataTemplates.chemical["active material"]
+                },
+                {
+                    name: "binder",
+                    subClassMetadataTemplate: subClassMetadataTemplates.chemical.binder
+                },
+                {
+                    name: "conductive additive",
+                    subClassMetadataTemplate: subClassMetadataTemplates.chemical["conductive additive"]
+                },
+                {
+                    name: "current collector",
+                    subClassMetadataTemplate: subClassMetadataTemplates.chemical["current collector"]
+                },
+                {
+                    name: "electrolyte",
+                    subClassMetadataTemplate: subClassMetadataTemplates.chemical.electrolyte
+                },
+                {
+                    name: "inorganic compound",
+                    subClassMetadataTemplate: subClassMetadataTemplates.chemical["inorganic compound"]
+                },
+                {
+                    name: "metal",
+                    subClassMetadataTemplate: subClassMetadataTemplates.chemical.metal
+                },
+                {
+                    name: "organic compound",
+                    subClassMetadataTemplate: subClassMetadataTemplates.chemical["organic compound"]
+                },
+                {
+                    name: "polymer",
+                    subClassMetadataTemplate: subClassMetadataTemplates.chemical.polymer
+                },
+                {
+                    name: "semiconductor",
+                    subClassMetadataTemplate: subClassMetadataTemplates.chemical.semiconductor
+                },
+                {
+                    name: "separator",
+                    subClassMetadataTemplate: subClassMetadataTemplates.chemical.separator
+                },
+                {
+                    name: "solvent",
+                    subClassMetadataTemplate: subClassMetadataTemplates.chemical.solvent
+                },
             ],
             fieldOfUse: ["electrode", "electrochemical cell", "synthesis", "undefined"],
             supplier: [
@@ -355,18 +391,22 @@ export const DEFAULT_SETTINGS: ELNSettings = {
                 {
                     name: "research",
                     category: ["chemistry", "electrochemistry", "physics", "materials science", "engineering"],
+                    subClassMetadataTemplate: subClassMetadataTemplates.project.research,
                 },
                 {
                     name: "development",
                     category: ["battery", "fuel cell", "supercapacitor", "electrolyzer"],
+                    subClassMetadataTemplate: subClassMetadataTemplates.project.development,
                 },
                 {
                     name: "programming",
-                    category: ["python", "javascript", "typescript", "java", "c++"],
+                    category: ["application", "webapp", "backend", "database", "data analysis", "machine learning"],
+                    subClassMetadataTemplate: subClassMetadataTemplates.project.programming,
                 },
                 {
                     name: "meeting",
                     category: ["conference", "workshop", "symposium"],
+                    subClassMetadataTemplate: subClassMetadataTemplates.project.meeting,
                 },
             ],
             titleTemplate: [
@@ -384,7 +424,20 @@ export const DEFAULT_SETTINGS: ELNSettings = {
             markdownTemplate: markdownTemplates.project,
         },
         sample: {
-            type: ["compound", "electrode", "electrochemical cell"],
+            type: [
+                {
+                    name: "compound",
+                    subClassMetadataTemplate: subClassMetadataTemplates.sample.compound,
+                },
+                {
+                    name: "electrode",
+                    subClassMetadataTemplate: subClassMetadataTemplates.sample.electrode,
+                },
+                {
+                    name: "electrochemical cell",
+                    subClassMetadataTemplate: subClassMetadataTemplates.sample["electrochemical cell"],
+                }
+            ],
             titleTemplate: [
                 { type: 'operator' , field: "operators[sample.operator].initials", separator: "-" },
                 { type: 'project' , field: "projects[project.name].abbreviation", separator: "-" },

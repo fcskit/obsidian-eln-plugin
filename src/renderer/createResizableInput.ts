@@ -1,5 +1,6 @@
-import { App } from "obsidian";
-import { updateProperties } from "./updateProperties";
+import { updateProperties } from "../utils/updateProperties";
+import type { NestedPropertiesEditorView } from "../views/NestedPropertiesEditor";
+import type { NestedPropertiesEditorCodeBlockView } from "../views/NestedPropertiesEditor";
 
 /**
  * Creates a resizable input field.
@@ -12,7 +13,7 @@ import { updateProperties } from "./updateProperties";
  * @returns The input field container element.
  */
 export function createResizableInput(
-    app: App,
+    view: NestedPropertiesEditorView | NestedPropertiesEditorCodeBlockView,
     parent: HTMLElement,
     fullKey: string,
     value: string | boolean,
@@ -20,6 +21,10 @@ export function createResizableInput(
     dataType: string,
     callback: (input: HTMLInputElement) => void
 ): HTMLElement {
+    const app = view.app;
+    const file = view.currentFile;
+    if (!file) return parent.createDiv({ text: "No file available" });
+
     const container = parent.createDiv({ cls: "resize-container" });
 
     const span = container.createEl("span", { cls: "resize-text", text: String(value) });
@@ -44,7 +49,7 @@ export function createResizableInput(
 
     input.oninput = () => {
         callback(input);
-        updateProperties(app, fullKey, inputType === "checkbox" ? input.checked : input.value, dataType);
+        updateProperties(app, file, fullKey, inputType === "checkbox" ? input.checked : input.value, dataType);
     };
 
     return container;

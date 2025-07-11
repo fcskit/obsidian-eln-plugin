@@ -1,4 +1,4 @@
-import { MetaDataTemplate } from "utils/types";
+import { MetaDataTemplate } from "../../utils/types";
 
 const dailyNoteMetadataTemplate : MetaDataTemplate = {
   "ELN version": {
@@ -39,7 +39,7 @@ const dailyNoteMetadataTemplate : MetaDataTemplate = {
   "tags": {
     "query": false,
     "inputType": "list",
-    "default": ["#daily-note"]
+    "default": ["daily-note"]
   },
   "dailynote date": {
     "query": true,

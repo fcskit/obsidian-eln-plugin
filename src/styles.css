@@ -1064,7 +1064,18 @@ ul.contains-task-list.plugin-tasks-query-result {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
     gap: var(--size-2-1);
+    position: relative;
+    /* Add this for absolute positioning */
+}
+
+.npe-options-menu-btn {
+    position: absolute;
+    right: 0;
+    margin-right: 5px;
+    margin-left: 0;
+    /* Remove auto margin */
 }
 
 .npe-button {
@@ -1498,21 +1509,42 @@ ul.contains-task-list.plugin-tasks-query-result {
 .periodic-table,
 .periodic-table-lanthanoids,
 .periodic-table-actinoids {
-    --emement-max-width: 45px;
-    --element-cell-padding: 2px;
+    table-layout: fixed;
     border-collapse: collapse;
     margin: 1em auto;
+}
+
+.periodic-table {
+    width: 100%;
+}
+
+.periodic-table-lanthanoids,
+.periodic-table-actinoids {
+    width: 83%;
+    margin: 0 auto;
+}
+
+.periodic-table td,
+.periodic-table th,
+.periodic-table-lanthanoids td,
+.periodic-table-lanthanoids th,
+.periodic-table-actinoids td,
+.periodic-table-actinoids th {
+    width: 1%;
+    /* Let table-layout: fixed handle equal widths */
+    min-width: 45px;
+    /* Optional: set a minimum width */
+    max-width: 80px;
+    /* Optional: set a maximum width */
+    padding: 0;
+    box-sizing: border-box;
 }
 
 .periodic-table-cell {
     border: none;
     text-align: center;
     vertical-align: middle;
-    min-width: calc(var(--emement-max-width) + var(--element-cell-padding) * 2) !important;
-    max-width: calc(var(--emement-max-width) + var(--element-cell-padding) * 2) !important;
-    width: calc(var(--emement-max-width) + var(--element-cell-padding) * 2) !important;
     padding: 2px 2px !important; /* Remove default padding */
-    /* Remove default cell padding */
 }
 
 /* Only show border if the cell contains .element-content */
@@ -1532,10 +1564,10 @@ ul.contains-task-list.plugin-tasks-query-result {
 .periodic-table-cell>.element-content {
     border: none;
     background: none;
+    width: 100%;
+    max-width: 100%;
     height: 60px;
     max-height: 60px;
-    width: var(--emement-max-width);
-    max-width: var(--emement-max-width);
     box-sizing: border-box;
     padding-top: 4px;
     padding-bottom: 2px;
@@ -1550,9 +1582,15 @@ ul.contains-task-list.plugin-tasks-query-result {
 }
 
 .element-name {
-    font-size: 6px;
+    display: block;
+    text-align: center;
+    width: 100%;
+    max-width: 100%;
+    font-size: 0.6em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;    
     color: #666;
-    max-width: var(--emement-max-width);
 }
 
 /* Example: style by groupName */

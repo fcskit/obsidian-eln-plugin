@@ -1,4 +1,4 @@
-import { MetaDataTemplate } from "utils/types";
+import { MetaDataTemplate } from "../../utils/types";
 
 const defaultMetadataTemplate : MetaDataTemplate = {
     "ELN version": {
@@ -29,11 +29,10 @@ const defaultMetadataTemplate : MetaDataTemplate = {
     "default": "contact",
     "callback": "(value) => value.trim()"
   },
-  "tag": {
+  "tags": {
     "query": false,
-    "inputType": "text",
-    "default": "note",
-    "callback": "(value) => value.trim()"
+    "inputType": "list",
+    "default": ["note"],
   }
 };
 

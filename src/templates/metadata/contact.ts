@@ -1,4 +1,4 @@
-import { MetaDataTemplate } from "utils/types";
+import { MetaDataTemplate } from "../../utils/types";
 
 const contactMetadataTemplate : MetaDataTemplate= {
   "ELN version": {

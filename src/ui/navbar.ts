@@ -7,6 +7,7 @@ import { DeviceNoteModal } from "../modals/notes/DeviceNoteModal";
 import { InstrumentNoteModal } from "../modals/notes/InstrumentNoteModal";
 import { MeetingNoteModal } from "../modals/notes/MeetingNoteModal";
 import { ProjectNoteModal } from "../modals/notes/ProjectNoteModal";
+import { NewNoteModal } from "src/modals/notes/NewNoteModal";
 
 export class Navbar {
     private app: App;
@@ -189,6 +190,18 @@ export class Navbar {
                             case "new_sample":
                                 new Notice("Opening new sample modal...");
                                 console.log("Opening new sample modal...");
+                                new NewNoteModal(this.plugin, {
+                                    modalTitle: "New Sample",
+                                    noteTitle: "New Sample Note",
+                                    noteType: "sample",
+                                    resolve: (result) => {
+                                        if (result) {
+                                            console.log("Sample note created successfully:", result);
+                                        } else {
+                                            console.warn("Sample note creation was canceled.");
+                                        }
+                                    },
+                                }).open();
                                 break;
                             case "new_analysis":
                                 new Notice("Opening new analysis modal...");

@@ -4,7 +4,7 @@ import type { NestedPropertiesEditorCodeBlockView } from "../views/NestedPropert
 import { getPropertyIcon } from "./getPropertyIcon";
 import { getPropertyInputType } from "./getPropertyInputType";
 import { updateProperties } from "./updateProperties";
-import { changeKeyName } from "./changeKeyName";
+import { changeKeyName } from "../utils/changeKeyName";
 import { getFrontmatterValue } from "./getFrontmatterValue";
 import { createInternalLinkElement } from "./createInternalLinkElement";
 import { createExternalLinkElement } from "./createExternalLinkElement";
@@ -26,6 +26,8 @@ export function renderPrimitive(
     update = false
 ): void {
     const app = view.app;
+    const file = view.currentFile;
+    if (!file) return;
     const { dataType, inputType, inputValue, icon, callback } = getPrimitiveDetails(key, value);
 
     const container = update ? parent : parent.createDiv({ cls: "npe-key-value-container" });
@@ -53,7 +55,7 @@ export function renderPrimitive(
             const oldFullKey = container.getAttribute("data-key") || fullKey;
             fullKey = oldFullKey.split(".").slice(0, -1).concat(newKey).join(".");
             // Update the key in the frontmatter
-            await changeKeyName(app, oldFullKey, newKey);
+            await changeKeyName(app, file, oldFullKey, newKey);
             // Update the key and fullKey variables and the data-key attribute
             key = newKey;
             container.setAttribute("data-key", fullKey);

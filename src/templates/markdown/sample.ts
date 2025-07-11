@@ -8,17 +8,22 @@ const sampleMarkdownTemplate = `
 
 ## Properties
 
-\`\`\`dataviewjs
-await dv.view("/assets/javascript/dataview/views/sample", { obsidian: obsidian });
+\`\`\`eln-properties
+key: sample
+actionButtons: false
+cssclasses: eln-sample
 \`\`\`
 
 ## Processing
 
 **Open process description**
-- [[\${process.name}]]
+- [[{{process.name}}]]
 
-\`\`\`dataviewjs
-await dv.view("/assets/javascript/dataview/views/process", { obsidian: obsidian });
+\`\`\`eln-properties
+file: sample.process.name
+key: process
+actionButtons: false
+cssclasses: eln-process
 \`\`\`
 
 

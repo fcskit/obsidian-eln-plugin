@@ -34,14 +34,14 @@ const chemicalMetadataTemplate : MetaDataTemplate = {
   "tags": {
     "query": false,
     "inputType": "list",
-    "default": "(userInput) => [`#chemical/${(userInput['chemical.type'] || 'unknown').replace(/\\s/g, '_')}`]",
+    "default": "(userInput) => [`chemical/${(userInput['chemical.type'] || 'unknown').replace(/\\s/g, '_')}`]",
     "callback": "(value) => value.trim()"
   },
   "chemical": {
     "type": {
       "query": true,
-      "inputType": "dropdown",
-      "options": "this.settings.chemicalType",
+      "inputType": "subclass",
+      "options": "this.settings.note.chemical.type.map((item) => item.name)",
       "callback": "(value) => value"
     },
     "field of use": {

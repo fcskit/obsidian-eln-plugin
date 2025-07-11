@@ -2,7 +2,7 @@ const contactMarkdownTemplate = `
 \`\`\`daily-note-nav
 \`\`\`
 
-# Daily Note - {{note_title}}
+# Daily Note - {{title}}
 
   - ### Tasks
     - [ ] Today 1
@@ -26,6 +26,7 @@ const contactMarkdownTemplate = `
   \`\`\`
 
 # Notes
+
 
 `;
 

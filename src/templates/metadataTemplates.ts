@@ -1,7 +1,3 @@
-import { App, TFile } from "obsidian";
-import { ELNSettings } from "../settings/settings";
-import { MetaDataTemplate } from "../utils/types";
-
 import analysisMetadataTemplate from "./metadata/analysis";
 import chemicalMetadataTemplate from "./metadata/chemical";
 import contactMetadataTemplate from "./metadata/contact";
@@ -14,6 +10,43 @@ import processMetadataTemplate from "./metadata/process";
 import projectMetadataTemplate from "./metadata/project";
 import sampleMetadataTemplate from "./metadata/sample";
 import sampleListMetadataTemplate from "./metadata/samplelist";
+
+import { chemTypesMetadataTemplates } from "./metadata/chemtypes/chemtypes";
+import { projectTypesMetadataTemplates } from "./metadata/projecttypes/projecttypes";
+import { sampleTypesMetadataTemplates } from "./metadata/sampletypes/sampletypes";
+
+// Type/Interface definitions for  subclass metadata templates
+export interface SubclassAddField {
+    fullKey: string;
+    insertAfter?: string;
+    input: {
+        query?: boolean;
+        inputType: string;
+        default: string | number | boolean | Array<string | number | boolean> | null;
+        units?: string;
+        defaultUnit?: string;
+        callback?: string;
+    };
+}
+
+export interface SubclassReplaceField {
+    fullKey: string;
+    newKey: string;
+    input: {
+        query?: boolean;
+        inputType: string;
+        default: string | number | boolean | Array<string | number | boolean> | null;
+        units?: string;
+        defaultUnit?: string;
+        callback?: string;
+    };
+}
+
+export interface SubclassMetadataTemplate {
+    add?: SubclassAddField[];
+    remove?: string[];
+    replace?: SubclassReplaceField[];
+}
 
 export const metadataTemplates = {
     analysis: analysisMetadataTemplate,
@@ -28,6 +61,12 @@ export const metadataTemplates = {
     project: projectMetadataTemplate,
     sample: sampleMetadataTemplate,
     sampleList: sampleListMetadataTemplate,
+};
+
+export const subClassMetadataTemplates = {
+    chemical: chemTypesMetadataTemplates,
+    project: projectTypesMetadataTemplates,
+    sample: sampleTypesMetadataTemplates,
 };
 
 // export async function loadMetadataTemplates(app: App, settings: ELNSettings) {

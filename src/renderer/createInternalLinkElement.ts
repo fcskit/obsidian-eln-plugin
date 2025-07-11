@@ -1,6 +1,6 @@
-import type { NestedPropertiesEditorView } from "views/NestedPropertiesEditor";
-import type { NestedPropertiesEditorCodeBlockView } from "views/NestedPropertiesEditor";
-import { updateProperties } from "./updateProperties";
+import type { NestedPropertiesEditorView } from "../views/NestedPropertiesEditor";
+import type { NestedPropertiesEditorCodeBlockView } from "../views/NestedPropertiesEditor";
+import { updateProperties } from "../utils/updateProperties";
 
 /**
  * Creates an editable internal link element.
@@ -14,6 +14,8 @@ export function createInternalLinkElement(
     parent: HTMLElement,
     fullKey: string
 ): void {
+    const app = view.app;
+    const file = view.currentFile;
     const linkDiv = parent.createDiv({ cls: "npe-editable-link" });
 
     const link = linkDiv.createEl("a", {
@@ -45,7 +47,7 @@ export function createInternalLinkElement(
 
     // Update the frontmatter and link attributes on blur
     link.addEventListener("blur", () => {
-        updateProperties(view, fullKey, link.textContent || "", "link");
+        updateProperties(app, file, fullKey, link.textContent || "", "link");
         link.setAttribute("href", link.textContent || "");
         link.setAttribute("data-href", link.textContent || "");
         link.contentEditable = "false";

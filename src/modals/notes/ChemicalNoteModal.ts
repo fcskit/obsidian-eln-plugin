@@ -23,7 +23,7 @@ export class ChemicalNoteModal extends NewNoteModal {
         super(plugin, {
             ...options,
             modalTitle: options?.modalTitle || "New Chemical",
-            noteTitle: options?.noteTitle || "New Chemical Note",
+            noteTitle: options?.noteTitle,
             noteType: options?.noteType || "chemical",
             resolve: options?.resolve || (() => {}),
         });

@@ -1,4 +1,4 @@
-{
+export const acidSubclassMetadataTemplate = {
     "add": [
         {
             "fullKey": "chemical.properties.concentration",
@@ -25,6 +25,19 @@
             }
         }
     ],
-    "remove": [],
-    "replace": []
+    "remove": [
+        "chemical.properties.solubility in water"
+    ],
+    "replace": [
+        {
+            "fullKey": "chemical.properties.melting point",
+            "newKey": "chemical.properties.pKs",
+            "input": {
+                "query": true,
+                "inputType": "number",
+                "default": "",
+                "callback": "(value) => value.trim()"
+            }
+        }
+    ]
 }

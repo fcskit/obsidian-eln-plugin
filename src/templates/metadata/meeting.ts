@@ -1,4 +1,4 @@
-import { MetaDataTemplate } from "utils/types";
+import { MetaDataTemplate } from "../../utils/types";
 
 const meetingMetadataTemplate : MetaDataTemplate = {
   "ELN version": {
@@ -33,7 +33,7 @@ const meetingMetadataTemplate : MetaDataTemplate = {
   "tags": {
     "query": false,
     "inputType": "list",
-    "default": ["#meeting"],
+    "default": ["meeting"],
     "callback": "(value) => value.trim()"
   },
   "meeting": {

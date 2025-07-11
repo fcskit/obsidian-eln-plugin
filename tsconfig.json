@@ -14,6 +14,8 @@
     "isolatedModules": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "strict": true,
     "lib": [
       "DOM",

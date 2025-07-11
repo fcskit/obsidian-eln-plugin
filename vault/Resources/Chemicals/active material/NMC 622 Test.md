@@ -1,39 +1,40 @@
 ---
-ELN version: 1.0.0
+ELN version: ""
 cssclasses:
   - chemical
-date created: 2025-06-16
-author: Anne Anybody
+date created: 2025-07-03
+author: ""
 note type: chemical
 tags:
-  - "#chemical/unknown"
+  - chemical/active_material
 chemical:
-  type: current collector
+  type: active material
   field of use:
     - electrode
-  name: NMP
-  IUPAC name: 1-methylpyrrolidin-2-one
+  name: NMC 622 Test
+  IUPAC name: ""
   CAS: ""
-  formula: C5H9NO
-  smiles: CN1CCCC1=O
+  formula: ""
+  smiles:
   properties:
     molar mass:
-      value: "99.1322"
+      value: ""
       unit: g/mol
     density:
       value: ""
       unit: g/cm³
-    melting point:
-      value: ""
-      unit: K
     boiling point: ""
-    solubility in water: ""
+    chemical.properties.voltage range: ""
+    theoretical capacity:
+      value: ""
+      unit: mol/L
+    storage mechanism: ""
   batch:
     grade: ""
     supplier: abcr
     manufacturer: abcr
     product name: ""
-    delivery date: 2025-06-16
+    delivery date: 2025-07-03
     batch number: "1"
     quantity:
       value: ""

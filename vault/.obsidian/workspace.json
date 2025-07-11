@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Daily Notes/2025/05 Mai/16.5.2025 - Freitag, 16. Mai.md",
-                "mode": "preview",
+                "file": "Experiments/Analyses/Dummy Sample/Dummy Analysis/Dummy Analysis.md",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "16.5.2025 - Freitag, 16. Mai"
+              "title": "Dummy Analysis"
             }
           },
           {
@@ -90,9 +90,37 @@
               "icon": "lucide-file",
               "title": "List of List Test"
             }
+          },
+          {
+            "id": "b92f4793e1e3551c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Experiments/Samples/electrode/MM-DP-el001.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "MM-DP-el001"
+            }
+          },
+          {
+            "id": "b0e5f5d4e72913e8",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Periodic Table of Elements.md",
+                "mode": "preview",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Periodic Table of Elements"
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 7
       }
     ],
     "direction": "vertical"
@@ -124,7 +152,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "tag:#contact  ",
+                "query": "tag:project/unkno",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -149,7 +177,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 346.5
   },
   "right": {
     "id": "b3994d4bc654696d",
@@ -261,7 +289,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 473.5
+    "width": 435.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -276,51 +304,51 @@
       "pexels-banner:🚩 Pixel Banner Menu": false
     }
   },
-  "active": "ee95baef599068b0",
+  "active": "b0e5f5d4e72913e8",
   "lastOpenFiles": [
-    "Home.md",
-    "Daily Notes/2025/05 Mai/16.5.2025 - Freitag, 16. Mai.md",
-    "Meetings/2025/05 Mai/Demo Meeting.md",
     "Experiments/Analyses/Dummy Sample/Dummy Analysis/Dummy Analysis.md",
+    "Meetings/2025/05 Mai/Demo Meeting.md",
+    "Daily Notes/2025/05 Mai/16.5.2025 - Freitag, 16. Mai.md",
+    "Experiments/Samples/electrode/MM-DP-el001.md",
+    "assets/images/Devices/dummy-image-device.png",
+    "Projects/development/Test Project.md",
+    "Projects/development/Test Project - Base.base",
+    "Periodic Table of Elements.md",
+    "Projects/Example Project.md",
+    "Experiments/Samples/electrode",
+    "Experiments/Samples",
+    "Projects/Demo Project.md",
     "Resources/Chemicals/solvent/NMP.md",
+    "Resources/Chemicals/current collector/Copper foil.md",
+    "Resources/Chemicals/active material/NMC 622 Test.md",
+    "Resources/Chemicals/binder/CMC-SBR.md",
+    "Resources/Chemicals/binder/PVDF.md",
+    "Resources/Chemicals/binder",
+    "Resources/Chemicals/active material/New Chemical Note.md",
+    "Resources/Chemicals/active material",
+    "Resources/Chemicals/current collector/New Chemical Note.md",
+    "Daily Notes/2025/07 Juli/1.7.2025 - Dienstag, 1. Juli.md",
+    "Daily Notes/2025/07 Juli",
+    "Unbenannt.md",
+    "Untitled.md",
+    "Untitled 1.md",
+    "Daily Notes/2025/06 Juni/7.6.2025 - Samstag, 7. Juni.md",
+    "Unbenannt.base",
+    "Home.md",
+    "Projects/development",
+    "Daily Notes/2025/06 Juni/24.6.2025 - Dienstag, 24. Juni.md",
+    "Projects",
+    "Fix deprecated properties Test.md",
     "List of List Test.md",
     "assets/images/Motivation/attitude_is_a_little_thing.png",
     "Test.md",
-    "Periodic Table of Elements.md",
-    "Daily Notes/2025/06 Juni/7.6.2025 - Samstag, 7. Juni.md",
-    "Resources/Contacts/Anne Anybody.md",
-    "Resources/Chemicals/current collector/New Chemical Note.md",
     "Resources/Chemicals/current collector",
-    "Daily Notes/2025/06 Juni",
-    "Unbenannt.base",
-    "Daily Notes/12.5.2025 - Montag, 12. Mai.md",
-    "Notes/Untiteled Note.md",
-    "Chemicals/Instruments.md",
-    "Chemicals/Untitled Note.md",
-    "Resources/Devices/Unicorn Devices - Test Coater/Unicorn Devices - Test Coater.md",
-    "Willkommen.md",
-    "Toolbar Test.md",
-    "Resources/Devices/Another Fancy Device.md",
-    "Resources/Devices/Fancy Device.md",
-    "Resources/Devices/Test Device.md",
-    "Resources/Chemicals/metal/Test Metal.md",
-    "Resources/Chemicals/polymer/Polyethylene.md",
-    "Resources/Chemicals/solvent/Isopropanol.md",
-    "Resources/Chemicals/solvent/NMP 2.md",
     "Experiments/Analyses/Dummy Sample/Dummy Analysis/plots/MM-DP-el001 - GCPL_01_v_vs_cap.png",
     "Experiments/Analyses/Dummy Sample/Dummy Analysis/plots/MM-DP-el001 - GCPL_01_dq_dv_vs_v.png",
     "Experiments/Analyses/Dummy Sample/Dummy Analysis/plots/MM-DP-el001 - GCPL_01_cap_vs_cyc.png",
-    "Experiments/Analyses/Dummy Sample/Dummy Analysis/plots",
-    "Experiments/Analyses/Dummy Sample/Dummy Analysis",
-    "Experiments/Analyses/Dummy Sample",
-    "Experiments/Analyses",
-    "Experiments",
-    "Resources/Devices/Unicorn Devices - Test Coater",
-    "Meetings/2025/05 Mai",
     "assets/images/People/Dummy-Contact-Icon.png",
     "assets/images/Banner/obsidian-eln-banner.png",
     "assets/images/Instruments/dummy-image-instrument.png",
-    "assets/images/Devices/dummy-image-device.png",
     "assets/images/Motivation/wind_it_up.png",
     "assets/images/Motivation/pave_a_new_road.png"
   ]

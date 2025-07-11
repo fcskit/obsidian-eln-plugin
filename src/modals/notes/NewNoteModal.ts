@@ -5,11 +5,15 @@ import { LabeledDateInput } from "../components/LabeledDateInput";
 import { LabeledDropdown } from "../components/LabeledDropdown";
 import { MultiSelectInput } from "../components/MultiSelectInput";
 import { DynamicInputSection } from "../components/DynamicInputSection";
+import { QueryDropDown } from "../components/QueryDropDown";
+import { SubClassSelection } from "../components/SubClassSelection";
 import { PathTemplate } from "../../utils/types";
 import { parsePathTemplate } from "../../utils/template";
+import { processMarkdownTemplate } from "src/templates/processMarkdownTemplate";
 import ElnPlugin from "../../main";
 import { ELNSettings } from "../../settings/settings";
 import type { MetaDataTemplate } from "../../utils/types";
+import type { SubclassMetadataTemplate } from "../../templates/metadataTemplates";
 
 export interface NewNoteModalOptions {
     modalTitle?: string; // Optional title for the modal
@@ -32,7 +36,8 @@ export class NewNoteModal extends Modal {
     private submitted: boolean;
     protected data: Record<string, any>;
     protected inputs: Record<string, any>;
-    private metadataTemplate: MetaDataTemplate
+    private originalMetadataTemplate: MetaDataTemplate;
+    private metadataTemplate: MetaDataTemplate;
     private openNote: boolean;
     private openInNewLeaf: boolean;
     private noteTFile: TFile | null;
@@ -68,10 +73,12 @@ export class NewNoteModal extends Modal {
         // Load the metadata template from settings if not using a custom template
         if (this.noteType && this.noteType in this.settings.note) {
             const noteSettings = this.settings.note[this.noteType as keyof typeof this.settings.note];
-                this.metadataTemplate = noteSettings.metadataTemplate;
+            this.originalMetadataTemplate = noteSettings.metadataTemplate;
+            this.metadataTemplate = JSON.parse(JSON.stringify(noteSettings.metadataTemplate));
         } else {
             // fallback to default
-            this.metadataTemplate = this.settings.note.default.metadataTemplate;
+            this.originalMetadataTemplate = this.settings.note.default.metadataTemplate;
+            this.metadataTemplate = JSON.parse(JSON.stringify(this.settings.note.default.metadataTemplate));
         }
         if (!this.metadataTemplate) {
             console.error("Failed to load metadata template.");
@@ -80,6 +87,7 @@ export class NewNoteModal extends Modal {
 
         this.processDynamicFields(this.metadataTemplate);
 
+        // --------- Preprocess the metadata template
         if (this.plugin.settings.includeVersion) {
             this.metadataTemplate["ELN version"].default = this.plugin.manifest.version;
         }
@@ -94,9 +102,39 @@ export class NewNoteModal extends Modal {
                 this.metadataTemplate.author.default = authorList[0];
             }
         }
+        // Check if the metadata template has a key with inputType "subclass"
+        const subclassInput = this.findSubclassInputField(this.metadataTemplate);
+        console.debug("subclassInput:", subclassInput);
+        if (subclassInput) {
+            // If it does, we need to apply the subclass template
+            console.debug("Applying subclass template to metadata template.");
+            // Check if the noteType is defined and exists in the settings
+            if (this.noteType && this.noteType in this.settings.note) {
+                // Get the default value for the subclass input if defined in the metadata template
+                const defaultSubclass = subclassInput.default || subclassInput.options?.[0] || null;
+                // Get the subclass metadata template
+                const typeArray = this.settings.note[this.noteType as keyof typeof this.settings.note].type;
+                const typeObj = Array.isArray(typeArray)
+                    ? typeArray.find((type) => type.name === defaultSubclass)
+                    : undefined;
+                console.debug("Selected subclass type object:", typeObj);
+                const subclassTemplate = typeObj?.subClassMetadataTemplate;
+                if (subclassTemplate) {
+                    // Apply the subclass template to the metadata template
+                    this.metadataTemplate = this.applySubclassTemplate(subclassTemplate);
+                } else {
+                    console.warn(`No subclass metadata template found for note type "${this.noteType}".`);
+                }
+            } else {
+                console.warn(`Note type "${this.noteType}" is not defined in settings.`);
+            }
+        }
 
+        // Create a container for the input fields so that it can be updated
+        // without erasing the entire modal content (e.g. the submit button)
+        const inputContainer = contentEl.createDiv({ cls: "eln-inputs" });
         // Render input fields based on the metadata template
-        this.renderInputs(contentEl, this.metadataTemplate);
+        this.renderInputs(inputContainer, this.metadataTemplate);
 
         // Add a confirm button to the modal
         const confirmButton = new ButtonComponent(contentEl);
@@ -122,9 +160,6 @@ export class NewNoteModal extends Modal {
     }
 
     private async handleSubmit(): Promise<boolean> {
-        console.log(`Processing user input: `, this.data);
-        // Process metadata using user input
-        const processedMetadata = await this.processMetadata(this.metadataTemplate, this.data);
 
         // Load the markdown template from settings if not using a custom template
         let markdownContent: string;
@@ -186,6 +221,14 @@ export class NewNoteModal extends Modal {
                 this.folderPath = "";
             }
         }
+
+        console.debug(`Processing user input: `, this.data);
+        // Process metadata using user input
+        const processedMetadata = await this.processMetadata(this.metadataTemplate, this.data);
+        console.debug("Processing markdown template with user input:", this.data);
+        // Process markdown content with user input
+        markdownContent = processMarkdownTemplate(markdownContent, this.noteTitle, this.data);
+
         // Ensure the folder path is valid
         // Check if note already exists
         const existingNote = this.app.vault.getAbstractFileByPath(`${this.folderPath}/${this.noteTitle}.md`);
@@ -195,6 +238,7 @@ export class NewNoteModal extends Modal {
         } else {
             try {
                 // Create the note with metadata and content
+                console.debug("Creating note with folder path:", this.folderPath + "and note title:", this.noteTitle);
                 await this.createNote(this.folderPath, this.noteTitle, processedMetadata, markdownContent);
                 return true; // Note created successfully
             } catch (error) {
@@ -203,6 +247,20 @@ export class NewNoteModal extends Modal {
                 return false; // Note creation failed
             }
         }
+    }
+
+    private findSubclassInputField(obj: Record<string, any>): any | undefined {
+        for (const value of Object.values(obj)) {
+            if (value && typeof value === "object") {
+                if (value.inputType === "subclass") {
+                    return value;
+                }
+                // Recursively search nested objects (but not arrays)
+                const nested = this.findSubclassInputField(value);
+                if (nested) return nested;
+            }
+        }
+        return undefined;
     }
 
     private async processMetadata(
@@ -255,23 +313,6 @@ export class NewNoteModal extends Modal {
         }
         return result;
     }
-
-    private async loadMetadataTemplate(templatePath: string): Promise<MetaDataTemplate> {
-        try {
-            // Use the Vault API to read the file
-            const metadataContent = await this.app.vault.adapter.read(templatePath);
-            const metadataTemplate = JSON.parse(metadataContent);
-
-            // Process dynamic fields in the template
-            console.log("Processing dynamic fields in metadata template.");
-            this.processDynamicFields(metadataTemplate);
-
-            return metadataTemplate;
-        } catch (error) {
-            console.error(`Failed to load metadata template from ${templatePath}:`, error);
-            throw error;
-        }
-    }   
 
     /**
      * Processes dynamic fields (e.g., `callback`, `default`, `options`) in the metadata template.
@@ -388,8 +429,10 @@ private evaluateDynamicField(field: string): any {
     ) {
         console.log("Creating note with metadata:", metadata);
         // Ensure folder exists
+        folderPath = folderPath.endsWith("/") ? folderPath.slice(0, -1) : folderPath; // Remove trailing slash if present
         const folder = this.app.vault.getFolderByPath(folderPath);
         if (!folder) {
+            console.debug(`Folder "${folderPath}" does not exist. Creating it.`);
             await this.app.vault.createFolder(folderPath);
         }
 
@@ -588,6 +631,58 @@ private evaluateDynamicField(field: string): any {
                         targetInputs[key] = dynamicSection; // Store reference
                         break;
                     }
+                        
+                    case "queryDropdown": {
+                        const queryDropDown = new QueryDropDown(this.app, {
+                            container,
+                            label: key,
+                            search: config.search || "",
+                            where: config.where || undefined,
+                            onChangeCallback: (value) => {
+                                targetData[key] = config.callback ? config.callback(value) : value;
+                            },
+                        });
+                        targetInputs[key] = queryDropDown; // Store reference
+                        break;
+                    }
+                        
+                    case "subclass": {
+                        const subclassOptions = config.options || [];
+                        const defaultValue = config.default || subclassOptions[0] || "";
+
+                        const subClassSelection = new SubClassSelection({
+                            app: this.app,
+                            container,
+                            label: key,
+                            options: subclassOptions,
+                            defaultValue: defaultValue,
+                            onChangeCallback: async (selectedType: string) => {
+                                targetData[key] = selectedType;
+                                try {
+                                    const typeArray = this.settings.note[this.noteType as keyof typeof this.settings.note].type;
+                                    const typeObj = Array.isArray(typeArray)
+                                        ? typeArray.find((type) => type.name === selectedType)
+                                        : undefined;
+                                    console.debug("Selected subclass type object:", typeObj);
+                                    const subclassTemplate = typeObj?.subClassMetadataTemplate;
+                                    // Apply subclass modifications to the metadataTemplate
+                                    const newMetadataTemplate = this.applySubclassTemplate(
+                                        subclassTemplate
+                                    );
+                                    this.metadataTemplate = newMetadataTemplate; // Update the metadata template
+                                    // Re-render modal fields
+                                    container.empty();
+                                    this.renderInputs(container, this.metadataTemplate);
+
+                                } catch (e) {
+                                    console.error(`Could not load subclass template for ${selectedType}:`, e);
+                                }
+                            }
+                        });
+                        targetData[key] = defaultValue; // Set initial value
+                        targetInputs[key] = subClassSelection; // Store reference
+                        break;
+                    }
 
                     default:
                         console.warn(`Unsupported input type: ${config.inputType}`);
@@ -652,5 +747,83 @@ private evaluateDynamicField(field: string): any {
         } else {
             console.warn(`Unsupported input field type for "${fullKey}".`);
         }
+    }
+
+    private applySubclassTemplate(
+        subclassTemplate: SubclassMetadataTemplate
+    ): Record<string, any> {
+        const baseTemplate = this.originalMetadataTemplate
+        if (!baseTemplate) {
+            console.error("Base template is not defined. Cannot apply subclass template.");
+            return {};
+        }
+        console.debug("applySubclassTemplate: Subclass Template", subclassTemplate);
+        // Create a deep copy of the base template to avoid modifying the original
+        const newTemplate = JSON.parse(JSON.stringify(baseTemplate));
+        // Remove fields
+        if (Array.isArray(subclassTemplate.remove)) {
+            for (const fullKey of subclassTemplate.remove) {
+                const keys = fullKey.split(".");
+                let obj = newTemplate;
+                for (let i = 0; i < keys.length - 1; i++) {
+                    if (!obj[keys[i]]) break;
+                    obj = obj[keys[i]];
+                }
+                delete obj[keys[keys.length - 1]];
+            }
+        }
+        // Replace fields
+        if (subclassTemplate.replace && Array.isArray(subclassTemplate.replace)) {
+            for (const { fullKey, newKey, input } of subclassTemplate.replace) {
+                // Remove old key
+                const keys = fullKey.split(".");
+                let obj = newTemplate;
+                for (let i = 0; i < keys.length - 1; i++) {
+                    if (!obj[keys[i]]) break;
+                    obj = obj[keys[i]];
+                }
+                delete obj[keys[keys.length - 1]];
+                // Add new key
+                obj[newKey] = input;
+            }
+        }
+        // Add fields
+        if (Array.isArray(subclassTemplate.add)) {
+            for (const { fullKey, input } of subclassTemplate.add) {
+                const keys = fullKey.split(".");
+                let obj = newTemplate;
+                for (let i = 0; i < keys.length - 1; i++) {
+                    if (!obj[keys[i]]) obj[keys[i]] = {};
+                    obj = obj[keys[i]];
+                }
+                obj[keys[keys.length - 1]] = input;
+            }
+        }
+        // Process dynamic fields
+        this.processDynamicFields(newTemplate);
+    // --- Recursively restore user input values ---
+    function restoreUserInput(template: any, data: any) {
+        if (!template || typeof template !== "object" || !data || typeof data !== "object") return;
+        for (const key of Object.keys(template)) {
+            if (template[key] && typeof template[key] === "object" && "inputType" in template[key]) {
+                if (data[key] !== undefined) {
+                    template[key].default = data[key];
+                }
+            }
+            // Recurse into nested objects (but not arrays or fields with inputType)
+            if (
+                template[key] &&
+                typeof template[key] === "object" &&
+                !Array.isArray(template[key]) &&
+                !template[key].inputType
+            ) {
+                restoreUserInput(template[key], data[key] || {});
+            }
+        }
+    }
+    restoreUserInput(newTemplate, this.data);
+    // --------------------------------------------
+        console.debug("applySubclassTemplate: New Template", newTemplate);
+        return newTemplate;
     }
 }

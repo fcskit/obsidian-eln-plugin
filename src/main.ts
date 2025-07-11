@@ -1,4 +1,5 @@
 import { App, Plugin, TFile, WorkspaceLeaf } from 'obsidian';
+import { ELNApi } from "./ELNApi";
 import { ELNSettings, DEFAULT_SETTINGS } from "./settings/settings";
 import { ELNSettingTab } from "./settings/ENLSettingTab";
 import { NestedPropertiesEditorView } from './views/NestedPropertiesEditor';
@@ -13,22 +14,31 @@ import { PeriodicTableView } from "./views/PeriodicTableView";
 
 
 export default class ElnPlugin extends Plugin {
-	app!: App;
-	settings!: ELNSettings;
-	lastActiveFile?: TFile | null = null;
+	public app!: App;
+	public settings!: ELNSettings;
+	public lastActiveFile: TFile | null = null;
+
+	public api!: ELNApi;
+
 
 	async onload() {
 		// Load plugin settings
 		await this.loadSettings();
 
 		this.app.workspace.onLayoutReady(() => {
-            // Add Navbar and Footer to the new active leaf
+			// Add Navbar and Footer to the new active leaf
 			handleActiveLeafChange(this.app, this);
-        })
+		})
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new ELNSettingTab(this.app, this));
 
+		// Initialize the ELN API
+		this.api = new ELNApi();
+
+		// Register API to global window object.
+		(window["elnAPI"] as any) = this.api && this.register(() => delete window["elnAPI"]);
+		
 		// Register NPE view 
 		this.registerView(
 			NestedPropertiesEditorView.viewType,
@@ -85,13 +95,13 @@ export default class ElnPlugin extends Plugin {
 			ctx.addChild(new PeriodicTableView(this.app, el));
 		});
 
-        // Register active-leaf-change event
-        this.registerEvent(
+		// Register active-leaf-change event
+		this.registerEvent(
 			this.app.workspace.on("active-leaf-change", () => {
 				console.log("Active leaf changed event fired!");
-                handleActiveLeafChange(this.app, this);
-            })
-        );		
+				handleActiveLeafChange(this.app, this);
+			})
+		);		
 	}
 
 	async initNpeLeaf() {
@@ -123,11 +133,13 @@ export default class ElnPlugin extends Plugin {
 
 	async loadSettings() {
 		// Load settings from storage or use default settings
-        this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
 
 	async saveSettings() {
 		// Save settings to storage
 		await this.saveData(this.settings);
 	}
+
+
 }

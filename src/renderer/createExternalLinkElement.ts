@@ -1,6 +1,6 @@
 import type { NestedPropertiesEditorView } from "views/NestedPropertiesEditor";
 import type { NestedPropertiesEditorCodeBlockView } from "views/NestedPropertiesEditor";
-import { updateProperties } from "./updateProperties";
+import { updateProperties } from "../utils/updateProperties";
 
 /**
  * Creates an editable external link element.
@@ -54,7 +54,7 @@ export function createExternalLinkElement(
         const newLinkText = newValue.match(/\[(.*?)\]/)?.[1] || "";
         const newLinkUrl = newValue.match(/\((.*?)\)/)?.[1] || "";
 
-        updateProperties(view, fullKey, newValue, "external-link");
+        updateProperties(app, file, fullKey, newValue, "external-link");
         link.setAttribute("href", newLinkUrl);
         link.textContent = newLinkText;
         link.contentEditable = "false";

@@ -6,7 +6,7 @@ author: Name Surname
 date created: 2024-08-01
 note type: analysis
 tags:
-  - " #analysis "
+  - analysis
 project:
   name: Demo Project
   link: "[[Demo Project]]"
@@ -101,11 +101,12 @@ cssclasses: analysis
 
 ```image-viewer
 folder: Experiments/Analyses/Dummy Sample/Dummy Analysis/plots
-// bgColor: #151515
+//bgColor: #151515
 size: 800
 shuffle: manual
 shuffleOrder: alphabetical
 interval: 5
 thumbnails: true
-// invertGray: true
+invertGray: true
 ```
+
