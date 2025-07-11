@@ -1,6 +1,6 @@
 import { MarkdownRenderChild, App } from "obsidian";
 import { parseCircularProgressOptions } from "../utils/parseCircularProgressOptions";
-import { renderCircularProgress, updateCircularProgressValue } from "../renderer/renderCircularProgress";
+import { renderCircularProgress, updateCircularProgressValue } from "../renderer/components/renderCircularProgress";
 import type { CircularProgressOptions } from "../utils/parseCircularProgressOptions";
 
 export class CircularProgress extends MarkdownRenderChild {

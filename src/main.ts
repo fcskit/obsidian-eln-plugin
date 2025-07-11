@@ -1,5 +1,5 @@
 import { App, Plugin, TFile, WorkspaceLeaf } from 'obsidian';
-import { ELNApi } from "./ELNApi";
+import { ELNApi } from "./api/ELNApi";
 import { ELNSettings, DEFAULT_SETTINGS } from "./settings/settings";
 import { ELNSettingTab } from "./settings/ENLSettingTab";
 import { NestedPropertiesEditorView } from './views/NestedPropertiesEditor';

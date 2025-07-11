@@ -1,6 +1,6 @@
 import { MarkdownRenderChild, App } from "obsidian";
 import { parseImageViewerOptions } from "../utils/parseImageViewerOptions";
-import { renderImageViewer } from "../renderer/renderImageViewer";
+import { renderImageViewer } from "../renderer/components/renderImageViewer";
 import type { ImageViewerOptions } from "../utils/parseImageViewerOptions";
 
 export class ImageViewer extends MarkdownRenderChild {

@@ -6,7 +6,10 @@
 	"scripts": {
 		"dev": "node esbuild.config.mjs && node copy-assets.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production && node copy-assets.mjs",
-		"version": "node version-bump.mjs && git add manifest.json versions.json"
+		"build-fast": "node esbuild.config.mjs production && node copy-assets.mjs",
+		"version": "node version-bump.mjs && git add manifest.json versions.json",
+		"release": "npm run build && node build-release.mjs",
+		"release-fast": "npm run build-fast && node build-release.mjs"
 	},
 	"keywords": [],
 	"author": "",

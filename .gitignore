@@ -18,5 +18,13 @@ main.js
 # obsidian
 data.json
 
+# Release builds
+release/
+*.zip
+
 # Exclude macOS Finder (System Explorer) View States
 .DS_Store
+
+# Exclude Copilot Summary Markdown Files
+RELEASE.md
+src/renderer/README.md

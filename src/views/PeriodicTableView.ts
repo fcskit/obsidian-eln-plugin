@@ -1,5 +1,5 @@
 import { MarkdownRenderChild, App } from "obsidian";
-import { renderPeriodicTable } from "../renderer/renderPeriodicTable";
+import { renderPeriodicTable } from "../renderer/components/renderPeriodicTable";
 
 export class PeriodicTableView extends MarkdownRenderChild {
     private app: App;

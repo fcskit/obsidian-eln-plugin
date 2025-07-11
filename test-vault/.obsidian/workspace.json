@@ -1,0 +1,365 @@
+{
+  "main": {
+    "id": "d19ad99ec66d45bc",
+    "type": "split",
+    "children": [
+      {
+        "id": "19c3da0e8cf1c816",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9111a77b189d8885",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Home.md",
+                "mode": "preview",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Home"
+            }
+          },
+          {
+            "id": "ee95baef599068b0",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Experiments/Analyses/Dummy Sample/Dummy Analysis/Dummy Analysis.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Dummy Analysis"
+            }
+          },
+          {
+            "id": "93cf80928d70e6f7",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Resources/Chemicals/solvent/NMP.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "NMP"
+            }
+          },
+          {
+            "id": "5dae1405088dd872",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Experiments/Analyses/Dummy Sample/Dummy Analysis/Dummy Analysis.md",
+                "mode": "preview",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Dummy Analysis"
+            }
+          },
+          {
+            "id": "8dd995cbfb71913d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Meetings/2025/05 Mai/Demo Meeting.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Demo Meeting"
+            }
+          },
+          {
+            "id": "fb6f7ac40e5798b2",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "List of List Test.md",
+                "mode": "source",
+                "source": true
+              },
+              "icon": "lucide-file",
+              "title": "List of List Test"
+            }
+          },
+          {
+            "id": "b92f4793e1e3551c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Fix deprecated properties Test.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Fix deprecated properties Test"
+            }
+          },
+          {
+            "id": "b0e5f5d4e72913e8",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Periodic Table of Elements.md",
+                "mode": "preview",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Periodic Table of Elements"
+            }
+          }
+        ],
+        "currentTab": 6
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "c239c3caba0c72fb",
+    "type": "split",
+    "children": [
+      {
+        "id": "422639d8be16b03c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "4411d2f7b94e318e",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Dateiexplorer"
+            }
+          },
+          {
+            "id": "f8baa4b60643aebe",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "tag:project/unkno",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Suchen"
+            }
+          },
+          {
+            "id": "6e037a4c921f45c8",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Lesezeichen"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 346.5
+  },
+  "right": {
+    "id": "b3994d4bc654696d",
+    "type": "split",
+    "children": [
+      {
+        "id": "6d0d61a4ada8a37c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ec6fc63d06d68f2e",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Daily Notes/2025-03-19 - Mittwoch, 19. März.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Rückverweise für 2025-03-19 - Mittwoch, 19. März"
+            }
+          },
+          {
+            "id": "a0ae3cb1f5bf15db",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Willkommen.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Ausgehende Links von Willkommen öffnen"
+            }
+          },
+          {
+            "id": "4bf74dbf7c258591",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "422b4b43fb5f7858",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Resources/Chemicals/solvent/New Chemical Note.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Gliederung von New Chemical Note"
+            }
+          },
+          {
+            "id": "459d24846b0fe925",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "Alle Eigenschaften"
+            }
+          },
+          {
+            "id": "05a7f29b530d45c5",
+            "type": "leaf",
+            "state": {
+              "type": "NPE_VIEW",
+              "state": {},
+              "icon": "npe-icon",
+              "title": "Nested Properties Editor View"
+            }
+          },
+          {
+            "id": "415ae8fde238dbde",
+            "type": "leaf",
+            "state": {
+              "type": "NPE_VIEW",
+              "state": {},
+              "icon": "lucide-ghost",
+              "title": "NPE_VIEW"
+            }
+          },
+          {
+            "id": "7ff0420b5d970850",
+            "type": "leaf",
+            "state": {
+              "type": "NPE_VIEW",
+              "state": {},
+              "icon": "npe-icon",
+              "title": "Nested Properties Editor View"
+            }
+          }
+        ],
+        "currentTab": 5
+      }
+    ],
+    "direction": "horizontal",
+    "width": 435.5
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Schnellauswahl öffnen": false,
+      "graph:Graphen-Ansicht öffnen": false,
+      "canvas:Neuen Canvas erstellen": false,
+      "daily-notes:Heutige Notiz öffnen": false,
+      "templates:Vorlage einfügen": false,
+      "command-palette:Befehlspalette öffnen": false,
+      "audio-recorder:Audioaufzeichnung starten/stoppen": false,
+      "markdown-importer:Markdown Importprogramm öffnen": false,
+      "pexels-banner:🚩 Pixel Banner Menu": false
+    }
+  },
+  "active": "b92f4793e1e3551c",
+  "lastOpenFiles": [
+    "Experiments/Samples/electrode/MM-DP-el001.md",
+    "Periodic Table of Elements.md",
+    "Experiments/Analyses/Dummy Sample/Dummy Analysis/Dummy Analysis.md",
+    "Meetings/2025/05 Mai/Demo Meeting.md",
+    "Daily Notes/2025/05 Mai/16.5.2025 - Freitag, 16. Mai.md",
+    "assets/images/Devices/dummy-image-device.png",
+    "Projects/development/Test Project.md",
+    "Projects/development/Test Project - Base.base",
+    "Projects/Example Project.md",
+    "Experiments/Samples/electrode",
+    "Experiments/Samples",
+    "Projects/Demo Project.md",
+    "Resources/Chemicals/solvent/NMP.md",
+    "Resources/Chemicals/current collector/Copper foil.md",
+    "Resources/Chemicals/active material/NMC 622 Test.md",
+    "Resources/Chemicals/binder/CMC-SBR.md",
+    "Resources/Chemicals/binder/PVDF.md",
+    "Resources/Chemicals/binder",
+    "Resources/Chemicals/active material/New Chemical Note.md",
+    "Resources/Chemicals/active material",
+    "Resources/Chemicals/current collector/New Chemical Note.md",
+    "Daily Notes/2025/07 Juli/1.7.2025 - Dienstag, 1. Juli.md",
+    "Daily Notes/2025/07 Juli",
+    "Unbenannt.md",
+    "Untitled.md",
+    "Untitled 1.md",
+    "Daily Notes/2025/06 Juni/7.6.2025 - Samstag, 7. Juni.md",
+    "Unbenannt.base",
+    "Home.md",
+    "Projects/development",
+    "Daily Notes/2025/06 Juni/24.6.2025 - Dienstag, 24. Juni.md",
+    "Projects",
+    "Fix deprecated properties Test.md",
+    "List of List Test.md",
+    "assets/images/Motivation/attitude_is_a_little_thing.png",
+    "Test.md",
+    "Resources/Chemicals/current collector",
+    "Experiments/Analyses/Dummy Sample/Dummy Analysis/plots/MM-DP-el001 - GCPL_01_v_vs_cap.png",
+    "Experiments/Analyses/Dummy Sample/Dummy Analysis/plots/MM-DP-el001 - GCPL_01_dq_dv_vs_v.png",
+    "Experiments/Analyses/Dummy Sample/Dummy Analysis/plots/MM-DP-el001 - GCPL_01_cap_vs_cyc.png",
+    "assets/images/People/Dummy-Contact-Icon.png",
+    "assets/images/Banner/obsidian-eln-banner.png",
+    "assets/images/Instruments/dummy-image-instrument.png",
+    "assets/images/Motivation/wind_it_up.png",
+    "assets/images/Motivation/pave_a_new_road.png"
+  ]
+}

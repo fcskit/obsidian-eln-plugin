@@ -6,7 +6,7 @@ import {
     WorkspaceLeaf,
     TFile, addIcon
 } from "obsidian";
-import { renderFrontMatter } from "../renderer/renderFrontMatter";
+import { renderFrontMatter } from "../renderer/npe/core/renderFrontMatter";
 
 export class NestedPropertiesEditorView extends ItemView {
     static viewType = "NPE_VIEW";

@@ -1,13 +1,13 @@
 import { setIcon, FrontMatterCache, Notice } from "obsidian";
-import { renderObject } from "./npe/core/renderObject";
-import { createToggleButton } from "./npe/buttons/createToggleButton";
-import { createReloadButton } from "./npe/buttons/createReloadButton";
-import { createAddPropertyButton } from "./npe/buttons/createAddPropertyButton";
-import { createFixDepricatedPropertiesButton } from "./npe/buttons/createFixDepricatedPropertiesButton";
-import { createOptionsMenuButton } from "./npe/buttons/createOptionsMenuButton";
-import { fixAllDeprecatedKeysInVault } from "../utils/fixDeprecatedKey";
-import type { NestedPropertiesEditorView } from "../views/NestedPropertiesEditor";
-import type { NestedPropertiesEditorCodeBlockView } from "../views/NestedPropertiesEditor";
+import { renderObject } from "./renderObject";
+import { createToggleButton } from "../buttons/createToggleButton";
+import { createReloadButton } from "../buttons/createReloadButton";
+import { createAddPropertyButton } from "../buttons/createAddPropertyButton";
+import { createFixDepricatedPropertiesButton } from "../buttons/createFixDepricatedPropertiesButton";
+import { createOptionsMenuButton } from "../buttons/createOptionsMenuButton";
+import { fixAllDeprecatedKeysInVault } from "../../../utils/fixDeprecatedKey";
+import type { NestedPropertiesEditorView } from "../../../views/NestedPropertiesEditor";
+import type { NestedPropertiesEditorCodeBlockView } from "../../../views/NestedPropertiesEditor";
 
 
 export function renderFrontMatter(
