@@ -1,0 +1,75 @@
+/*
+ * Footer Styles
+ * Global HTML footer component
+ */
+/*
+ * Footer Styles
+ * Global HTML footer component
+ */
+/* ...footer CSS content as previously modularized... */
+/* Footer base styles */
+.eln-footer {
+    margin-top: 30px !important;
+    margin-bottom: 20px !important;
+    padding-top: 10px !important;
+    opacity: 1;
+    transition: opacity 600ms ease-in-out;
+}
+
+.eln-footer--hidden {
+    opacity: 0;
+}
+
+/* Footer separator line */
+.eln-footer--separator {
+    border-top: 1px dashed var(--text-accent);
+    opacity: 0.6;
+    margin-bottom: 10px;
+}
+
+/* Footer content container */
+.eln-footer--content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Footer info text */
+.eln-footer--info {
+    font-size: 0.85em;
+    color: var(--text-muted);
+    text-align: right;
+    opacity: 0.8;
+}
+
+/* Editor mode specific styles */
+.cm-sizer > .eln-footer {
+    margin-top: 15px !important;
+    max-width: var(--max-width);
+    width: var(--line-width);
+    margin-inline: var(--content-margin) !important;
+}
+
+/* Preview mode specific styles */
+.markdown-preview-section > .eln-footer {
+    padding-top: var(--eln-footer-top-padding, 10px) !important;
+    padding-bottom: 0 !important;
+    margin-bottom: var(--eln-footer-margin-bottom, 0) !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .eln-footer--info {
+        font-size: 0.8em;
+        text-align: center;
+    }
+}
+
+/* Theme compatibility */
+.theme-light .eln-footer--info {
+    filter: brightness(70%);
+}
+
+.theme-dark .eln-footer--info {
+    filter: brightness(90%);
+}

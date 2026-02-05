@@ -1,0 +1,31 @@
+/*
+ * Obsidian ELN Plugin - Main Styles
+ * 
+ * This file imports all modular CSS components.
+ * Individual files can be edited for better maintainability.
+ */
+/*
+ * Main CSS entry point for Obsidian ELN Plugin
+ * This file imports all modular CSS files in the correct order.
+ * Do not add styles here; add them to the appropriate module file.
+ */
+
+@import "./base.css";
+@import "./navbar.css";
+@import "./modals.css";
+@import "./progress.css";
+@import "./dashboard.css";
+@import "./npe.css";
+@import "./settings.css";
+@import "./footer.css";
+/* Core styles and variables */
+@import 'base.css';
+
+/* Component styles */
+@import 'navbar.css';
+@import 'modals.css';
+@import 'progress.css';
+@import 'dashboard.css';
+@import 'npe.css';
+@import 'settings.css';
+@import 'footer.css';

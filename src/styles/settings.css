@@ -1,0 +1,292 @@
+/*
+ * Settings and Dialog Styles
+ * Modal dialogs, settings panels, and form components
+ */
+/*
+ * Settings and Dialog Styles
+ * Modal dialogs, settings panels, and form components
+ */
+/* ...settings and dialog CSS content as previously modularized... */
+/* Modal button container */
+.modal-button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--background-modifier-border);
+}
+
+/* Template editor styles */
+.template-elements {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.template-element {
+    background: var(--background-secondary);
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.template-element h4 {
+    margin: 0 0 10px 0;
+    color: var(--text-accent);
+}
+
+/* Metadata field editor styles */
+.metadata-fields {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.metadata-field {
+    background: var(--background-secondary);
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.metadata-field h4 {
+    margin: 0 0 10px 0;
+    color: var(--text-accent);
+}
+
+/* Array editor styles */
+.array-items {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.array-item {
+    background: var(--background-secondary);
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.array-item h4 {
+    margin: 0 0 10px 0;
+    color: var(--text-accent);
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--text-muted);
+    font-style: italic;
+    margin: 20px 0;
+}
+
+/* File picker styles */
+.file-browser {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    margin: 2px 0;
+    background: var(--background-secondary);
+    border-radius: 4px;
+    border: 1px solid var(--background-modifier-border);
+}
+
+.file-path {
+    flex: 1;
+    font-family: var(--font-monospace);
+    font-size: 0.9em;
+    color: var(--text-normal);
+}
+
+.file-select-button {
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+}
+
+.file-select-button:hover {
+    background: var(--interactive-accent-hover);
+}
+
+/* Note type manager styles */
+.note-types-list {
+    margin: 15px 0;
+}
+
+.note-type-item {
+    background: var(--background-secondary);
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid var(--background-modifier-border);
+}
+
+.note-type-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.note-type-name {
+    font-weight: 600;
+    font-size: 1.1em;
+    color: var(--text-normal);
+    flex: 1;
+}
+
+.note-type-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.note-type-badge.built-in {
+    background: var(--color-blue);
+    color: white;
+}
+
+.note-type-badge.custom {
+    background: var(--color-green);
+    color: white;
+}
+
+.note-type-delete {
+    background: var(--color-red);
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+}
+
+.note-type-delete:hover {
+    background: var(--color-red-hover);
+}
+
+.note-type-controls {
+    margin-top: 10px;
+}
+
+/* Settings UI improvements */
+.note-settings-header {
+    margin-bottom: 20px;
+}
+
+.note-settings-section {
+    margin-bottom: 15px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+}
+
+.note-settings-summary {
+    background: var(--background-secondary);
+    padding: 12px 15px;
+    font-weight: 600;
+    color: var(--text-accent);
+    cursor: pointer;
+    border-radius: 6px 6px 0 0;
+}
+
+.note-settings-summary:hover {
+    background: var(--background-modifier-hover);
+}
+
+.note-settings-content {
+    padding: 15px;
+}
+
+.note-settings-content h5 {
+    color: var(--text-accent);
+    margin: 20px 0 10px 0;
+    font-size: 1.05em;
+    border-bottom: 1px solid var(--background-modifier-border);
+    padding-bottom: 5px;
+}
+
+.note-settings-content h5:first-child {
+    margin-top: 0;
+}
+
+/* Editable list improvements */
+.editable-list {
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    padding: 10px;
+    background: var(--background-secondary);
+}
+
+.editable-list-item {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 8px;
+    background: var(--background-primary);
+    border-radius: 4px;
+    border: 1px solid var(--background-modifier-border);
+}
+
+.editable-list-item input {
+    flex: 1;
+    padding: 6px 8px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    background: var(--background-primary);
+    color: var(--text-normal);
+}
+
+.editable-list-item button {
+    padding: 6px 10px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    background: var(--interactive-normal);
+    color: var(--text-normal);
+    cursor: pointer;
+    font-size: 0.85em;
+}
+
+.editable-list-item button:hover {
+    background: var(--interactive-hover);
+}
+
+.editable-list > button {
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.editable-list > button:hover {
+    background: var(--interactive-accent-hover);
+}

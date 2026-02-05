@@ -1,0 +1,588 @@
+/*
+ * Modal Styles
+ * Input modals and dialog components
+ */
+/*
+ * Modal Styles
+ * Input modals and dialog components
+ */
+
+/* Enhanced Input Wrapper Styles - Consistent across all input types */
+.eln-input-wrapper {
+    margin: 10px 0;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--background-primary);
+}
+
+.eln-input-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--background-secondary);
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.eln-input-label {
+    font-weight: 500;
+    color: var(--text-normal);
+    margin: 0;
+}
+
+.eln-input-content {
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Remove borders from input elements - use clean styling like editableObject */
+.eln-input-content input,
+.eln-input-content select {
+    flex: 1;
+    border: none;
+    border-radius: 0;
+    padding: 6px 8px;
+    background: transparent;
+    color: var(--text-normal);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+}
+
+.eln-input-content input:focus,
+.eln-input-content select:focus {
+    border-bottom-color: var(--interactive-accent);
+    outline: none;
+    background: var(--background-modifier-hover);
+}
+
+.eln-input-content input::placeholder {
+    color: var(--text-faint);
+    font-style: italic;
+}
+
+/* Ensure dropdowns maintain their arrow indicator */
+.eln-input-content select {
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+    appearance: auto;
+}
+
+.eln-input-content button {
+    flex-shrink: 0;
+}
+
+/* Unit label styling */
+.eln-input-unit-label {
+    color: var(--text-faint);
+    font-size: 0.9em;
+    margin-left: 8px;
+    flex-shrink: 0;
+}
+
+/* Nested content styling */
+.eln-nested-content {
+    flex-direction: column;
+    padding: 16px 12px;
+    gap: 0;
+    align-items: stretch;
+}
+
+/* Simple input components for nested contexts */
+.eln-simple-input {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--background-modifier-border-hover);
+    width: 100%;
+}
+
+.eln-simple-input:last-child {
+    border-bottom: none;
+}
+
+.eln-simple-label {
+    font-weight: 500;
+    color: var(--text-normal);
+    width: 40%;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.eln-simple-field {
+    width: 60%;
+    border: none;
+    border-radius: 0;
+    padding: 6px 8px;
+    background: transparent;
+    color: var(--text-normal);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+}
+
+.eln-simple-field:focus {
+    border-bottom-color: var(--interactive-accent);
+    outline: none;
+    background: var(--background-modifier-hover);
+}
+
+.eln-simple-field::placeholder {
+    color: var(--text-faint);
+    font-style: italic;
+}
+
+/* Ensure simple dropdowns maintain their arrow indicator */
+select.eln-simple-field {
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+    appearance: auto;
+}
+
+.eln-modal-chemical {
+    width: 50em;
+}
+
+/* Legacy support - hide border lines for cleaner appearance */
+.eln-modal-input-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-top: none; /* Remove horizontal borders */
+}
+
+.eln-modal-input-wrapper button {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    margin-left: 10px;
+}
+
+.eln-modal-input-wrapper label {
+    width: 70%;
+}
+
+.eln-modal-dropdown-wrapper,
+.eln-modal-multiselect-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-top: none; /* Remove horizontal borders */
+}
+
+.eln-modal-dropdown-wrapper label {
+    font-size: var(--font-ui-medium);
+    width: 70%;
+}
+
+.eln-modal-multiselect-dropdown-wrapper {
+    display: inline-flex;
+    flex-direction: row;
+    background-color: var(--tag-background);
+    border-radius: 15px;
+}
+
+.eln-modal-multiselect-dropdown-wrapper select.dropdown {
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
+    padding-left: 10px;
+    padding-right: 5px;
+}
+
+.eln-modal-multiselect-dropdown-wrapper button {
+    background-color: transparent !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    margin-right: 7px;
+}
+
+.eln-modal-multiselect-dropdown-wrapper button svg {
+    width: 1em;
+    height: 1em;
+    stroke: var(--text-faint);
+}
+
+.eln-modal-multiselect-dropdown-wrapper button:hover svg {
+    stroke: var(--text-normal);
+}
+
+.eln-modal-unit-label {
+    width: 4em;
+    color: var(--text-faint);
+    margin-left: 5px;
+}
+
+.eln-modal-section-title {
+    font-size: var(--font-ui-medium);
+    font-weight: var(--font-semibold);
+    margin-top: 0.75em;
+    margin-bottom: 0.75em;
+}
+.eln-modal-chemical {
+    width: 50em;
+}
+
+.eln-modal-input-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-top-color: var(--background-modifier-border);
+    border-top-style: solid;
+    border-top-width: 1px;
+}
+
+.eln-modal-input-wrapper button {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    margin-left: 10px;
+}
+
+.eln-modal-input-wrapper label {
+    width: 70%;
+}
+
+.eln-modal-dropdown-wrapper,
+.eln-modal-multiselect-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-top-color: var(--background-modifier-border);
+    border-top-style: solid;
+    border-top-width: 1px;
+}
+
+.eln-modal-dropdown-wrapper label {
+    font-size: var(--font-ui-medium);
+    width: 70%;
+}
+
+.eln-modal-multiselect-dropdown-wrapper {
+    display: inline-flex;
+    flex-direction: row;
+    background-color: var(--tag-background);
+    border-radius: 15px;
+}
+
+.eln-modal-multiselect-dropdown-wrapper select.dropdown {
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
+    padding-left: 10px;
+    padding-right: 5px;
+}
+
+.eln-modal-multiselect-dropdown-wrapper button {
+    background-color: transparent !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    margin-right: 7px;
+}
+
+.eln-modal-multiselect-dropdown-wrapper button svg {
+    width: 1em;
+    height: 1em;
+    stroke: var(--text-faint);
+}
+
+.eln-modal-multiselect-dropdown-wrapper button:hover svg {
+    stroke: var(--text-normal);
+}
+
+.eln-modal-unit-label {
+    width: 4em;
+    color: var(--text-faint);
+    margin-left: 5px;
+}
+
+.eln-modal-section-title {
+    font-size: var(--font-ui-medium);
+    font-weight: var(--font-semibold);
+    margin-top: 0.75em;
+    margin-bottom: 0.75em;
+}
+
+/* MultiQueryDropdown Styles */
+.eln-modal-multi-query-dropdown-wrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 0;
+    border-top-color: var(--background-modifier-border);
+    border-top-style: solid;
+    border-top-width: 1px;
+}
+
+.eln-modal-multi-query-dropdown-wrapper label {
+    font-size: var(--font-ui-medium);
+    margin-bottom: 8px;
+    color: var(--text-normal);
+}
+
+.eln-modal-multi-query-dropdown-item {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: var(--tag-background);
+    border-radius: 15px;
+    margin-bottom: 6px;
+    padding: 2px;
+}
+
+.eln-modal-multi-query-dropdown-item select.dropdown {
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
+    padding-left: 10px;
+    padding-right: 5px;
+    flex: 1;
+}
+
+.eln-modal-multi-query-dropdown-item button {
+    background-color: transparent !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    margin-right: 7px;
+    min-height: 24px;
+    min-width: 24px;
+}
+
+.eln-modal-multi-query-dropdown-item button svg {
+    width: 1em;
+    height: 1em;
+    stroke: var(--text-faint);
+}
+
+.eln-modal-multi-query-dropdown-item button:hover svg {
+    stroke: var(--text-normal);
+}
+
+.eln-modal-multi-query-dropdown-wrapper > button {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    margin-top: 6px;
+    align-self: flex-start;
+    cursor: pointer;
+    font-size: var(--font-ui-small);
+}
+
+.eln-modal-multi-query-dropdown-wrapper > button:hover {
+    background-color: var(--interactive-accent-hover);
+}
+
+.eln-modal-no-options {
+    color: var(--text-faint);
+    font-style: italic;
+    padding: 8px 12px;
+    background-color: var(--background-modifier-border);
+    border-radius: 8px;
+    text-align: center;
+    margin: 4px 0;
+}
+
+/* Enhanced Object List Styles */
+.enhanced-object-list-wrapper {
+    margin: 10px 0;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.enhanced-object-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--background-secondary);
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.enhanced-object-list-label {
+    font-weight: 500;
+    color: var(--text-normal);
+}
+
+.enhanced-object-list-add-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.enhanced-object-list-add-button:hover {
+    background: var(--interactive-accent-hover);
+}
+
+.enhanced-object-list-objects {
+    padding: 0;
+}
+
+.enhanced-object-list-object {
+    border-bottom: 1px solid var(--background-modifier-border);
+    background: var(--background-primary);
+}
+
+.enhanced-object-list-object:last-child {
+    border-bottom: none;
+}
+
+.enhanced-object-list-object-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--background-secondary);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.enhanced-object-list-object-title {
+    font-weight: 500;
+    color: var(--text-normal);
+}
+
+.enhanced-object-list-object-controls {
+    display: flex;
+    gap: 4px;
+}
+
+.enhanced-object-list-toggle,
+.enhanced-object-list-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    background: var(--background-modifier-hover);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.enhanced-object-list-toggle:hover,
+.enhanced-object-list-remove:hover {
+    background: var(--background-modifier-border);
+    color: var(--text-normal);
+}
+
+.enhanced-object-list-remove:hover {
+    background: var(--background-modifier-error);
+    color: var(--text-error);
+}
+
+.enhanced-object-list-fields {
+    padding: 12px;
+}
+
+.enhanced-object-list-field {
+    margin-bottom: 8px;
+}
+
+.enhanced-object-list-field:last-child {
+    margin-bottom: 0;
+}
+
+.enhanced-object-list-add-field {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    margin-top: 8px;
+    border-radius: 4px;
+    background: var(--background-modifier-hover);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.enhanced-object-list-add-field:hover {
+    background: var(--background-modifier-border);
+    color: var(--text-normal);
+}
+
+/* Editable Object Styles */
+.editable-object-wrapper {
+    margin: 10px 0;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.editable-object-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--background-secondary);
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.editable-object-label {
+    font-weight: 500;
+    color: var(--text-normal);
+}
+
+.editable-object-add-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.editable-object-add-button:hover {
+    background: var(--interactive-accent-hover);
+}
+
+.editable-object-fields {
+    padding: 12px;
+}
+
+.editable-object-field {
+    margin-bottom: 8px;
+}
+
+.editable-object-field:last-child {
+    margin-bottom: 0;
+}
+
+.editable-object-empty {
+    padding: 20px;
+    text-align: center;
+}
+
+.editable-object-empty-text {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: var(--font-size-small);
+}

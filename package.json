@@ -1,15 +1,22 @@
 {
 	"name": "obsidian-eln",
-	"version": "0.7.0",
+	"version": "0.8.0-beta.1",
 	"description": "Integrates an electronic lab notebook into Obsidian. This plugin allows you to create and manage lab notebooks, including features for organizing experiments, tracking samples, and documenting results.",
 	"main": "main.js",
 	"scripts": {
-		"dev": "node esbuild.config.mjs && node copy-assets.mjs",
-		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production && node copy-assets.mjs",
-		"build-fast": "node esbuild.config.mjs production && node copy-assets.mjs",
+		"dev": "node build-css.mjs && node esbuild.config.mjs && node copy-assets.mjs",
+		"build": "node build-css.mjs && tsc -noEmit -skipLibCheck && node esbuild.config.mjs production && node copy-assets.mjs",
+		"build-fast": "node build-css.mjs && node esbuild.config.mjs production && node copy-assets.mjs",
 		"version": "node version-bump.mjs && git add manifest.json versions.json",
+		"sync": "node sync-from-vault.mjs",
 		"release": "npm run build && node build-release.mjs",
-		"release-fast": "npm run build-fast && node build-release.mjs"
+		"release-fast": "npm run build-fast && node build-release.mjs",
+		"publish": "npm run release && node package-assets.mjs && node package-test-vault.mjs && node publish-release.mjs",
+		"prepare-release": "node prepare-release.mjs",
+		"package-assets": "node package-assets.mjs",
+		"package-test-vault": "node package-test-vault.mjs",
+		"build-css": "node ./build-css.mjs",
+		"watch-css": "node ./watch-css.mjs"
 	},
 	"keywords": [],
 	"author": "",

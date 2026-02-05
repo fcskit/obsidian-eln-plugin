@@ -1,0 +1,103 @@
+/*
+ * Base Variables and Layout
+ * Core theme variables and page-wide layout settings
+ */
+/*
+ * Base Variables and Layout
+ * Core theme variables and page-wide layout settings
+ */
+
+.wide-page {
+    --file-line-width: 1200px;
+    /* Set a maximum width for the page */
+}
+
+.pse-table {
+    --file-line-width: 90%;
+}
+
+.theme-light {
+    --background-navbar: var(--background-primary);
+    --background-dropdown: var(--background-primary);
+    --content-bg-darken: rgba(0, 0, 0, 0.1);
+    
+    --dashboard-card-bg-color: var(--titlebar-background);
+    --daily-note-card-bg-color: var(--titlebar-background);
+    --daily-note-nav-button: var(--titlebar-background);
+}
+
+.theme-dark {
+    --background-navbar: var(--background-primary);
+    --background-dropdown: var(--background-primary);
+    --content-bg-darken: rgba(0, 0, 0, 0.2);
+    
+    --dashboard-card-bg-color: var(--titlebar-background);
+    --daily-note-card-bg-color: var(--titlebar-background);
+    --daily-note-nav-button: var(--titlebar-background);
+}
+
+:root {
+    --dashboard-gap-width: 30px;
+    --dashboard-indent: 20px;
+    --dashboard-card-min-width: 300px;
+    --dashboard-title-color: var(--ctp-pink, 236, 131, 208);
+    --daily-note-title-color: var(--ctp-pink, 236, 131, 208);
+    --dashboard-bold-color: var(--ctp-pink, var(--ctp-ext-pink, 236, 131, 208));
+    --dashboard-h3-color: var(--ctp-purple, var(--ctp-ext-purple, 128, 0, 128));
+    --daily-note-bold-color: var(--ctp-pink, var(--ctp-ext-pink, 236, 131, 208));
+    --daily-note-h3-color: var(--ctp-purple, var(--ctp-ext-purple, 128, 0, 128));
+    --dashboard-card-bg-color: var(--background-secondary);
+    --daily-note-card-bg-color: var(--background-secondary);
+    --daily-note-nav-button: var(--background-secondary);
+    --max-width: 55rem;
+    --button-radius: 5px;
+}
+.wide-page {
+    --file-line-width: 1200px;
+    /* Set a maximum width for the page */
+}
+
+.pse-table {
+    --file-line-width: 90%;
+}
+
+.theme-light {
+    --background-navbar: var(--background-primary);
+    --background-dropdown: var(--background-primary);
+    --content-bg-darken: rgba(0, 0, 0, 0.1);
+    
+    --dashboard-card-bg-color: var(--titlebar-background);
+    --daily-note-card-bg-color: var(--titlebar-background);
+    --daily-note-nav-button: var(--titlebar-background);
+}
+
+.theme-dark {
+    --background-navbar: var(--background-primary);
+    --background-dropdown: var(--background-primary);
+    --content-bg-darken: rgba(0, 0, 0, 0.2);
+    
+    --dashboard-card-bg-color: var(--titlebar-background);
+    --daily-note-card-bg-color: var(--titlebar-background);
+    --daily-note-nav-button: var(--titlebar-background);
+}
+
+/* Dashboard and Daily Note Variables */
+:root {
+    --dashboard-gap-width: 30px;
+    /* Define a variable for the gap width */
+    --dashboard-indent: 20px;
+    /* Define a variable for the indent */
+    --dashboard-card-min-width: 300px;
+    /* Define a variable for the minimum width of cards */
+    --dashboard-title-color: var(--ctp-pink, 236, 131, 208);
+    --daily-note-title-color: var(--ctp-pink, 236, 131, 208);
+    --dashboard-bold-color: var(--ctp-pink, var(--ctp-ext-pink, 236, 131, 208));
+    --dashboard-h3-color: var(--ctp-purple, var(--ctp-ext-purple, 128, 0, 128));
+    --daily-note-bold-color: var(--ctp-pink, var(--ctp-ext-pink, 236, 131, 208));
+    --daily-note-h3-color: var(--ctp-purple, var(--ctp-ext-purple, 128, 0, 128));
+    --dashboard-card-bg-color: var(--background-secondary);
+    --daily-note-card-bg-color: var(--background-secondary);
+    --daily-note-nav-button: var(--background-secondary);
+    --max-width: 55rem;
+    --button-radius: 5px;
+}

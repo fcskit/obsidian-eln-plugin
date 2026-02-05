@@ -1,0 +1,876 @@
+/*
+ * Nested Properties Editor (NPE) Styles
+ * Complex property editor for frontmatter and object editing
+ */
+/*
+ * Nested Properties Editor (NPE) Styles
+ * Complex property editor for frontmatter and object editing
+ */
+/* ...NPE CSS content as previously modularized... */
+.block-language-dataviewjs.node-insert-event {
+    --npe-key-width: 45%;
+}
+
+.block-language-dataviewjs.node-insert-event .npe-array-objects-container,
+.block-language-dataviewjs.node-insert-event .npe-object-properties-container {
+    border-left: 1px solid var(--dv-indentation-guide-color) !important;
+}
+
+.hidden {
+    display: none;
+}
+
+.npe-array.npe-key-wrapper {
+    align-self: flex-start;
+}
+
+.npe-array-container {
+    display: flex;
+    align-items: center;
+    margin-right: 2px;
+}
+
+.npe-array-container.npe-primitive-array:hover {
+    background-color: var(--background-secondary);
+    border-radius: var(--metadata-property-radius-hover);
+    background-color: var(--metadata-property-background-hover);
+    box-shadow: 0 0 0 1px var(--background-modifier-border);
+    cursor: default;
+}
+
+.npe-array-container.npe-object-array {
+    flex-wrap: wrap;
+    /* margin-left: var(--npe-key-indent); */
+    /* border-left: 1px solid var(--npe-indentation-guide-color); */
+    /* padding-left: var(--npe-key-indent); */
+}
+
+.npe-array-container .npe-button-remove {
+    align-self: center;
+}
+
+.npe-array-item {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    background-color: var(--tag-background);
+    border-radius: var(--pill-radius);
+    color: var(--tag-color);
+    font-size: var(--npe-value-font-size);
+    font-weight: var(--npe-value-font-weight);
+    padding: var(--pill-padding-y) 5px;
+    margin-bottom: 2px;
+}
+
+.npe-array-objects-container {
+    width: 100%;
+    margin-left: var(--npe-key-indent-margin);
+    border-left: var(--npe-key-indent-border) solid var(--npe-indentation-guide-color);
+    padding-left: var(--npe-key-indent-padding);
+}
+
+.npe-array-value-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex: 1 1 0%;
+    /* allows shrinking below content size if needed */
+    font-weight: var(--npe-value-font-weight);
+    padding-left: var(--npe-value-padding-left);
+}
+
+/* === Variables and Base === */
+.npe-view-container {
+    --npe-key-width: 250px;
+    --npe-key-indent-margin: 15px;
+    --npe-key-indent-padding: 13px;
+    --npe-key-indent-border: 1px;
+    --npe-key-value-outline: 1px;
+    --npe-icon-width: 27px;
+    --npe-prop-line-spacing: 5px;
+    --npe-button-remove-width: 25px;
+    --npe-key-font-size: var(--metadata-label-font-size, 0.875rem);
+    --npe-key-font-weight: 400;
+    --npe-value-font-size: var(--metadata-label-font-size, 0.875rem);
+    --npe-value-font-weight: 400;
+    --npe-value-field-width: calc(var(--file-line-width, 40rem) - var(--npe-key-width) - var(--npe-button-remove-width));
+    --npe-value-padding-left: 5px;
+    --npe-row-height: 32px; /* or whatever fits your design */
+    --npe-indentation-guide-color: var(--nav-indentation-guide-color);
+    --npe-background-list-item: rgba(var(--mono-rgb-100), 0.067);
+    --npe-background-tag-item: var(--tag-background);
+    --npe-font-color-tag-item: var(--tag-color);
+    min-width: 400px;
+    max-width: 55rem;
+    overflow: auto;
+    padding-right: 3px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+}
+
+/* === Buttons === */
+.npe-button-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: var(--size-2-1);
+    position: relative;
+    /* Add this for absolute positioning */
+}
+
+.npe-options-menu-btn {
+    position: absolute;
+    right: 0;
+    margin-right: 5px;
+    margin-left: 0;
+    /* Remove auto margin */
+}
+
+.npe-button {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--background-primary);
+    color: var(--text-normal);
+    border-radius: var(--button-radius);
+    padding: var(--size-2-1) var(--size-4-3);
+    height: var(--input-height);
+    width: max-content;
+    font-size: var(--npe-key-font-size);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.npe-button--add,
+.npe-button--remove,
+.npe-button--options {
+    width: var(--npe-button-remove-width);
+}
+
+.npe-button--remove {
+    visibility: hidden;
+    color: var(--text-faint);
+    background-color: transparent;
+    padding: 0 2px;
+}
+
+.npe-button--add {
+    background-color: transparent;
+}
+
+.npe-button--options {
+    padding: var(--size-2-1);
+    margin-left: 5px;
+    visibility: hidden;
+}
+
+.npe-button--options svg {
+    stroke: var(--text-faint);
+}
+
+.npe-button--options:hover svg {
+    stroke: var(--text-normal);
+}
+
+.npe-button:hover,
+.npe-button--add:hover,
+.npe-button--remove:hover,
+.npe-button--options:hover {
+    background-color: var(--background-secondary);
+    color: var(--text-normal);
+}
+
+.npe-key-value-container:hover .npe-button--remove,
+.npe-object-key-container:hover .npe-button--remove,
+.npe-array-container.npe-primitive-array:hover .npe-button--remove {
+    visibility: visible;
+}
+
+.npe-key-wrapper:hover .npe-button--options {
+    visibility: visible;
+}
+
+/* === Key and Value Labels === */
+.npe-key {
+    display: inline-flex;
+    align-items: center;
+}
+
+.npe-key-label,
+.npe-list-item-value,
+.npe-editable-link,
+.npe-editable-link a {
+    font-size: var(--npe-value-font-size);
+    font-weight: var(--npe-value-font-weight);
+    color: var(--metadata-label-text-color);
+    display: flex;
+    align-items: center;
+}
+
+.npe-key-label {
+    color: var(--metadata-label-text-color);
+    font-size: var(--npe-key-font-size);
+}
+
+.npe-key-label.npe-object {
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.npe-key-label > span.npe-array-index {
+    font-weight: normal;
+    font-style: italic;
+    color: var(--text-faint);
+    margin-left: 5px;
+}
+
+.npe-list-item-value {
+    margin: 0 5px 0 10px;
+    cursor: text;
+}
+
+.npe-editable-link {
+    display: inline-flex;
+    padding: 0 var(--npe-value-padding-left);
+}
+
+.npe-editable-link a {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* === List Items === */
+.npe-list-item {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--npe-background-list-item);
+    border: none;
+    border-radius: var(--pill-radius);
+    color: var(--tag-color);
+    font-weight: var(--npe-value-font-weight);
+    margin-bottom: 2px;
+}
+
+.npe-list-item.npe-tag-item {
+    background-color: var(--npe-background-tag-item);
+}
+
+.npe-list-item.npe-tag-item > .npe-list-item-value {
+    color: var(--npe-font-color-tag-item);
+}
+
+.npe-list-item .npe-editable-link {
+    margin-left: 10px;
+}
+
+.npe-list-item input {
+    background-color: transparent;
+    border: none;
+    padding: 0 5px;
+    height: calc(var(--npe-value-font-size) + 4px);
+    font-weight: var(--npe-value-font-weight);
+}
+
+.npe-list-item .npe-button--remove {
+    visibility: visible;
+    color: var(--text-faint);
+    background-color: transparent;
+    padding: 0 2px;
+}
+
+.npe-list-item .npe-button--remove:hover {
+    color: var(--text-normal);
+}
+
+/* === Array and Object Containers === */
+.npe-array-container {
+    display: flex;
+    align-items: center;
+    margin-right: 2px;
+}
+
+.npe-array-container.npe-primitive-array:hover {
+    background-color: var(--metadata-property-background-hover);
+    border-radius: var(--metadata-property-radius-hover);
+    box-shadow: 0 0 0 1px var(--background-modifier-border);
+    cursor: default;
+}
+
+.npe-array-item {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    background-color: var(--tag-background);
+    border-radius: var(--pill-radius);
+    color: var(--tag-color);
+    font-size: var(--npe-value-font-size);
+    font-weight: var(--npe-value-font-weight);
+    padding: var(--pill-padding-y) 5px;
+    margin-bottom: 2px;
+}
+
+.npe-array-value-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: var(--npe-value-field-width);
+    max-width: var(--npe-value-field-width);
+    /* font-size: var(--npe-value-font-size); */
+    font-weight: var(--npe-value-font-weight);
+    padding-left: var(--npe-value-padding-left);
+}
+
+/* === Key/Value Containers === */
+.npe-key-value-container {
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    width: 100%;
+    height: var(--npe-row-height);
+    min-height: var(--npe-row-height);
+    outline: var(--npe-key-value-outline) solid transparent;
+    border-radius: var(--metadata-property-radius-hover);
+}
+
+.npe-key-value-container:hover {
+    background-color: var(--metadata-property-background-hover);
+    outline: var(--npe-key-value-outline) solid var(--background-modifier-border);
+    box-shadow: none;
+    cursor: default;
+}
+
+.npe-key-value-container:focus-within {
+    border-radius: var(--metadata-property-radius-focus);
+    background-color: var(--metadata-property-background-focus);
+    outline: 2px solid var(--background-modifier-border);
+    box-shadow: none;
+    cursor: default;
+}
+
+.npe-key-value-container .npe-button--remove,
+.npe-object-key-container .npe-button--remove {
+    margin-left: auto;
+}
+
+.npe-value input {
+    background-color: transparent;
+    border: none;
+    padding: 0px;
+}
+
+.npe-value input:focus-visible {
+    box-shadow: none;
+}
+
+.npe-value input:not([type="date"]) {
+    padding: var(--size-4-1) var(--size-4-2); /* Adjust as needed for alignment */
+}
+
+/* === Editable Div Styles === */
+.npe-editable-div {
+    background-color: transparent;
+    border: none;
+    padding: var(--size-4-1) var(--size-4-2);
+    outline: none;
+    min-width: 2em;
+    min-height: 1.2em;
+    display: inline-block;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    line-height: 1.2;
+    font-family: inherit;
+    font-size: var(--npe-key-font-size);
+    color: var(--text-normal);
+    cursor: text;
+    border-radius: var(--radius-s);
+}
+
+.npe-editable-div:hover {
+    cursor: text;
+}
+
+.npe-editable-div:focus {
+    background-color: var(--background-modifier-form-field);
+    box-shadow: 0 0 0 1px var(--background-modifier-border-focus);
+}
+
+.npe-editable-div[data-empty="true"] {
+    color: var(--text-faint);
+}
+
+.npe-editable-div[data-empty="true"]:before {
+    content: attr(data-placeholder);
+    color: var(--text-faint);
+    font-style: italic;
+}
+
+.npe-editable-div[data-empty="true"]:focus:before {
+    display: none;
+}
+
+/* Number input validation styling */
+.npe-editable-div[data-input-type="number"]:invalid {
+    color: var(--text-error);
+    background-color: var(--background-modifier-error);
+}
+
+/* === Enhanced Input Component Styles === */
+.enhanced-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    border-radius: var(--radius-s);
+}
+
+.enhanced-input-wrapper:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+.enhanced-input-key-section {
+    min-width: 120px;
+    flex-shrink: 0;
+}
+
+.enhanced-input-key-editable {
+    font-weight: 500;
+    color: var(--metadata-label-text-color);
+    border: 1px solid transparent;
+    border-radius: var(--radius-s);
+    padding: 2px 4px;
+}
+
+.enhanced-input-key-editable:hover {
+    border-color: var(--background-modifier-border);
+}
+
+.enhanced-input-key-editable:focus {
+    border-color: var(--background-modifier-border-focus);
+}
+
+.enhanced-input-key-static {
+    font-weight: 500;
+    color: var(--metadata-label-text-color);
+    padding: 2px 4px;
+}
+
+.enhanced-input-value-section {
+    flex: 1;
+    min-width: 0;
+}
+
+.enhanced-input-unit-section {
+    flex-shrink: 0;
+    min-width: 60px;
+}
+
+.enhanced-input-unit-static {
+    color: var(--text-faint);
+    font-size: var(--font-ui-smaller);
+    padding: 2px 4px;
+}
+
+.enhanced-input-controls {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.enhanced-input-wrapper:hover .enhanced-input-controls {
+    opacity: 1;
+}
+
+.enhanced-input-controls button {
+    padding: 2px !important;
+    min-height: 20px !important;
+    min-width: 20px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.enhanced-input-controls button:hover {
+    background: var(--background-modifier-hover) !important;
+}
+
+.enhanced-input-type-menu {
+    background: var(--background-primary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--radius-s);
+    padding: 4px;
+    box-shadow: var(--shadow-s);
+    z-index: 1000;
+}
+
+.enhanced-input-type-menu-item {
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: var(--radius-s);
+    font-size: var(--font-ui-small);
+}
+
+.enhanced-input-type-menu-item:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+/* === Key Wrapper === */
+.npe-key-wrapper {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    width: calc(var(--npe-key-width) - var(--npe-data-level, 0) * (var(--npe-key-indent-margin) + var(--npe-key-indent-padding) + var(--npe-key-indent-border)));
+    min-width: calc(var(--npe-key-width) - var(--npe-data-level, 0) * (var(--npe-key-indent-margin) + var(--npe-key-indent-padding) + var(--npe-key-indent-border)));
+    min-height: var(--npe-row-height);
+    height: var(--npe-row-height);
+}
+
+.npe-key-resize-handle {
+    display: block;
+    width: 2px;
+    min-width: 2px;
+    height: auto;
+    min-height: var(--npe-row-height);
+    align-self: stretch;
+    cursor: ew-resize;
+    background: transparent;
+    /* margin-left: -1px; */
+    transition: background 0.2s;
+    z-index: 2;
+}
+
+.npe-view-container.npe-key-resize-handle-hovering .npe-key-resize-handle {
+    background: var(--interactive-accent, #4dd);
+}
+
+.npe-key-resize-handle:hover,
+.npe-key-wrapper.resizing .npe-key-resize-handle {
+    background: var(--interactive-accent, #4dd); 
+}
+
+/* === Icons === */
+.npe-icon-container,
+.npe-key-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--npe-icon-width);
+    margin: 0 4px 0 2px;
+}
+
+/* === Object Containers === */
+.npe-object-container {
+    /* margin-bottom: 3px; */
+    width: 100%;
+}
+
+.npe-object-key {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 0;
+}
+
+.npe-object-key:hover {
+    background-color: var(--background-secondary);
+    border-radius: var(--button-radius);
+}
+
+.npe-object-key .npe-icon-container:hover {
+    cursor: pointer;
+}
+
+.npe-object-key-container {
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+}
+
+.npe-object-key-container:hover {
+    border-radius: var(--metadata-property-radius-hover);
+    box-shadow: 0 0 0 1px var(--background-modifier-border);
+    cursor: default;
+}
+
+.npe-object-key-container .npe-button--add {
+    visibility: hidden;
+    background-color: transparent;
+}
+
+.npe-object-key-container:hover .npe-button--add {
+    visibility: visible;
+    color: var(--text-faint);
+}
+
+.npe-object-key-container .npe-button--add:hover {
+    color: var(--text-normal);
+}
+
+.npe-object-properties-container {
+    margin-left: var(--npe-key-indent-margin);
+    border-left: var(--npe-key-indent-border) solid var(--npe-indentation-guide-color);
+    padding-left: var(--npe-key-indent-padding);
+    /* margin-top: 3px; */
+    /* margin-bottom: 5px; */
+}
+
+.npe-object-value-spacer {
+    display: inline-block;
+    flex: 1 1 0%;
+    height: var(--npe-row-height);
+}
+
+/* === Misc === */
+.npe-make-editable {
+    width: 10px;
+    height: var(--npe-key-font-size);
+    cursor: text;
+}
+
+.npe-latex {
+    display: inline-block;
+    font-size: var(--npe-value-font-size);
+    font-weight: var(--npe-value-font-weight);
+}
+
+.npe-latex:hover {
+    cursor: text;
+}
+
+.npe-latex .npe-math-function {
+    font-size: inherit;
+    font-style: italic;
+    font-weight: medium;
+}
+
+.npe-info-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    background-color: var(--background-secondary);
+    border-radius: var(--metadata-property-radius-hover);
+    padding: 15px 10px;
+    margin: 5px 0;
+    width: 100%;
+}
+
+.npe-info-container .npe-info-icon {
+    margin-right: 10px;
+}
+
+.npe-info-container .npe-info-icon svg {
+    width: 40px;
+    height: 40px;
+    stroke: var(--text-faint);
+}
+
+.npe-info-container .npe-info-message {
+    color: var(--text-muted);
+    font-size: var(--npe-value-font-size);
+}
+
+/* === Menu === */
+.npe-menu {
+    display: block;
+    position: absolute;
+    align-self: start;
+    min-width: 10rem;
+    background-color: var(--background-secondary);
+    border-radius: var(--button-radius);
+    box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.2);
+    padding: 7px;
+    z-index: 1;
+}
+
+.npe-menu-item {
+    display: block;
+    padding: 3px 7px;
+    border-radius: var(--button-radius);
+    color: var(--text-normal);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    cursor: pointer;
+}
+
+.npe-menu-item:hover {
+    background-color: rgba(12, 116, 116, 0.2);
+}
+
+/* === Utility === */
+.hidden {
+    display: none !important;
+}
+
+/* === CCS for the Periodic Table of Elements === */
+.periodic-table,
+.periodic-table-lanthanoids,
+.periodic-table-actinoids {
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin: 1em auto;
+}
+
+.periodic-table {
+    width: 100%;
+}
+
+.periodic-table-lanthanoids,
+.periodic-table-actinoids {
+    width: 83%;
+    margin: 0 auto;
+}
+
+.periodic-table td,
+.periodic-table th,
+.periodic-table-lanthanoids td,
+.periodic-table-lanthanoids th,
+.periodic-table-actinoids td,
+.periodic-table-actinoids th {
+    width: 1%;
+    /* Let table-layout: fixed handle equal widths */
+    min-width: 45px;
+    /* Optional: set a minimum width */
+    max-width: 80px;
+    /* Optional: set a maximum width */
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.periodic-table-cell {
+    border: none;
+    text-align: center;
+    vertical-align: middle;
+    padding: 2px 2px !important; /* Remove default padding */
+}
+
+/* Only show border if the cell contains .element-content */
+.periodic-table-cell:has(.element-content) {
+    border: 1px solid #aaa;
+    border-radius: 0;
+    /* Remove rounded corners for a grid look */
+    background: inherit;
+}
+
+/* Remove border for empty cells */
+.periodic-table-cell:empty {
+    border: none;
+}
+
+/* Remove border and background from .element-content itself */
+.periodic-table-cell>.element-content {
+    border: none;
+    background: none;
+    width: 100%;
+    max-width: 100%;
+    height: 60px;
+    max-height: 60px;
+    box-sizing: border-box;
+    padding-top: 4px;
+    padding-bottom: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.atomic-number {
+    font-size: 0.7em;
+    color: #888;
+}
+
+.element-name {
+    display: block;
+    text-align: center;
+    width: 100%;
+    max-width: 100%;
+    font-size: 0.6em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;    
+    color: #666;
+}
+
+/* Example: style by groupName */
+.periodic-table-cell[data-group-name="alkali metal"] {
+    background: #ffecb3;
+}
+
+.periodic-table-cell[data-group-name="alkaline earth metal"] {
+    background: #ffe0b2;
+}
+
+.periodic-table-cell[data-group-name="transition metal"] {
+    background: #b3e5fc;
+}
+
+.periodic-table-cell[data-group-name="lanthanide"] {
+    background: #d1c4e9;
+}
+
+.periodic-table-cell[data-group-name="actinide"] {
+    background: #ffccbc;
+}
+
+.periodic-table-cell[data-group-name="metalloid"] {
+    background: #c8e6c9;
+}
+
+.periodic-table-cell[data-group-name="nonmetal"] {
+    background: #f8bbd0;
+}
+
+.periodic-table-cell[data-group-name="halogen"] {
+    background: #b2dfdb;
+}
+
+.periodic-table-cell[data-group-name="noble gas"] {
+    background: #d7ccc8;
+}
+
+.periodic-table-cell[data-group-name="post-transition metal"] {
+    background: #f0f4c3;
+}
+
+.element-popup {
+    background: #222;
+    color: #fff;
+    border: 1px solid #888;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 0.95em;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    max-width: 260px;
+    white-space: normal;
+}
+
+/* Additional editable div styling for better UX */
+.npe-editable-div:empty:before {
+    content: attr(data-placeholder);
+    color: var(--text-faint);
+    font-style: italic;
+    pointer-events: none;
+}
+
+.npe-editable-div:focus:empty:before {
+    opacity: 0.5;
+}
+
+/* Ensure proper sizing for single-line inputs */
+.npe-editable-div {
+    max-height: 2.5em;
+    overflow: hidden;
+    resize: none;
+}
+
+/* Better visual feedback for number inputs */
+.npe-editable-div[data-input-type="number"] {
+    font-variant-numeric: tabular-nums;
+    text-align: left;
+}
+
+.npe-editable-div[data-input-type="number"]:focus {
+    text-align: left;
+}

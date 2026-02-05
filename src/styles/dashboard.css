@@ -1,0 +1,464 @@
+/*
+ * Dashboard and Daily Note Styles
+ * Layout and styling for dashboard and daily note views
+ */
+/*
+ * Dashboard and Daily Note Styles
+ * Layout and styling for dashboard and daily note views
+ */
+/* ...dashboard and daily note CSS content as previously modularized... */
+.dashboard,
+.daily-note {
+    padding-left: 25px !important;
+    padding-right: 25px !important;
+    padding-top: 20px !important;
+}
+
+.dashboard .markdown-preview-section,
+.daily-note .markdown-preview-section {
+    max-width: 100%;
+}
+
+.dashboard .markdown-preview-sizer.markdown-preview-section,
+.daily-note .markdown-preview-sizer.markdown-preview-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard .markdown-preview-pusher,
+.daily-note .markdown-preview-pusher {
+    order: -1;
+}
+
+.dashboard .el-pre.obsidian-banner-wrapper,
+.daily-note .el-pre.obsidian-banner-wrapper {
+    order: -1;
+}
+
+.dashboard .markdown-preview-view.is-readable-line-width .markdown-preview-sizer,
+.daily-note .markdown-preview-view.is-readable-line-width .markdown-preview-sizer {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: var(--max-width);
+    width: 55rem;
+}
+
+/* Title at top of the document */
+.dashboard .markdown-preview-section .title,
+.daily-note .markdown-preview-section .title {
+    top: 60px;
+    position: absolute;
+    font-size: 30pt !important;
+    font-weight: 900;
+    text-shadow: 2px 2px 7px #83a4b9;
+    letter-spacing: 8px;
+}
+
+.dashboard.markdown-source-view.is-live-preview .title {
+    font-size: 30pt !important;
+    font-weight: 900;
+    text-shadow: 2px 2px 7px #83a4b9;
+    letter-spacing: 8px;
+    background-color: #421e55;
+    padding-top: 30px;
+    padding-left: 20px;
+    height: 150px;
+}
+
+.daily-note.markdown-source-view.is-live-preview .title {
+    font-size: 22pt !important;
+    font-weight: 900;
+    text-shadow: 2px 2px 7px #83a4b9;
+    letter-spacing: 4px;
+    background-color: #421e55;
+    padding-top: 30px;
+    padding-left: 20px;
+    height: 150px;
+}
+
+.dashboard div.inline-title,
+.daily-note div.inline-title {
+    top: 60px;
+    position: absolute;
+    font-size: 30pt !important;
+    font-weight: 900;
+    letter-spacing: 8px;
+}
+
+.daily-note div.inline-title {
+    color: rgb(var(--daily-note-title-color));
+    text-shadow: 2px 2px 7px rgb(var(--daily-note-title-color));
+}
+
+.dashboard div.inline-title {
+    color: rgb(var(--dashboard-title-color));
+    text-shadow: 2px 2px 7px rgb(var(--dashboard-title-color));
+}
+
+.dashboard h1,
+.dashboard div.HyperMD-header.HyperMD-header-1,
+.daily-note h1,
+.daily-note div.HyperMD-header.HyperMD-header-1 {
+    border-bottom-style: solid !important;
+    border-width: 1px !important;
+    border-color: lightgrey;
+    padding-bottom: 3px !important;
+    font-size: 18pt;
+}
+
+.dashboard h2,
+.daily-note h2 {
+    padding-bottom: 3px !important;
+    font-size: 16pt;
+}
+
+.dashboard h3,
+.dashboard .cm-header.cm-header-3,
+.daily-note h3,
+.daily-note .cm-header.cm-header-3 {
+    font-size: 13pt;
+    color: rgb(var(--dashboard-h3-color));
+    padding-bottom: 3px !important;
+}
+
+.daily-note .cm-header.cm-header-3 {
+    font-size: 1.5rem;
+    color: rgb(var(--daily-note-h3-color));
+    padding-bottom: 3px !important;
+}
+
+.dashboard h3>a,
+.dashboard .cm-header.cm-header-3>a,
+.daily-note h3>a {
+    color: rgb(var(--dashboard-h3-color)) !important;
+}
+
+.dashboard strong,
+.daily-note strong {
+    color: rgb(var(--dashboard-bold-color));
+}
+
+.dashboard div.el-ul>ul>li>span.list-bullet::after,
+.daily-note div.el-ul>ul>li>span.list-bullet::after {
+    visibility: hidden;
+}
+
+.dashboard div.el-ul>ul,
+.dashboard .open-tasks-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--dashboard-gap-width);
+    margin-left: var(--dashboard-indent);
+}
+
+.daily-note div.el-ul>ul {
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+    grid-template-rows: auto;
+}
+
+.dashboard div.el-ul>ul>li,
+.dashboard .open-tasks-container>div.open-tasks-view {
+    flex: 1 1 calc(33.33% - var(--dashboard-gap-width));
+    min-width: var(--dashboard-card-min-width);
+    margin: 0;
+}
+
+.dashboard .open-tasks-container>div.open-tasks-view,
+.daily-note .open-tasks-container>div.open-tasks-view {
+    background-color: var(--dashboard-card-bg-color);
+    border-radius: 5px;
+    padding: 8px;
+}
+
+.dashboard .open-tasks-container>div.open-tasks-view>h4,
+.dashboard .open-tasks-container>div.open-tasks-view>h4 a {
+    color: rgb(var(--dashboard-h3-color)) !important;
+    font-size: 13pt;
+    margin-top: 0px;
+    margin-bottom: 3px;
+}
+
+.dashboard ul.contains-task-list>li.dataview.task-list-item {
+    padding: 5px 4px;
+}
+
+@media (max-width: 1024px) {
+    .dashboard div.el-ul>ul>li {
+        flex: 1 1 calc(50% - var(--dashboard-gap-width));
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard div.el-ul>ul>li {
+        flex: 1 1 calc(50% - var(--dashboard-gap-width));
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard div.el-ul>ul>li {
+        flex: 1 1 calc(100% - var(--dashboard-indent));
+    }
+}
+
+.dashboard div.el-ul>ul>li>div.list-bullet::after,
+.daily-note div.el-ul>ul>li>div.list-bullet::after {
+    visibility: hidden;
+}
+
+.dashboard div>ul>li {
+    width: 100%-20px;
+    margin-bottom: 20px;
+    padding: 8px;
+    background-color: var(--dashboard-card-bg-color);
+    border-radius: 5px;
+}
+
+.daily-note div>ul>li {
+    width: 100%-20px;
+    margin-bottom: 20px;
+    padding: 8px;
+    background-color: var(--daily-note-card-bg-color);
+    border-radius: 5px;
+}
+
+.daily-note div.el-ul>ul>li>ul::before,
+.dashboard div.el-ul>ul>li>ul::before {
+    border-inline-end-style: none;
+    border-inline-end-width: 0px;
+    border-inline-end-color: transparent;
+}
+
+.dashboard .task-list-item,
+.daily-note .task-list-item {
+    width: auto !important;
+}
+
+ul.contains-task-list.plugin-tasks-query-result {
+    row-gap: normal;
+}
+
+.dashboard ul.dataview.list-view-ul {
+    padding-left: 0rem;
+}
+
+.dashboard ul.dataview.list-view-ul>li {
+    min-width: 100px;
+    width: 100%-20px;
+    margin-bottom: 0px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 0.3rem;
+}
+
+.daily-note ul.dataview.list-view-ul {
+    padding-left: 0rem;
+}
+
+.daily-note ul.dataview.list-view-ul>li {
+    min-width: 100px;
+    width: 100%-20px;
+    margin-bottom: 0px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 0.3rem;
+}
+
+.dashboard .image-viewer-parent,
+.daily-note .image-viewer-parent {
+    margin-top: 0rem;
+    margin-bottom: 0rem;
+    border-radius: none;
+    border: none;
+}
+
+.dashboard .markdown-rendered div.image-viewer-container,
+.daily-note .markdown-rendered div.image-viewer-container {
+    background-color: var(--dashboard-card-bg-color);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.dashboard .markdown-rendered img.image-viewer,
+.daily-note .markdown-rendered img.image-viewer {
+    width: 50%;
+}
+
+.dashboard .markdown-rendered div.progress-container,
+.daily-note .markdown-rendered div.progress-container {
+    background-color: var(--dashboard-card-bg-color);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.daily-note-nav-container {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: left;
+    align-items: left;
+    margin-bottom: 10px;
+}
+
+.daily-note-nav-button {
+    background-color: var(--daily-note-nav-button);
+    border-radius: var(--button-radius);
+    padding: 5px 25px;
+    text-align: center;
+    margin-right: 5px;
+}
+
+/* Editing/preview mode for dashboard */
+.dashboard div.HyperMD-list-line.HyperMD-list-line-1 {
+    background-color: var(--dashboard-card-bg-color);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding-top: 1rem;
+}
+
+.dashboard div.HyperMD-list-line.HyperMD-list-line-2,
+.dashboard .cm-line[style^="text-indent:"]:has(span.cm-list-1) {
+    background-color: var(--dashboard-card-bg-color);
+}
+
+.dashboard div.HyperMD-list-line.HyperMD-list-line-2:has(+div.cm-line>br),
+.dashboard .cm-line[style^="text-indent:"]:has(span.cm-list-1):has(+div.cm-line>br) {
+    background-color: var(--dashboard-card-bg-color);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding-bottom: 1rem;
+}
+
+.dashboard div.HyperMD-list-line.HyperMD-list-line-1+div.cm-preview-code-block.cm-embed-block.markdown-rendered {
+    background-color: var(--dashboard-card-bg-color);
+}
+
+.dashboard div.HyperMD-list-line.HyperMD-list-line-1+div.cm-preview-code-block.cm-embed-block.markdown-rendered:has(+div.cm-line>br) {
+    background-color: var(--dashboard-card-bg-color);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding-bottom: 1rem;
+}
+
+.dashboard div.HyperMD-list-line.HyperMD-list-line-2+div.cm-preview-code-block.cm-embed-block.markdown-rendered {
+    background-color: var(--dashboard-card-bg-color);
+}
+
+.dashboard div.HyperMD-list-line.HyperMD-list-line-2+div.cm-preview-code-block.cm-embed-block.markdown-rendered:has(+div.cm-line>br) {
+    background-color: var(--dashboard-card-bg-color);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding-bottom: 1rem;
+}
+
+/* Editing/preview mode for daily note */
+.daily-note div.HyperMD-list-line.HyperMD-list-line-1 {
+    background-color: var(--daily-note-card-bg-color);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding-top: 1rem;
+}
+
+.daily-note div.HyperMD-list-line.HyperMD-list-line-2 {
+    background-color: var(--daily-note-card-bg-color);
+}
+
+.daily-note div.HyperMD-list-line.HyperMD-list-line-2:has(+div.cm-line>br) {
+    background-color: var(--daily-note-card-bg-color);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding-bottom: 1rem;
+}
+
+.daily-note div.HyperMD-list-line.HyperMD-list-line-1+div.cm-preview-code-block.cm-embed-block.markdown-rendered {
+    background-color: var(--daily-note-card-bg-color);
+}
+
+.daily-note div.HyperMD-list-line.HyperMD-list-line-1+div.cm-preview-code-block.cm-embed-block.markdown-rendered:has(+div.cm-line>br) {
+    background-color: var(--daily-note-card-bg-color);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding-bottom: 1rem;
+}
+
+.daily-note div.HyperMD-list-line.HyperMD-list-line-2+div.cm-preview-code-block.cm-embed-block.markdown-rendered {
+    background-color: var(--daily-note-card-bg-color);
+}
+
+.daily-note div.HyperMD-list-line.HyperMD-list-line-2+div.cm-preview-code-block.cm-embed-block.markdown-rendered:has(+div.cm-line>br) {
+    background-color: var(--daily-note-card-bg-color);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding-bottom: 1rem;
+}
+
+.image-viewer-parent {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 5px;
+    border: 2px solid var(--background-modifier-border);
+}
+
+/* Image Viewer fade effect */
+.image-viewer-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.image-viewer {
+    opacity: 1;
+    transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    /* You can adjust the duration and easing as desired */
+    display: block;
+    margin: 0 auto;
+    width: 100%;
+    height: auto;
+    position: relative;
+    z-index: 1;
+}
+
+.image-viewer.fade-out {
+    opacity: 0; 
+}
+
+.image-viewer-thumbnails {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.image-viewer-thumb {
+    width: auto;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: pointer;
+    opacity: 0.7;
+    border: 2px solid transparent;
+    transition: border 0.2s, opacity 0.2s;
+}
+
+.image-viewer-thumb.active {
+    opacity: 1;
+    border: 2px solid var(--interactive-accent, #8bdaa9);
+}
+
+.image-viewer-thumbnails {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.image-viewer-thumbnails button {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 0 4px; 
+}
+
+.image-viewer-action-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+}
