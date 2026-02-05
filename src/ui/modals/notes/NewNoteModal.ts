@@ -1,824 +1,744 @@
 import { Modal, ButtonComponent } from "obsidian";
-import { LabeledTextInput } from "../components/LabeledTextInput";
-import { LabeledNumericInput } from "../components/LabeledNumericInput";
-import { LabeledDateInput } from "../components/LabeledDateInput";
-import { LabeledDropdown } from "../components/LabeledDropdown";
-import { MultiSelectInput } from "../components/MultiSelectInput";
-import { MultiQueryDropdown } from "../components/MultiQueryDropdown";
-import { ListInput } from "../components/ListInput";
-import { EditableObjectInput } from "../components/EditableObjectInput";
-import { QueryDropDown } from "../components/QueryDropDown";
-import { SubClassSelection } from "../components/SubClassSelection";
-import { createEnhancedObjectListFromTemplate } from "../components/EnhancedObjectListInput";
-import { SimpleTextInput } from "../components/SimpleTextInput";
-import { SimpleDropdown } from "../components/SimpleDropdown";
 import ElnPlugin from "../../../main";
-import { TemplateEvaluator } from "../../../core/templates/TemplateEvaluator";
-import { MetadataProcessor } from "../../../core/notes/MetadataProcessor";
+import { TemplateManager } from "../../../core/templates/TemplateManager";
+import { InputManager } from "../../modals/utils/InputManager";
+import { UniversalObjectRenderer } from "../components/UniversalObjectRenderer";
 import type { 
     MetaDataTemplateProcessed, 
-    MetaDataTemplateFieldProcessed,
-    JSONObject, 
-    FormData, 
-    FormFieldValue, 
-    InputComponents, 
-    SettableComponent
+    FormData,
+    FunctionDescriptor
 } from "../../../types";
 import { createLogger } from "../../../utils/Logger";
 
 export interface NewNoteModalOptions {
-    modalTitle?: string; // Optional title for the modal
-    noteType: string; // Type of note (required for subclass template handling)
-    metadataTemplate: MetaDataTemplateProcessed; // Preprocessed metadata template
-    onSubmit: (result: { formData: FormData; template: MetaDataTemplateProcessed } | null) => void; // Callback when modal is submitted
+    modalTitle?: string;
+    noteType: string;
+    templateManager?: TemplateManager; // Accept an existing TemplateManager instance
+    metadataTemplate?: MetaDataTemplateProcessed;
+    initialData?: FormData;
+    onSubmit: (result: { formData: FormData; template: MetaDataTemplateProcessed } | null) => void;
 }
 
+/**
+ * Refactored version of NewNoteModal using the new architecture:
+ * - TemplateManager for template handling
+ * - InputManager for centralized state management  
+ * - UniversalObjectRenderer for recursive object rendering
+ * - Clean separation of concerns
+ */
 export class NewNoteModal extends Modal {
     private plugin: ElnPlugin;
     private modalTitle: string;
     private noteType: string;
-    private baseMetadataTemplate: MetaDataTemplateProcessed; // Original template from settings (never modified)
-    private metadataTemplate: MetaDataTemplateProcessed; // Current working template (with subclass modifications)
     private onSubmit: (result: { formData: FormData; template: MetaDataTemplateProcessed } | null) => void;
-    private templateEvaluator: TemplateEvaluator;
-    private metadataProcessor: MetadataProcessor; // Handles all subclass logic
-    private submitted: boolean;
-    protected data: FormData;
-    protected inputs: InputComponents;
-    private inputContainer!: HTMLElement; // Store reference to input container for re-rendering
-    private initialTemplateApplied = false; // Prevent multiple initial applications
+    private submitted: boolean = false;
+    
+    // Flag to prevent recursive updates during initialization
+    private isInitializing: boolean = false;
+    
+    // Flag to prevent callbacks during UI rendering
+    private isRenderingUI: boolean = false;
+    
+    // Reactive dependency mapping: field path -> array of fields it depends on
+    private reactiveDependencyMap: Map<string, string[]> = new Map();
+    
+    // Reverse dependency mapping: field path -> array of fields that depend on it
+    private reverseDependencyMap: Map<string, string[]> = new Map();
+    
+    // New architecture components
+    private templateManager: TemplateManager;
+    private inputManager: InputManager;
+    private objectRenderer!: UniversalObjectRenderer;
+    
+    // UI elements
+    private inputContainer!: HTMLElement;
+    private submitButton!: ButtonComponent;
+    private cancelButton!: ButtonComponent;
+    
     private logger = createLogger('modal');
 
     constructor(plugin: ElnPlugin, options: NewNoteModalOptions) {
         super(plugin.app);
-        this.plugin = plugin;
-        this.modalTitle = options.modalTitle || "New Note";
-        this.noteType = options.noteType;
-        // Store the original base template and create a working copy
-        this.baseMetadataTemplate = JSON.parse(JSON.stringify(options.metadataTemplate));
-        this.metadataTemplate = JSON.parse(JSON.stringify(options.metadataTemplate));
-        this.onSubmit = options.onSubmit;
-        this.templateEvaluator = new TemplateEvaluator(plugin);
-        this.metadataProcessor = new MetadataProcessor(plugin); // Initialize metadata processor
-        this.submitted = false;
-        this.data = {};
-        this.inputs = {};
-    }
-
-    async onOpen() {
-        const { modalEl, contentEl, titleEl } = this;
-
-        // Set the modal title
-        titleEl.setText(this.modalTitle);
-
-        // Add a custom class to the modal for styling
-        modalEl.addClass("eln-modal");
-
-        // Apply initial subclass template if the template has a subclass field
-        // This modifies this.metadataTemplate to include the default subclass modifications
-        await this.applyInitialSubclassTemplate();
-
-        // Create a container for the input fields and store reference for re-rendering
-        this.inputContainer = contentEl.createDiv({ cls: "eln-inputs" });
         
-        // Render input fields based on the provided metadata template
-        this.renderInputs(this.inputContainer, this.metadataTemplate);
-
-        // Add a confirm button to the modal
-        const confirmButton = new ButtonComponent(contentEl);
-        confirmButton.setButtonText("Submit");
-        confirmButton.setCta();
-        confirmButton.onClick(async () => {
-            this.submitted = true; // Mark the modal as submitted
-            this.close(); // Close the modal
+        this.plugin = plugin;
+        this.modalTitle = options.modalTitle || `Create New ${options.noteType}`;
+        this.noteType = options.noteType;
+        this.onSubmit = options.onSubmit;
+        
+        // Use provided TemplateManager instance or create a new one
+        if (options.templateManager) {
+            this.logger.debug('📋 Using provided TemplateManager instance');
+            this.templateManager = options.templateManager;
+        } else {
+            this.logger.debug('📋 Creating new TemplateManager instance');
+            // Initialize new architecture components
+            this.templateManager = new TemplateManager({
+                plugin: this.plugin,
+                noteType: this.noteType,
+                baseTemplate: options.metadataTemplate, // Can be undefined, TemplateManager will load from settings
+                initialData: options.initialData || {}
+            });
+        }
+        
+        // Initialize InputManager temporarily with basic data
+        // Will be updated with proper defaults in onOpen
+        this.inputManager = new InputManager(options.initialData || {}, (data) => {
+            // Prevent recursive updates during initialization
+            if (this.isInitializing) {
+                this.logger.debug('⚠️ InputManager change callback blocked during initialization');
+                return;
+            }
+            
+            // Prevent callbacks during UI rendering
+            if (this.isRenderingUI) {
+                this.logger.debug('⚠️ InputManager change callback blocked during UI rendering');
+                return;
+            }
+            
+            this.logger.debug('InputManager change callback triggered');
+            this.debugFlatFields('InputManager change callback', data);
+            
+            // Update template manager with current data context
+            this.templateManager.updateDataContext(data);
+        }, this.plugin); // Pass plugin reference for reactive function evaluation
+        
+        this.logger.debug('NewNoteModal initialized', {
+            noteType: this.noteType,
+            template: options.metadataTemplate
         });
     }
 
-    onClose() {
-        if (this.onSubmit) {
-            // Call the onSubmit callback with the collected data and final template if submitted, otherwise with null
-            this.onSubmit(this.submitted ? { 
-                formData: this.data, 
-                template: this.metadataTemplate 
-            } : null);
-        }
-    }
-
-    private renderInputs(container: HTMLElement, template: MetaDataTemplateProcessed, fullKey: string | null = null, isNested: boolean = false) {
-        for (const [key, config] of Object.entries(template)) {
-            const currentKey = fullKey ? `${fullKey}.${key}` : key;
-
-            // Check if this is a direct input field (has inputType and query properties)
-            if (config && typeof config === "object" && "inputType" in config && "query" in config) {
-                // This is a direct input field - process it as an input field
-                const field = config as MetaDataTemplateFieldProcessed;
-                
-                // Handle different types of default values
-                let defaultValue: unknown;
-                if (TemplateEvaluator.isFunctionDescriptor(field.default)) {
-                    // If it's a function descriptor, evaluate it with current context
-                    if (field.default.userInputs && field.default.userInputs.length > 0) {
-                        // For reactive functions that depend on user input, defer evaluation to postprocessing
-                        // Use an appropriate placeholder value based on input type
-                        if (field.inputType === "list") {
-                            defaultValue = []; // Empty array as placeholder for lists
-                        } else {
-                            defaultValue = ""; // Empty string as placeholder for other types
-                        }
-                    } else {
-                        // For non-reactive function descriptors, they should already be evaluated
-                        defaultValue = TemplateEvaluator.evaluateFunctionDescriptor(field.default, this);
-                    }
-                } else if (typeof field.default === "function") {
-                    // Handle legacy functions
-                    defaultValue = (field.default as (data: JSONObject) => unknown)(this.data as JSONObject);
-                } else {
-                    // Handle static values
-                    defaultValue = field.default;
-                }
-
-                // Ensure nested structure in data and inputs
-                let targetData: FormData = this.data;
-                let targetInputs: InputComponents = this.inputs;
-                if (fullKey) {
-                    const keys = fullKey.split(".");
-                    for (const k of keys) {
-                        if (!targetData[k]) {
-                            targetData[k] = {} as FormData;
-                        }
-                        if (!targetInputs[k]) {
-                            targetInputs[k] = {} as InputComponents;
-                        }
-                        targetData = targetData[k] as FormData;
-                        targetInputs = targetInputs[k] as InputComponents;
-                    }
-                }
-
-                this.renderInputField(container, key, field, targetData, targetInputs, currentKey, defaultValue, isNested);
-            } else if (config !== null && typeof config === "object" && !("inputType" in config) && !("query" in config)) {
-                // This is a nested object section (like "process": { "name": {...}, "type": {...} })
-                // Create a container section only for true nested structures
-                const sectionWrapper = container.createDiv({ cls: "eln-input-wrapper" });
-                
-                // Create header with section label
-                const header = sectionWrapper.createDiv({ cls: "eln-input-header" });
-                header.createDiv({ cls: "eln-input-label", text: key.charAt(0).toUpperCase() + key.slice(1) });
-                
-                // Create content container for nested inputs
-                const content = sectionWrapper.createDiv({ cls: "eln-input-content eln-nested-content" });
-                
-                this.renderInputs(content, config as MetaDataTemplateProcessed, currentKey, true);
-            }
-        }
-    }
-
-    private renderInputField(
-        container: HTMLElement, 
-        key: string, 
-        field: MetaDataTemplateFieldProcessed, 
-        targetData: FormData, 
-        targetInputs: InputComponents, 
-        currentKey: string, 
-        defaultValue: unknown, 
-        isNested: boolean
-    ) {
-        switch (field.inputType) {
-                    case "text": {
-                        // Extract placeholder
-                        let placeholder: string | undefined;
-                        if (field.placeholder) {
-                            if (TemplateEvaluator.isFunctionDescriptor(field.placeholder)) {
-                                placeholder = String(TemplateEvaluator.evaluateFunctionDescriptor(field.placeholder, this));
-                            } else {
-                                placeholder = String(field.placeholder);
-                            }
-                        }
-
-                        if (isNested) {
-                            // Use simple input for nested contexts
-                            const textInput = new SimpleTextInput({
-                                container,
-                                label: key,
-                                defaultValue: (defaultValue as string) || "",
-                                placeholder: placeholder,
-                                onChangeCallback: this.createReactiveCallback(targetData, key, currentKey, field.callback),
-                            });
-                            targetData[key] = (defaultValue as string) || "";
-                            targetInputs[key] = textInput;
-                        } else {
-                            // Use enhanced input for top-level contexts
-                            const textInput = new LabeledTextInput({
-                                container,
-                                label: key,
-                                defaultValue: (defaultValue as string) || "",
-                                placeholder: placeholder,
-                                onChangeCallback: this.createReactiveCallback(targetData, key, currentKey, field.callback),
-                            });
-                            targetData[key] = (defaultValue as string) || "";
-                            targetInputs[key] = textInput;
-                        }
-                        break;
-                    }
-                        
-                    case "number": {
-                        const numberInput = new LabeledNumericInput({
-                            container,
-                            label: key,
-                            defaultValue: (defaultValue as number) || 0,
-                            units: (field.units as string[]) || [],
-                            defaultUnit: field.defaultUnit || (Array.isArray(field.units) ? field.units[0] : undefined),
-                            onChangeCallback: (value) => {
-                                const callback = field.callback;
-                                // Handle the complex return type from LabeledNumericInput
-                                let processedValue: FormFieldValue;
-                                if (typeof value === 'object' && value !== null) {
-                                    // If it's an object with value and unit, extract just the number for the callback
-                                    processedValue = callback ? callback(value.value) as FormFieldValue : value.value;
-                                } else {
-                                    // If it's just a number
-                                    processedValue = callback ? callback(value) as FormFieldValue : value;
-                                }
-                                targetData[key] = processedValue;
-                            },
-                        });
-                        targetData[key] = (defaultValue as number) || 0; // Store initial value
-                        targetInputs[key] = numberInput;
-                        break;
-                    }
-                        
-                    case 'actiontext': {
-                        const defaultActionText = typeof field.default === 'function' ? (field.default as (data: JSONObject) => unknown)(this.data as JSONObject) : field.default;
-                        const actionCallback = field.action;
-
-                        const actionTextInput = new LabeledTextInput({
-                            container,
-                            label: key,
-                            defaultValue: (defaultActionText as string) || "",
-                            onChangeCallback: (value) => {
-                                const callback = field.callback;
-                                targetData[key] = callback ? callback(value) as FormFieldValue : value;
-                            },
-                            actionButton: true,
-                            actionCallback: actionCallback || undefined, // Convert null to undefined
-                            actionButtonIcon: (field.icon as string) || "gear",
-                            actionButtonTooltip: (field.tooltip as string) || "Perform action",
-                            fieldKey: currentKey,
-                        });
-
-                        targetData[key] = (defaultActionText as string) || ""; // Store initial value
-                        targetInputs[key] = actionTextInput;
-                        break;
-                    }
-
-                    case "dropdown": {
-                        this.logger.debug("Creating dropdown for key:", key);
-                        const fieldOptions = field.options;
-                        const dropdownOptions = Array.isArray(fieldOptions) 
-                            ? fieldOptions 
-                            : [];
-
-                        // Extract placeholder
-                        let placeholder: string | undefined;
-                        if (field.placeholder) {
-                            if (TemplateEvaluator.isFunctionDescriptor(field.placeholder)) {
-                                placeholder = String(TemplateEvaluator.evaluateFunctionDescriptor(field.placeholder, this));
-                            } else {
-                                placeholder = String(field.placeholder);
-                            }
-                        }
-
-                        if (isNested) {
-                            // Use simple dropdown for nested contexts
-                            const dropdownInput = new SimpleDropdown({
-                                container,
-                                label: key,
-                                options: dropdownOptions,
-                                placeholder: placeholder,
-                                onChangeCallback: this.createReactiveCallback(targetData, key, currentKey, field.callback),
-                            });
-                            const initialValue = defaultValue || (placeholder ? "" : (dropdownOptions.length > 0 ? dropdownOptions[0] : ""));
-                            targetData[key] = initialValue as FormFieldValue;
-                            targetInputs[key] = dropdownInput;
-                        } else {
-                            // Use enhanced dropdown for top-level contexts
-                            const dropdownInput = new LabeledDropdown({
-                                container,
-                                label: key,
-                                options: dropdownOptions,
-                                placeholder: placeholder,
-                                onChangeCallback: this.createReactiveCallback(targetData, key, currentKey, field.callback),
-                            });
-                            const initialValue = defaultValue || (placeholder ? "" : (dropdownOptions.length > 0 ? dropdownOptions[0] : ""));
-                            targetData[key] = initialValue as FormFieldValue;
-                            targetInputs[key] = dropdownInput;
-                        }
-                        break;
-                    }
-
-                    case "multiselect": {
-                        const fieldOptions = field.options;
-                        const dropdownOptions = Array.isArray(fieldOptions) 
-                            ? fieldOptions 
-                            : [];
-                        const multiSelectInput = new MultiSelectInput({
-                            container,
-                            label: key,
-                            options: dropdownOptions,
-                            onChangeCallback: this.createReactiveCallback(targetData, key, currentKey, field.callback),
-                        });
-                        targetData[key] = (defaultValue || []) as FormFieldValue; // Store initial value
-                        targetInputs[key] = multiSelectInput;
-                        break;
-                    }
-
-                    case "date": {
-                        const dateInput = new LabeledDateInput({
-                            container,
-                            label: key,
-                            defaultValue: (defaultValue as string) || "",
-                            onChangeCallback: (value) => {
-                                const callback = field.callback;
-                                targetData[key] = callback ? callback(value) as FormFieldValue : value;
-                            },
-                        });
-                        targetData[key] = (defaultValue as string) || ""; // Store initial value
-                        targetInputs[key] = dateInput;
-                        break;
-                    }
-                        
-                    case "dynamic":
-                    case "editableObject": {
-                        const editableObject = new EditableObjectInput({
-                            container,
-                            label: key,
-                            defaultValue: (defaultValue as Record<string, FormFieldValue>) || {},
-                            onChangeCallback: (updatedData) => {
-                                targetData[key] = updatedData as unknown as FormFieldValue;
-                            },
-                            app: this.app
-                        });
-                        targetData[key] = ((defaultValue as Record<string, FormFieldValue>) || {}) as unknown as FormFieldValue;
-                        targetInputs[key] = editableObject;
-                        break;
-                    }
-                        
-                    case "queryDropdown": {
-                        // Extract placeholder
-                        let placeholder: string | undefined;
-                        if (field.placeholder) {
-                            if (TemplateEvaluator.isFunctionDescriptor(field.placeholder)) {
-                                placeholder = String(TemplateEvaluator.evaluateFunctionDescriptor(field.placeholder, this));
-                            } else {
-                                placeholder = String(field.placeholder);
-                            }
-                        }
-
-                        const queryDropDown = new QueryDropDown(this.app, {
-                            container,
-                            label: key,
-                            search: field.search || "",
-                            where: field.where || undefined,
-                            return: field.return || undefined,
-                            defaultValue: typeof defaultValue === "string" ? defaultValue : undefined,
-                            placeholder: placeholder,
-                            isNested: isNested,
-                            onChangeCallback: (value, returnValues) => {
-                                const callback = field.callback;
-                                
-                                // Store the selected value
-                                targetData[key] = callback ? callback(value) as FormFieldValue : value;
-                                
-                                // If return values are specified, map them to the target data
-                                if (returnValues && field.return) {
-                                    console.debug("QueryDropdown return values:", returnValues);
-                                    console.debug("QueryDropdown return mapping:", field.return);
-                                    
-                                    if (Array.isArray(field.return)) {
-                                        // Simple array format - direct mapping to current level
-                                        for (const returnField of field.return) {
-                                            const returnValue = returnValues[returnField];
-                                            if (returnValue !== undefined && returnValue !== null) {
-                                                targetData[returnField] = returnValue as FormFieldValue;
-                                            }
-                                        }
-                                    } else {
-                                        // Mapping object format - support dot notation for nested keys
-                                        // returnValues are already mapped by QueryDropdown, so iterate over them
-                                        for (const [targetPath, returnValue] of Object.entries(returnValues)) {
-                                            if (returnValue !== undefined && returnValue !== null) {
-                                                // Check if targetPath uses dot notation
-                                                if (targetPath.includes('.')) {
-                                                    // Use setNestedValue for dot notation paths from this.data root
-                                                    this.setNestedValue(this.data, targetPath, returnValue as FormFieldValue);
-                                                } else {
-                                                    // Direct assignment to current level (targetData)
-                                                    targetData[targetPath] = returnValue as FormFieldValue;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                        });
-                        // For queryDropdown, let the component handle its own initialization
-                        // Don't set a default value that would override the return values
-                        targetInputs[key] = queryDropDown;
-                        break;
-                    }
-
-                    case "multiQueryDropdown": {
-                        const multiQueryDropdown = new MultiQueryDropdown(this.app, {
-                            container,
-                            label: key,
-                            search: field.search || "",
-                            where: field.where || undefined,
-                            return: field.return || undefined,
-                            defaultValues: Array.isArray(defaultValue) ? defaultValue as string[] : undefined,
-                            onChangeCallback: (selectedValues, returnValuesList) => {
-                                // Store the selected values array
-                                // For multiQueryDropdown, we store the array directly since callbacks expect single values
-                                // but multi-selection naturally produces arrays
-                                targetData[key] = selectedValues as FormFieldValue;
-                                
-                                // If return values are specified, apply them
-                                if (returnValuesList && field.return && Array.isArray(field.return) === false) {
-                                    console.debug("MultiQueryDropdown return values:", returnValuesList);
-                                    console.debug("MultiQueryDropdown return mapping:", field.return);
-                                    
-                                    // For multiple selections, create an array of device objects
-                                    // Each device object contains all the mapped return values for that device
-                                    const deviceObjects = returnValuesList.map((returnValues, index) => {
-                                        const deviceObject: Record<string, FormFieldValue> = {};
-                                        
-                                        // Apply return mapping to create device object structure
-                                        for (const [targetPath] of Object.entries(field.return as Record<string, string>)) {
-                                            const value = returnValues[targetPath];
-                                            
-                                            if (value !== undefined && value !== null) {
-                                                // Extract the property name from the target path
-                                                // e.g., "process.devices.name" -> "name", "process.devices.parameters" -> "parameters"
-                                                const pathParts = targetPath.split('.');
-                                                const propertyName = pathParts[pathParts.length - 1]; // Get last part
-                                                deviceObject[propertyName] = value as FormFieldValue;
-                                            }
-                                        }
-                                        
-                                        return deviceObject;
-                                    });
-                                    
-                                    // Store the array of device objects
-                                    targetData[key] = deviceObjects as unknown as FormFieldValue;
-                                }
-                            },
-                        });
-                        // For multiQueryDropdown, let the component handle its own initialization
-                        targetInputs[key] = multiQueryDropdown;
-                        break;
-                    }
-                        
-                    case "subclass": {
-                        const fieldOptions = field.options;
-                        const subclassOptions = Array.isArray(fieldOptions) 
-                            ? fieldOptions 
-                            : [];
-                        const defaultValue = typeof field.default === "string" 
-                            ? field.default 
-                            : subclassOptions[0] || "";
-
-                        const subClassSelection = new SubClassSelection({
-                            app: this.app,
-                            container,
-                            label: key,
-                            options: subclassOptions,
-                            defaultValue: defaultValue,
-                            onChangeCallback: async (selectedType: string) => {
-                                targetData[key] = selectedType;
-                                this.updateDependentFields(currentKey);
-                                // Apply subclass template when selection changes
-                                this.logger.debug(`Subclass selection changed to: ${selectedType}`);
-                                await this.applySubclassTemplate(selectedType, currentKey);
-                            }
-                        });
-                        targetData[key] = defaultValue;
-                        targetInputs[key] = subClassSelection;
-                        break;
-                    }
-
-                    case "list": {
-                        // Check if this is an object list (type: "object")
-                        if (field.type === "object" && field.object) {
-                            // Handle object list with object field template
-                            console.debug("Creating enhanced object list input for key:", key, "with field:", field);
-                            const objectListInput = createEnhancedObjectListFromTemplate(field, {
-                                container,
-                                label: key,
-                                defaultValue: (Array.isArray(defaultValue) ? defaultValue : []) as Record<string, FormFieldValue>[],
-                                onChangeCallback: (objects) => {
-                                    console.debug("Object list changed:", objects);
-                                    targetData[key] = objects as unknown as FormFieldValue;
-                                },
-                                initialItems: field.initialItems, // Pass through initialItems from template
-                                app: this.app
-                            });
-                            
-                            if (objectListInput) {
-                                targetData[key] = (Array.isArray(defaultValue) ? defaultValue : []) as FormFieldValue;
-                                targetInputs[key] = objectListInput;
-                            } else {
-                                console.warn(`Failed to create object list input for key: ${key}`);
-                                console.warn("Field object:", field.object);
-                                console.warn("Field inputType:", field.inputType);
-                            }
-                        } else {
-                            // Handle regular list
-                            let defaultValueString = "";
-                            if (Array.isArray(defaultValue)) {
-                                defaultValueString = defaultValue.join(", ");
-                            } else if (typeof defaultValue === "string") {
-                                defaultValueString = defaultValue;
-                            }
-
-                            const listInput = new ListInput({
-                                container,
-                                label: key,
-                                defaultValue: defaultValueString,
-                                dataType: field.dataType as string || "text",
-                                onChangeCallback: (value) => {
-                                    let processedValue: FormFieldValue;
-                                    if (field.dataType === "number") {
-                                        processedValue = value.split(",").map(item => parseFloat(item.trim())).filter(item => !isNaN(item));
-                                    } else if (field.dataType === "boolean") {
-                                        processedValue = value.split(",").map(item => item.trim().toLowerCase() === "true");
-                                    } else {
-                                        processedValue = value.split(",").map(item => item.trim()).filter(item => item.length > 0);
-                                    }
-                                    // For list inputs, we handle the processed array directly since callbacks expect single values
-                                    targetData[key] = processedValue;
-                                },
-                                fieldKey: currentKey,
-                            });
-                            // Store initial value - process the default value as the callback would
-                            let initialListValue: FormFieldValue;
-                            if (field.dataType === "number") {
-                                initialListValue = Array.isArray(defaultValue) ? defaultValue : [];
-                            } else if (field.dataType === "boolean") {
-                                initialListValue = Array.isArray(defaultValue) ? defaultValue : [];
-                            } else {
-                                initialListValue = Array.isArray(defaultValue) ? defaultValue : defaultValueString.split(",").map(item => item.trim()).filter(item => item.length > 0);
-                            }
-                            targetData[key] = initialListValue;
-                            targetInputs[key] = listInput;
-                        }
-                        break;
-                    }
-
-                    default:
-                        console.warn(`Unsupported input type: ${field.inputType}`);
-                }
-        }
-    }
-
     /**
-     * Updates fields that depend on user input when their dependencies change.
-     * @param changedFieldPath The path of the field that was changed (e.g., "chemical.type")
+     * Initialize InputManager with properly defaulted form data
      */
-    private updateDependentFields(changedFieldPath: string): void {
-        this.updateFieldsInTemplate(this.metadataTemplate, changedFieldPath);
-    }
-
-    /**
-     * Recursively finds and updates fields that depend on the changed field.
-     * @param template The metadata template to search through
-     * @param changedFieldPath The path of the field that was changed
-     * @param currentPath The current path in the template traversal
-     */
-    private updateFieldsInTemplate(template: MetaDataTemplateProcessed, changedFieldPath: string, currentPath: string = ""): void {
-        for (const [key, config] of Object.entries(template)) {
-            const fieldPath = currentPath ? `${currentPath}.${key}` : key;
-            
-            if (config !== null && typeof config === "object" && !("inputType" in config)) {
-                this.updateFieldsInTemplate(config as MetaDataTemplateProcessed, changedFieldPath, fieldPath);
-            } else if (config && typeof config === "object" && "inputType" in config) {
-                const field = config as MetaDataTemplateFieldProcessed;
-                
-                const hasUserInputDependency = this.templateEvaluator.checkFieldForUserInputDependencies(field, changedFieldPath);
-                if (hasUserInputDependency) {
-                    this.updateFieldValue(fieldPath, field);
-                }
-            }
-        }
-    }
-
-    /**
-     * Updates the value of a field that depends on user input.
-     * @param fieldPath The path to the field that needs updating
-     * @param field The field configuration
-     */
-    private updateFieldValue(fieldPath: string, field: MetaDataTemplateFieldProcessed): void {
-        let newValue: unknown;
-        if (typeof field.default === "function") {
-            try {
-                newValue = (field.default as (data: JSONObject) => unknown)(this.data as JSONObject);
-            } catch (error) {
-                console.error(`Error evaluating function for field "${fieldPath}":`, error);
-                return;
-            }
-        } else if (TemplateEvaluator.isFunctionDescriptor(field.default)) {
-            try {
-                newValue = this.templateEvaluator.evaluateUserInputFunction(field.default, this.data);
-            } catch (error) {
-                console.error(`Error evaluating function descriptor for field "${fieldPath}":`, error);
-                return;
-            }
-        } else {
-            newValue = field.default;
-        }
-
-        this.setNestedValue(this.data, fieldPath, newValue as FormFieldValue);
-        this.updateInputField(fieldPath, newValue as FormFieldValue);
-    }
-
-    /**
-     * Updates an input field component with a new value
-     */
-    protected updateInputField(fullKey: string, value: FormFieldValue): void {
-        const keys = fullKey.split(".");
-        let target: FormData = this.data;
-        let inputField: InputComponents = this.inputs;
-
-        for (let i = 0; i < keys.length - 1; i++) {
-            if (!target[keys[i]]) {
-                console.warn(`Data key "${keys[i]}" does not exist in this.data at level ${i}.`);
-                return;
-            }
-            if (!inputField[keys[i]]) {
-                console.warn(`Input field key "${keys[i]}" does not exist in this.inputs at level ${i}.`);
-                return;
-            }
-            target = target[keys[i]] as FormData;
-            inputField = inputField[keys[i]] as InputComponents;
-        }
-
-        const finalKey = keys[keys.length - 1];
-        target[finalKey] = value;
-
-        const component = inputField[finalKey];
-        if (component && typeof component === 'object' && 'setValue' in component && typeof component.setValue === 'function') {
-            // Convert complex values to appropriate types for setValue
-            let setValue: string | number | boolean | null = null;
-            if (value instanceof Date) {
-                setValue = value.toISOString();
-            } else if (Array.isArray(value)) {
-                setValue = value.join(', ');
-            } else if (typeof value === 'object' && value !== null) {
-                setValue = JSON.stringify(value);
-            } else {
-                setValue = value as string | number | boolean | null;
-            }
-            (component as unknown as SettableComponent).setValue(setValue);
-        } else if (component instanceof HTMLInputElement) {
-            component.value = String(value || '');
-        } else {
-            console.warn(`Unsupported input field type for "${fullKey}".`);
-        }
-    }
-
-    /**
-     * Sets a nested value in an object using dot notation.
-     */
-    private setNestedValue(obj: FormData, path: string, value: FormFieldValue): void {
-        const keys = path.split(".");
-        let current = obj;
-        
-        for (let i = 0; i < keys.length - 1; i++) {
-            if (!current[keys[i]] || typeof current[keys[i]] !== "object") {
-                current[keys[i]] = {} as FormData;
-            }
-            current = current[keys[i]] as FormData;
-        }
-        
-        current[keys[keys.length - 1]] = value;
-    }
-
-    /**
-     * Creates a callback function that updates the field value and triggers reactive updates.
-     */
-    private createReactiveCallback(
-        targetData: FormData,
-        key: string,
-        currentKey: string,
-        callback?: ((value: string | number | boolean | null) => string | number | boolean | null) | null
-    ): (value: unknown) => void {
-        return (value: unknown) => {
-            const processedValue = callback ? callback(value as string | number | boolean | null) as FormFieldValue : value as FormFieldValue;
-            targetData[key] = processedValue;
-            this.updateDependentFields(currentKey);
-        };
-    }
-
-    /**
-     * Applies a subclass template when the user changes the subclass selection
-     * @param selectedType The selected subclass type
-     * @param fieldPath The path of the subclass field that changed
-     */
-    private async applySubclassTemplate(selectedType: string, fieldPath: string): Promise<void> {
+    private async initializeInputManagerWithDefaults(): Promise<void> {
         try {
-            this.logger.debug(`NewNoteModal: Applying subclass template for type: ${selectedType}`);
+            // Set flag to prevent recursive callbacks during initialization
+            this.isInitializing = true;
+            this.inputManager.setInitializing(true);
             
-            // Store current user input before applying new template
-            const currentUserData = JSON.parse(JSON.stringify(this.data));
-            this.logger.debug("Stored current user data:", currentUserData);
+            // Get form data with defaults populated from the metadata template
+            const formDataWithDefaults = await this.templateManager.getFormDataWithDefaults();
             
-            // Use MetadataProcessor to apply the subclass template
-            this.metadataTemplate = this.metadataProcessor.applySubclassTemplateByName(
-                this.baseMetadataTemplate,
-                this.noteType,
-                selectedType
-            );
+            // Debug: Check if defaults already contain flat fields
+            this.debugFlatFields('After getFormDataWithDefaults()', formDataWithDefaults);
             
-            // Restore user input values directly to the template defaults (legacy approach)
-            this.restoreUserInputValues(this.metadataTemplate, currentUserData);
+            // Register reactive fields before updating data
+            this.registerReactiveFields();
             
-            // Clear data and input references completely before re-rendering
-            this.data = {};
-            this.inputs = {};
+            // Update the InputManager data with the processed defaults
+            this.inputManager.updateData(formDataWithDefaults);
             
-            // Re-render modal fields
-            this.inputContainer.empty();
-            this.renderInputs(this.inputContainer, this.metadataTemplate);
+            // Debug: Check InputManager state after update
+            const inputManagerData = this.inputManager.getData();
+            this.debugFlatFields('After InputManager.updateData()', inputManagerData);
             
-            this.logger.debug("Subclass template applied and modal re-rendered");
         } catch (error) {
-            console.error(`Could not apply subclass template for ${selectedType}:`, error);
+            console.error('Error initializing InputManager with defaults:', error);
+            // InputManager will continue to work with its existing data
+        } finally {
+            // Re-enable callbacks after initialization is complete
+            this.isInitializing = false;
+            this.inputManager.setInitializing(false);
+            
+            // Build reactive dependency maps after initialization (legacy compatibility)
+            this.buildReactiveDependencyMaps();
+            
+            // Evaluate all reactive fields now that initialization is complete
+            this.inputManager.evaluateAllReactiveFields();
         }
     }
 
     /**
-     * Apply the initial subclass template if the metadata template has a subclass field
-     * This should only be called once during modal initialization
+     * Register reactive fields with the InputManager
      */
-    private async applyInitialSubclassTemplate(): Promise<void> {
-        if (this.initialTemplateApplied) {
-            this.logger.debug("Initial template already applied, skipping");
+    private registerReactiveFields(): void {
+        this.logger.debug('🔗 Registering reactive fields with InputManager');
+        
+        // Clear any existing reactive field registrations
+        this.inputManager.clearReactiveFields();
+        
+        // Get all reactive fields from TemplateManager (both default and QueryDropdown types)
+        const reactiveFields = this.templateManager.getReactiveFieldsForRegistration();
+        
+        for (const reactiveField of reactiveFields) {
+            const { fieldPath, dependencies, type, field } = reactiveField;
+            
+            this.logger.debug(`📋 Found reactive field: "${fieldPath}" (${type}) depends on:`, dependencies);
+            
+            if (type === 'default') {
+                // Handle reactive default values
+                const evaluateFunction = (userInputs: Record<string, unknown>) => {
+                    try {
+                        const evaluator = this.templateManager.getEvaluator();
+                        if (typeof field.default === 'object' && field.default !== null && 'type' in field.default) {
+                            // Use evaluateUserInputFunction which handles all function descriptor formats
+                            return evaluator.evaluateUserInputFunction(field.default, userInputs as FormData);
+                        } else {
+                            // Fall back to regular field default evaluation
+                            return evaluator.evaluateFieldDefault(field, userInputs as FormData);
+                        }
+                    } catch (error) {
+                        this.logger.error(`Error evaluating reactive field "${fieldPath}":`, error);
+                        return undefined;
+                    }
+                };
+                
+                this.inputManager.registerReactiveField(fieldPath, dependencies, evaluateFunction);
+                
+            } else if (type === 'queryDropdown') {
+                // QueryDropdown reactive updates are handled directly by calling component's updateQuery() method
+                this.logger.debug(`� QueryDropdown reactive field "${fieldPath}" will be updated via component method`);
+            }
+        }
+        
+        this.logger.debug('✅ Enhanced reactive fields registered');
+    }
+
+    /**
+     * Build dependency maps using InputManager's reactive field registrations
+     */
+    private buildReactiveDependencyMaps(): void {
+        this.logger.debug('� Building reactive dependency maps');
+        
+        // Clear existing maps
+        this.reactiveDependencyMap.clear();
+        this.reverseDependencyMap.clear();
+        
+        // Get reactive fields to build dependency maps
+        const reactiveFields = this.templateManager.getReactiveFieldsForRegistration();
+        
+        for (const { fieldPath, dependencies } of reactiveFields) {
+            // Build forward mapping (field -> dependencies)
+            this.reactiveDependencyMap.set(fieldPath, dependencies);
+            
+            // Build reverse mapping (dependency -> dependents)
+            for (const dependency of dependencies) {
+                if (!this.reverseDependencyMap.has(dependency)) {
+                    this.reverseDependencyMap.set(dependency, []);
+                }
+                this.reverseDependencyMap.get(dependency)!.push(fieldPath);
+            }
+        }
+        
+        this.logger.debug('📊 Dependency maps built:', {
+            reactiveDependencyMap: Object.fromEntries(this.reactiveDependencyMap),
+            reverseDependencyMap: Object.fromEntries(this.reverseDependencyMap)
+        });
+    }
+
+    async onOpen() {
+        this.logger.debug('Modal opening');
+        
+        // Set modal title
+        this.titleEl.setText(this.modalTitle);
+        
+        // Create main UI
+        this.createMainUI();
+        
+        // Initialize InputManager with proper default values from the template FIRST
+        await this.initializeInputManagerWithDefaults();
+        
+        // THEN initialize object renderer with the populated data
+        this.initializeObjectRenderer();
+        
+        this.logger.debug('Modal opened successfully');
+    }
+
+    onClose() {
+        this.logger.debug('Modal closing', { submitted: this.submitted });
+        
+        // Clean up components
+        this.objectRenderer?.unload();
+        
+        // Submit null if modal was closed without submission
+        if (!this.submitted) {
+            this.onSubmit(null);
+        }
+    }
+
+    private createMainUI(): void {
+        this.modalEl.addClass('eln-new-note-modal');
+        const content = this.contentEl;
+        content.empty();
+        
+        // Main input container
+        this.inputContainer = content.createDiv({ cls: 'eln-modal-inputs' });
+        
+        // Footer with buttons
+        const footer = content.createDiv({ cls: 'eln-modal-footer' });
+        this.createFooterButtons(footer);
+    }
+
+    private createFooterButtons(footer: HTMLElement): void {
+        const buttonContainer = footer.createDiv({ cls: 'eln-modal-buttons' });
+        
+        // Cancel button
+        this.cancelButton = new ButtonComponent(buttonContainer);
+        this.cancelButton.setButtonText('Cancel');
+        this.cancelButton.setCta();
+        this.cancelButton.onClick(() => {
+            this.logger.debug('Cancel button clicked');
+            this.close();
+        });
+        
+        // Submit button  
+        this.submitButton = new ButtonComponent(buttonContainer);
+        this.submitButton.setButtonText('Create Note');
+        this.submitButton.setCta();
+        this.submitButton.onClick(() => {
+            this.logger.debug('Submit button clicked');
+            this.handleSubmit();
+        });
+    }
+
+    private initializeObjectRenderer(): void {
+        this.logger.debug('Initializing object renderer');
+        
+        // Set flag to prevent callbacks during UI rendering
+        this.isRenderingUI = true;
+        
+        try {
+            // Create the universal object renderer for the entire form
+            this.objectRenderer = new UniversalObjectRenderer({
+                container: this.inputContainer,
+                label: 'Note Metadata',
+                templateManager: this.templateManager,
+                inputManager: this.inputManager,
+                renderingMode: 'editable',
+                allowNewFields: true,
+                onChangeCallback: (data) => {
+                    // Only process callbacks after rendering is complete
+                    if (this.isRenderingUI) {
+                        this.logger.debug('⚠️ UniversalObjectRenderer change callback blocked during UI rendering');
+                        return;
+                    }
+                    
+                    this.logger.debug('UniversalObjectRenderer change callback triggered');
+                    this.debugFlatFields('UniversalObjectRenderer change callback', data);
+                    
+                    this.handleDataChange(data);
+                    this.validateForm();
+                },
+                app: this.app
+            });
+            
+            this.logger.debug('Object renderer initialized');
+        } finally {
+            // Re-enable callbacks after UI rendering is complete
+            this.isRenderingUI = false;
+        }
+    }
+
+    /**
+     * Handle data changes and trigger reactive field updates
+     */
+    private handleDataChange(data: FormData): void {
+        this.logger.debug('🔄 Handling reactive data changes for:', Object.keys(data));
+        
+        // Debug: Check state before reactive updates
+        this.debugFlatFields('Before reactive updates', data);
+        
+        // Use optimized dependency-based reactive updates
+        this.updateReactiveFieldsOptimized(data);
+        
+        // Debug: Check state after reactive updates
+        const finalData = this.inputManager.getData();
+        this.debugFlatFields('After reactive updates', finalData);
+    }
+    
+    /**
+     * Optimized reactive field updates using pre-built dependency maps
+     */
+    private updateReactiveFieldsOptimized(userData: FormData): void {
+        // Update the template manager's data context first
+        this.templateManager.updateDataContext(userData);
+        
+        // Get only actual field paths from the form data (exclude container objects)
+        const actualFieldPaths = this.getActualFieldPaths(userData);
+        
+        this.logger.debug('🔍 Checking reactive updates for actual fields:', actualFieldPaths);
+        
+        // For each actual field, check if any other fields depend on it or its nested properties
+        for (const changedField of actualFieldPaths) {
+            // Check for direct dependencies
+            const directDependentFields = this.reverseDependencyMap.get(changedField);
+            
+            if (directDependentFields && directDependentFields.length > 0) {
+                this.logger.debug(`🎯 Field "${changedField}" changed, updating dependent fields:`, directDependentFields);
+                
+                for (const dependentField of directDependentFields) {
+                    this.updateReactiveField(dependentField, userData);
+                }
+            }
+            
+            // Check for nested property dependencies (e.g., when "project" changes, trigger "project.name" dependencies)
+            for (const [dependencyPath, dependentFields] of this.reverseDependencyMap.entries()) {
+                if (dependencyPath.startsWith(changedField + '.')) {
+                    this.logger.debug(`🎯 Field "${changedField}" changed, triggering nested dependency "${dependencyPath}" for fields:`, dependentFields);
+                    
+                    for (const dependentField of dependentFields) {
+                        this.updateReactiveField(dependentField, userData);
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Get actual field paths from form data, recursively extracting nested field paths
+     */
+    private getActualFieldPaths(userData: FormData): string[] {
+        const actualFields: string[] = [];
+        
+        // Recursively extract all field paths that correspond to input fields
+        this.extractFieldPaths(userData, '', actualFields);
+        
+        return actualFields;
+    }
+    
+    /**
+     * Recursively extract field paths from nested objects
+     */
+    private extractFieldPaths(data: unknown, currentPath: string, result: string[]): void {
+        if (!data || typeof data !== 'object' || Array.isArray(data)) {
             return;
         }
         
-        this.logger.debug("NewNoteModal: Checking for subclass field in initial template");
-        const subclassField = this.metadataProcessor.findSubclassInputField(this.baseMetadataTemplate);
-        this.logger.debug("subclassField found:", subclassField);
+        const dataObj = data as Record<string, unknown>;
         
-        if (subclassField) {
-            this.logger.debug("NewNoteModal: Applying initial subclass template");
+        for (const [key, value] of Object.entries(dataObj)) {
+            const fieldPath = currentPath ? `${currentPath}.${key}` : key;
             
-            // Get the default subclass name
-            const defaultSubclass = this.metadataProcessor.getDefaultSubclassName(this.baseMetadataTemplate, this.noteType);
-            this.logger.debug("Default subclass:", defaultSubclass);
-            
-            if (defaultSubclass) {
-                // Apply the default subclass template to create the initial working template
-                this.logger.debug("NewNoteModal: Applying default subclass template for:", defaultSubclass);
-                this.metadataTemplate = this.metadataProcessor.applySubclassTemplateByName(
-                    this.baseMetadataTemplate, 
-                    this.noteType, 
-                    defaultSubclass
-                );
-                this.logger.debug("Initial subclass template applied");
-            } else {
-                this.logger.debug("No default subclass found, using base template");
+            // Check if this path corresponds to an actual input field in the template
+            if (this.isActualField(fieldPath, value)) {
+                result.push(fieldPath);
             }
-        } else {
-            this.logger.debug("No subclass field found in template");
+            
+            // If it's a nested object, recurse into it
+            if (value && typeof value === 'object' && !Array.isArray(value)) {
+                this.extractFieldPaths(value, fieldPath, result);
+            }
+        }
+    }
+    
+    /**
+     * Determine if a field is an actual input field vs a container object
+     */
+    private isActualField(fieldPath: string, value: unknown): boolean {
+        // Check if the field exists in the template as an input field
+        const template = this.templateManager.getCurrentTemplate();
+        const field = this.getFieldFromTemplate(template, fieldPath);
+        
+        // If it has an inputType, it's an actual field
+        if (field && typeof field === 'object' && 'inputType' in field) {
+            return true;
         }
         
-        // Mark that initial template has been applied
-        this.initialTemplateApplied = true;
+        // If it's a primitive value and not a nested object, treat it as a field
+        if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+            return true;
+        }
+        
+        // Otherwise, it's likely a container object
+        return false;
+    }
+    
+    /**
+     * Get a field from template using dot notation path
+     */
+    private getFieldFromTemplate(template: MetaDataTemplateProcessed, fieldPath: string): unknown {
+        const pathParts = fieldPath.split('.');
+        let current: unknown = template;
+        
+        for (const part of pathParts) {
+            if (current && typeof current === 'object' && part in current) {
+                current = (current as Record<string, unknown>)[part];
+            } else {
+                return undefined;
+            }
+        }
+        
+        return current;
+    }
+    
+    /**
+     * Update a specific reactive field (only handles QueryDropdown components)
+     * Regular reactive fields are handled by InputManager's built-in reactive system
+     */
+    private updateReactiveField(fieldPath: string, userData: FormData): void {
+        const dependencies = this.reactiveDependencyMap.get(fieldPath);
+        
+        if (!dependencies) {
+            this.logger.debug(`Field "${fieldPath}" has no reactive dependencies`);
+            return;
+        }
+        
+        // Check if all dependencies are satisfied
+        const allDependenciesSatisfied = dependencies.every(dep => {
+            const depValue = this.getNestedValue(userData, dep);
+            return depValue !== undefined && depValue !== null && depValue !== '';
+        });
+        
+        if (!allDependenciesSatisfied) {
+            this.logger.debug(`Not all dependencies satisfied for "${fieldPath}":`, {
+                dependencies,
+                values: dependencies.map(dep => ({ [dep]: this.getNestedValue(userData, dep) }))
+            });
+            return;
+        }
+        
+        this.logger.debug(`🎯 Updating reactive field "${fieldPath}" with satisfied dependencies:`, dependencies);
+        
+        try {
+            // Get the component instance from InputManager (now properly registered by UniversalObjectRenderer)
+            const component = this.inputManager.getInput(fieldPath);
+            
+            if (!component) {
+                // This is expected for regular reactive fields handled by InputManager
+                this.logger.debug(`No UI component for reactive field "${fieldPath}" - handled by InputManager's reactive system`);
+                return;
+            }
+            
+            this.logger.debug(`🔧 Found component for ${fieldPath}:`, {
+                componentType: component.constructor.name,
+                hasUpdateQuery: typeof component.updateQuery === 'function'
+            });
+            
+            // Only handle QueryDropdown components with updateQuery method
+            // Regular reactive fields (like 'tags') are handled by InputManager's reactive system
+            if (typeof component.updateQuery === 'function') {
+                this.logger.debug(`📡 Calling updateQuery() on QueryDropdown component for ${fieldPath}`);
+                component.updateQuery();
+                this.logger.debug(`✅ QueryDropdown ${fieldPath} update completed`);
+            } else {
+                this.logger.debug(`Component for ${fieldPath} is not a QueryDropdown - skipping (handled by InputManager)`, {
+                    componentType: component.constructor.name
+                });
+            }
+        } catch (error) {
+            this.logger.error(`Error updating reactive field "${fieldPath}":`, error);
+        }
+    }
+    
+    /**
+     * Type guard to check if a value is a function descriptor
+     */
+    private isFunctionDescriptor(value: unknown): value is FunctionDescriptor {
+        return (
+            typeof value === 'object' &&
+            value !== null &&
+            'type' in value &&
+            'value' in value &&
+            (value as FunctionDescriptor).type === 'function' &&
+            typeof (value as FunctionDescriptor).value === 'string'
+        );
+    }
+    
+    /**
+     * Helper to get nested values from userData using dot notation
+     */
+    private getNestedValue(obj: Record<string, unknown>, path: string): unknown {
+        return path.split('.').reduce((current: unknown, key: string) => {
+            return (current && typeof current === 'object' && key in current) 
+                ? (current as Record<string, unknown>)[key] 
+                : undefined;
+        }, obj);
+    }
+    
+    /**
+     * Debug helper to detect and log flat fields with dots
+     */
+    private debugFlatFields(context: string, data: FormData): void {
+        const flatFields = Object.keys(data).filter(key => key.includes('.'));
+        if (flatFields.length > 0) {
+            this.logger.error(`🚨 FLAT FIELDS DETECTED [${context}]:`, flatFields);
+            this.logger.error(`🔍 Full data [${context}]:`, data);
+            
+            // Log stack trace to see where this was called from
+            this.logger.error(`📍 Stack trace [${context}]:`, new Error().stack);
+        } else {
+            this.logger.debug(`✅ No flat fields found [${context}]`);
+        }
+    }
+
+    private validateForm(): boolean {
+        // Basic validation - can be extended
+        const data = this.inputManager.getData();
+        const hasRequiredFields = Object.keys(data).length > 0;
+        
+        // Update submit button state
+        this.submitButton.setDisabled(!hasRequiredFields);
+        
+        return hasRequiredFields;
+    }
+
+    private handleSubmit(): void {
+        this.logger.debug('Handling form submission');
+        
+        if (!this.validateForm()) {
+            this.logger.warn('Form validation failed');
+            return;
+        }
+        
+        const rawFormData = this.inputManager.getData();
+        
+        // 🔍 DEBUG: Log the raw form data structure
+        this.logger.debug('🔍 [SUBMIT] Raw form data from InputManager:', {
+            keys: Object.keys(rawFormData),
+            fullData: rawFormData
+        });
+        
+        // Filter out any flat fields that contain dots (which shouldn't exist)
+        const formData = this.sanitizeFormDataForSubmission(rawFormData);
+        
+        const currentTemplate = this.templateManager.getCurrentTemplate();
+        
+        this.logger.debug('Submitting form data:', { formData, template: currentTemplate });
+        
+        this.submitted = true;
+        this.onSubmit({
+            formData,
+            template: currentTemplate
+        });
+        
+        this.close();
+    }
+    
+    /**
+     * Remove any flat fields with dots from form data before submission
+     */
+    private sanitizeFormDataForSubmission(rawData: FormData): FormData {
+        const sanitized: FormData = {};
+        const filteredFields: string[] = [];
+        
+        for (const [key, value] of Object.entries(rawData)) {
+            // Skip fields that contain dots (these are flat field artifacts)
+            if (key.includes('.')) {
+                this.logger.warn(`🧹 Filtering out flat field "${key}" with value:`, value);
+                filteredFields.push(key);
+                continue;
+            }
+            
+            sanitized[key] = value;
+        }
+        
+        if (filteredFields.length > 0) {
+            this.logger.error(`🚨 CLEANED UP ${filteredFields.length} flat fields during submission:`, filteredFields);
+            this.logger.error(`📊 Original data keys:`, Object.keys(rawData));
+            this.logger.error(`📊 Sanitized data keys:`, Object.keys(sanitized));
+        } else {
+            this.logger.debug(`✅ No flat fields to clean up during submission`);
+        }
+        
+        return sanitized;
     }
 
     /**
-     * Restores user input values that were already entered before subclass template change
-     * @param template The template to restore values into
-     * @param data The form data containing user input values
+     * Public API for testing and integration
      */
-    private restoreUserInputValues(template: MetaDataTemplateProcessed, data: FormData): void {
-        if (!template || typeof template !== "object" || !data || typeof data !== "object") return;
+    
+
+    
+    /**
+     * Apply a subclass template by name (uses plugin settings)
+     */
+    applySubclassTemplateByName(subclassName: string): void {
+        this.logger.debug('🔧 Applying subclass template by name:', subclassName);
         
-        for (const key of Object.keys(template)) {
-            const templateField = template[key];
-            if (templateField && typeof templateField === "object" && "inputType" in templateField) {
-                if (data[key] !== undefined) {
-                    const field = templateField as MetaDataTemplateFieldProcessed;
-                    field.default = data[key] as typeof field.default;
-                }
-            }
-            // Recurse into nested objects (but not arrays or fields with inputType)
-            if (
-                templateField &&
-                typeof templateField === "object" &&
-                !Array.isArray(templateField) &&
-                !("inputType" in templateField)
-            ) {
-                this.restoreUserInputValues(templateField as MetaDataTemplateProcessed, (data[key] as FormData) || {});
-            }
+        // Debug: Check state before subclass template by name
+        const beforeSubclass = this.inputManager.getData();
+        this.debugFlatFields('Before applySubclassTemplateByName', beforeSubclass);
+        
+        this.templateManager.applySubclassTemplateByName(subclassName);
+        this.objectRenderer.updateTemplate(this.templateManager);
+        
+        // Rebuild dependency maps after template change
+        this.buildReactiveDependencyMaps();
+        
+        // Debug: Check state after subclass template by name
+        const afterSubclass = this.inputManager.getData();
+        this.debugFlatFields('After applySubclassTemplateByName', afterSubclass);
+        
+        this.logger.debug('✅ Subclass template applied successfully');
+    }
+    
+    /**
+     * Get current form data (for testing)
+     */
+    getCurrentData(): FormData {
+        return this.inputManager.getData();
+    }
+    
+    /**
+     * Set form data programmatically (for testing)
+     */
+    setFormData(data: FormData): void {
+        this.logger.debug('📝 Setting form data programmatically');
+        
+        // Debug: Check input data for flat fields
+        this.debugFlatFields('setFormData input', data);
+        
+        this.inputManager.updateData(data);
+        
+        // Debug: Check InputManager state after updateData
+        const afterUpdateData = this.inputManager.getData();
+        this.debugFlatFields('After InputManager.updateData in setFormData', afterUpdateData);
+        
+        this.objectRenderer.setValue(data);
+        
+        // Debug: Check final state after objectRenderer.setValue
+        const afterSetValue = this.inputManager.getData();
+        this.debugFlatFields('After objectRenderer.setValue in setFormData', afterSetValue);
+    }
+    
+    /**
+     * Get current template state (for testing)
+     */
+    getCurrentTemplate(): MetaDataTemplateProcessed {
+        return this.templateManager.getCurrentTemplate();
+    }
+    
+    /**
+     * Reset to base template (for testing)
+     */
+    resetTemplate(): void {
+        this.templateManager.resetToBase();
+        this.objectRenderer.updateTemplate(this.templateManager);
+        
+        // Rebuild dependency maps after template reset
+        this.buildReactiveDependencyMaps();
+        
+        this.logger.debug('Template reset to base');
+    }
+    
+    /**
+     * Undo last template change
+     */
+    undoLastTemplateChange(): boolean {
+        const success = this.templateManager.undoLastChange();
+        if (success) {
+            this.objectRenderer.updateTemplate(this.templateManager);
+            
+            // Rebuild dependency maps after template change
+            this.buildReactiveDependencyMaps();
+            
+            this.logger.debug('Template change undone');
         }
+        return success;
+    }
+    
+    /**
+     * Check if a field is editable
+     */
+    isFieldEditable(fieldPath: string): boolean {
+        return this.templateManager.isFieldEditable(fieldPath);
+    }
+    
+    /**
+     * Get the default subclass name for the current note type
+     */
+    getDefaultSubclassName(): string | null {
+        return this.templateManager.getDefaultSubclassName();
     }
 }

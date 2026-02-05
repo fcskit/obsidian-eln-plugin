@@ -1,18 +1,22 @@
 import { setIcon } from "obsidian";
-import type { NestedPropertiesEditorView } from "../../../views/NestedPropertiesEditor";
+import { NestedPropertiesEditorView } from "../../../views/NestedPropertiesEditor";
 import type { NestedPropertiesEditorCodeBlockView } from "../../../views/NestedPropertiesEditor";
 import type { FrontmatterPrimitive, Primitive } from "../../../../types/core";
 import { getPropertyIcon } from "../helpers/getPropertyIcon";
 import { getPropertyInputType } from "../helpers/getPropertyInputType";
+import { createLogger } from "../../../../utils/Logger";
 import { updateProperties } from "../utils/updateProperties";
 import { changeKeyName } from "../utils/changeKeyName";
-import { getFrontmatterValue } from "../helpers/getFrontmatterValue";
 import { createInternalLinkElement } from "../elements/createInternalLinkElement";
 import { createExternalLinkElement } from "../elements/createExternalLinkElement";
-import { latexToHTML } from "../../components/latexToHTML";
+import { createLatexElement } from "../elements/createLatexElement";
 import { showTypeSwitchMenu } from "../helpers/showTypeSwitchMenu";
 import { addKeyWrapperResizeHandle } from "../helpers/addKeyWrapperResizeHandle";
-import { createEditableDiv, getEditableDivValue } from "../elements/createEditableDiv";
+import { createEditableDiv } from "../elements/createEditableDiv";
+import { createTypeLabel } from "../helpers/createTypeLabel";
+import { getDataType, parsePrimitiveValue } from "../helpers/getDataType";
+
+const logger = createLogger('npe');
 
 /**
  * Render a primitive value (string, number, boolean, link, etc.) as an editable row.
@@ -51,13 +55,20 @@ export function renderPrimitive(
     view.registerDomEvent(keyLabelDiv, "blur", async () => {
         const newKey = keyLabelDiv.textContent?.trim();
         if (newKey && newKey !== key) {
+            
             // If the key of the parent object has been renamed, the fullKey variable may
             // no longer point to the correct object in the frontmatter.
             // Therefore we need to update the fullKey from the data-key attribute of the container
             const oldFullKey = container.getAttribute("data-key") || fullKey;
             fullKey = oldFullKey.split(".").slice(0, -1).concat(newKey).join(".");
-            // Update the key in the frontmatter
-            await changeKeyName(app, file, oldFullKey, newKey);
+            
+            // Update the key in the frontmatter using standard changeKeyName function
+            if (view instanceof NestedPropertiesEditorView && view.currentFile) {
+                await changeKeyName({ app: view.app, file: view.currentFile, key: oldFullKey, newKeyName: newKey, view });
+            } else if (file) {
+                // Fallback for code block view
+                await changeKeyName({ app, file, key: oldFullKey, newKeyName: newKey });
+            }
             // Update the key and fullKey variables and the data-key attribute
             key = newKey;
             container.setAttribute("data-key", fullKey);
@@ -79,36 +90,8 @@ export function renderPrimitive(
     } else if (dataType === "link") {
         createInternalLinkElement(view, inputValue as string, valueDiv, fullKey);
     } else if (dataType === "latex") {
-        // Render LaTeX as HTML, allow editing on click
-        const latexDiv = valueDiv.createDiv({ cls: "npe-latex" });
-        latexDiv.innerHTML = latexToHTML(inputValue as string);
-        fullKey = container.getAttribute("data-key") || fullKey;
-        view.registerDomEvent(latexDiv, "click", () => {
-            const val = getFrontmatterValue(app, fullKey);
-            let stringVal = "";
-            if (typeof val === "string") {
-                stringVal = val.startsWith("$") && val.endsWith("$") ? val.slice(1, -1) : val;
-            } else if (val != null) {
-                stringVal = String(val);
-            }
-            latexDiv.innerHTML = stringVal;
-            latexDiv.contentEditable = "true";
-            latexDiv.focus();
-        });
-        view.registerDomEvent(latexDiv,"blur", () => {
-            const newValue = latexDiv.textContent || "";
-            fullKey = container.getAttribute("data-key") || fullKey;
-            if (view.currentFile) {
-                // Use internal update to prevent full re-render for individual value changes
-                if ('updatePropertiesInternal' in view && typeof view.updatePropertiesInternal === 'function') {
-                    view.updatePropertiesInternal(fullKey, newValue, "latex");
-                } else {
-                    updateProperties(view.app, view.currentFile, fullKey, newValue, "latex");
-                }
-            }
-            latexDiv.innerHTML = latexToHTML(newValue);
-            latexDiv.contentEditable = "false";
-        });
+        // Use unified LaTeX element for consistent rendering with \mathsf{} wrapping
+        createLatexElement(view, inputValue as string, valueDiv, fullKey);
     } else if (inputType) {
         // Use editable divs for text/number inputs, HTML inputs for date/checkbox
         if (inputType === "text" || inputType === "number") {
@@ -122,14 +105,16 @@ export function renderPrimitive(
                     if (callback) {
                         callback(newValue);
                     }
+                    logger.debug(`Editable div callback: ${fullKey} = ${newValue} (${dataType})`);
                     fullKey = container.getAttribute("data-key") || fullKey;
+                    
                     if (view.currentFile) {
-                        // Use internal update to prevent full re-render for individual value changes
-                        if ('updatePropertiesInternal' in view && typeof view.updatePropertiesInternal === 'function') {
-                            view.updatePropertiesInternal(fullKey, newValue, dataType);
-                        } else {
-                            updateProperties(view.app, view.currentFile, fullKey, newValue, dataType);
+                        // Set internal change flag BEFORE calling updateProperties
+                        if (view instanceof NestedPropertiesEditorView) {
+                            view.setInternalChangeFlag();
                         }
+                        // Use standard updateProperties function
+                        updateProperties(view.app, view.currentFile, fullKey, newValue, dataType);
                     }
                     // Optionally update label if this is a key of an array object
                     if (isKeyOfArrayObject && key === "name") {
@@ -156,12 +141,12 @@ export function renderPrimitive(
                 }
                 fullKey = container.getAttribute("data-key") || fullKey;
                 if (view.currentFile) {
-                    // Use internal update to prevent full re-render for individual value changes
-                    if ('updatePropertiesInternal' in view && typeof view.updatePropertiesInternal === 'function') {
-                        view.updatePropertiesInternal(fullKey, inputType === "checkbox" ? input.checked : input.value, dataType);
-                    } else {
-                        updateProperties(view.app, view.currentFile, fullKey, inputType === "checkbox" ? input.checked : input.value, dataType);
+                    // Set internal change flag BEFORE calling updateProperties
+                    if (view instanceof NestedPropertiesEditorView) {
+                        view.setInternalChangeFlag();
                     }
+                    // Use standard updateProperties function
+                    updateProperties(view.app, view.currentFile, fullKey, inputType === "checkbox" ? input.checked : input.value, dataType);
                 }
                 // Optionally update label if this is a key of an array object
                 if (isKeyOfArrayObject && key === "name") {
@@ -176,16 +161,23 @@ export function renderPrimitive(
         valueDiv.textContent = value !== null ? value.toString() : "";
     }
 
+    // --- Type Label (if enabled in settings) ---
+    const showTypeLabels = view.plugin?.settings?.npe?.showDataTypes || false;
+    const typeLabel = createTypeLabel(value, showTypeLabels);
+    if (typeLabel) {
+        container.appendChild(typeLabel);
+    }
+
     // --- Remove Button ---
     const removeButton = container.createDiv({ cls: "npe-button npe-button--remove", text: "×" });
     view.registerDomEvent(removeButton, "click", () => {
         if (view.currentFile) {
-            // Use internal update to prevent full re-render for removal operations
-            if ('updatePropertiesInternal' in view && typeof view.updatePropertiesInternal === 'function') {
-                view.updatePropertiesInternal(fullKey, undefined, "undefined");
-            } else {
-                updateProperties(view.app, view.currentFile, fullKey, undefined, "undefined");
+            // Set internal change flag BEFORE calling updateProperties
+            if (view instanceof NestedPropertiesEditorView) {
+                view.setInternalChangeFlag();
             }
+            // Use standard updateProperties function for removal
+            updateProperties(view.app, view.currentFile, fullKey, undefined, "undefined");
         }
         container.remove();
     });
@@ -210,10 +202,7 @@ function getPrimitiveDetails(
     icon: string;
     callback?: (input: FrontmatterPrimitive) => void;
 } {
-    let dataType: string = typeof value;
-    if (dataType === 'string') { 
-        dataType = detectStringType(value as string);
-    }
+    const dataType: string = getDataType(value);
 
     const inputType = getPropertyInputType(dataType);
     let inputValue = parsePrimitiveValue(dataType, value);
@@ -231,56 +220,11 @@ function getPrimitiveDetails(
         } else if (dataType === 'string' || dataType === 'link' || dataType === 'external-link' || dataType === 'date' || dataType === 'latex') {
             inputValue = input as string;
         } else {
-            console.warn(`Unknown data type: ${dataType}. Input not processed.`);
+            logger.warn(`Unknown data type: ${dataType}. Input not processed.`);
         }
     };
 
     return { dataType, inputType, inputValue, icon, callback };
 }
 
-type ValueTransformKey = 'string' | 'number' | 'boolean' | 'link' | 'external-link' | 'date' | 'latex' | 'unknown';
 
-function parsePrimitiveValue(dataType: string, value: FrontmatterPrimitive): FrontmatterPrimitive {
-    const valueTransform: Record<ValueTransformKey, (v: FrontmatterPrimitive) => FrontmatterPrimitive> = {
-        string: (v: FrontmatterPrimitive) => String(v ?? ''),
-        number: (v: FrontmatterPrimitive) => typeof v === 'string' ? parseFloat(v) : Number(v ?? 0),
-        boolean: (v: FrontmatterPrimitive) => Boolean(v),
-        link: (v: FrontmatterPrimitive) => {
-            const str = String(v ?? '');
-            return str.startsWith("[[") && str.endsWith("]]") ? str.slice(2, -2) : str;
-        },
-        'external-link': (v: FrontmatterPrimitive) => String(v ?? ''),
-        date: (v: FrontmatterPrimitive) => String(v ?? ''),
-        latex: (v: FrontmatterPrimitive) => {
-            const str = String(v ?? '');
-            return str.startsWith("$") && str.endsWith("$") ? str.slice(1, -1) : str;
-        },
-        unknown: (v: FrontmatterPrimitive) => String(v ?? ''),
-    };
-    if ((dataType as ValueTransformKey) in valueTransform) {
-        return valueTransform[dataType as ValueTransformKey](value);
-    } else {
-        console.warn(`Unknown data type: ${dataType}. Returning value as is.`);
-        return value;
-    }
-}
-
-function detectStringType(value: string): string  {
-    let strType: string;
-
-    if (value.startsWith("[[") && value.endsWith("]]")) {
-        strType = "link";
-        value = value.slice(2, -2);
-    } else if (/^\[.*\]\(.*\)$/.test(value)) {
-        strType = "external-link";
-    } else if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-        strType = "date";
-    } else if (/^\$.*\$$/.test(value)) {
-        strType = "latex";
-        value = value.slice(1, -1);
-    } else {
-        strType = "string";
-    }
-
-    return strType
-}

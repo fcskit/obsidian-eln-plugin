@@ -95,12 +95,24 @@
     --npe-value-font-size: var(--metadata-label-font-size, 0.875rem);
     --npe-value-font-weight: 400;
     --npe-value-field-width: calc(var(--file-line-width, 40rem) - var(--npe-key-width) - var(--npe-button-remove-width));
-    --npe-value-padding-left: 5px;
+    --npe-value-padding-left: 8px;
     --npe-row-height: 32px; /* or whatever fits your design */
     --npe-indentation-guide-color: var(--nav-indentation-guide-color);
     --npe-background-list-item: rgba(var(--mono-rgb-100), 0.067);
     --npe-background-tag-item: var(--tag-background);
     --npe-font-color-tag-item: var(--tag-color);
+    
+    /* Data type colors */
+    --npe-color-string: var(--text-normal);
+    --npe-color-number: var(--color-blue);
+    --npe-color-boolean: var(--color-orange);
+    --npe-color-boolean-true: var(--color-green);
+    --npe-color-boolean-false: var(--color-red);
+    --npe-color-date: var(--color-green);
+    --npe-color-link: var(--link-color);
+    --npe-color-external-link: var(--link-color);
+    --npe-color-latex: var(--color-pink);
+    
     min-width: 400px;
     max-width: 55rem;
     overflow: auto;
@@ -200,7 +212,7 @@
 .npe-key-label,
 .npe-list-item-value,
 .npe-editable-link,
-.npe-editable-link a {
+.npe-editable-link {
     font-size: var(--npe-value-font-size);
     font-weight: var(--npe-value-font-weight);
     color: var(--metadata-label-text-color);
@@ -247,12 +259,13 @@
     background-color: var(--npe-background-list-item);
     border: none;
     border-radius: var(--pill-radius);
-    color: var(--tag-color);
+    color: var(--text-normal);
     font-weight: var(--npe-value-font-weight);
     margin-bottom: 2px;
 }
 
 .npe-list-item.npe-tag-item {
+    color: var(--npe-font-color-tag-item);
     background-color: var(--npe-background-tag-item);
 }
 
@@ -264,7 +277,18 @@
     margin-left: 10px;
 }
 
-.npe-list-item input {
+.npe-list-item input[type="date"] {
+    background-color: transparent;
+    border: none;
+    padding: 0 5px;
+    height: calc(var(--npe-value-font-size) + 4px);
+    font-weight: var(--npe-value-font-weight);
+    max-width: 110px;
+}
+
+
+/* Other input types (excluding date and checkbox) */
+.npe-list-item input:not([type="date"]):not([type="checkbox"]) {
     background-color: transparent;
     border: none;
     padding: 0 5px;
@@ -281,6 +305,109 @@
 
 .npe-list-item .npe-button--remove:hover {
     color: var(--text-normal);
+}
+
+/* === Array Item Type Colors === */
+.npe-list-item[data-type="number"] .npe-list-item-value,
+.npe-list-item[data-type="number"] input,
+.npe-list-item[data-type="number"] .npe-editable-div {
+    color: var(--npe-color-number);
+    font-weight: 500;
+}
+
+.npe-list-item[data-type="boolean"] .npe-list-item-value,
+.npe-list-item[data-type="boolean"] input,
+.npe-list-item[data-type="boolean"] .npe-editable-div {
+    color: var(--npe-color-boolean);
+    font-weight: 500;
+}
+
+.npe-list-item[data-type="date"] .npe-list-item-value,
+.npe-list-item[data-type="date"] .npe-editable-div {
+    color: var(--npe-color-date);
+    font-weight: 500;
+}
+
+.npe-list-item[data-type="link"] .npe-list-item-value,
+.npe-list-item[data-type="link"] input,
+.npe-list-item[data-type="link"] .npe-editable-div,
+.npe-list-item[data-type="link"] .npe-editable-link,
+.npe-list-item[data-type="link"] .npe-editable-link a {
+    color: var(--npe-color-link);
+}
+
+.npe-list-item[data-type="external-link"] .npe-list-item-value,
+.npe-list-item[data-type="external-link"] input,
+.npe-list-item[data-type="external-link"] .npe-editable-div,
+.npe-list-item[data-type="external-link"] .npe-editable-link,
+.npe-list-item[data-type="external-link"] .npe-editable-link a {
+    color: var(--npe-color-external-link);
+}
+
+.npe-list-item[data-type="latex"] .npe-list-item-value,
+.npe-list-item[data-type="latex"] .npe-editable-div {
+    /* color: var(--npe-color-latex); */
+    margin: 0 5px 0 10px; /* Match .npe-list-item-value margin for proper alignment */
+}
+
+.npe-list-item[data-type="latex"] .npe-list-item-latex {
+    /* color: var(--npe-color-latex); */
+    font-size: var(--npe-value-font-size);
+    margin: 0 5px 0 10px; /* Match other list item values for alignment */
+}
+
+/* Keep default color for strings and other types */
+.npe-list-item[data-type="string"] .npe-list-item-value,
+.npe-list-item[data-type="string"] input,
+.npe-list-item[data-type="string"] .npe-editable-div {
+    color: inherit;
+}
+
+/* === Type Labels === */
+.npe-type-label {
+    font-size: calc(var(--npe-value-font-size) * 0.67); /* 2/3 of normal size */
+    color: var(--text-faint);
+    font-weight: 400;
+    margin-left: auto;
+    margin-right: 8px; /* Space between type label and remove button */
+    padding: 2px 6px;
+    border-radius: var(--radius-s);
+    background-color: var(--background-modifier-form-field);
+    border: 1px solid var(--background-modifier-border);
+    white-space: nowrap;
+    flex-shrink: 0;
+    opacity: 0.8;
+    -webkit-user-select: none;
+    user-select: none;
+    pointer-events: none;
+}
+
+.npe-type-label.npe-type-string {
+    color: var(--npe-color-string);
+}
+
+.npe-type-label.npe-type-number {
+    color: var(--npe-color-number);
+}
+
+.npe-type-label.npe-type-boolean {
+    color: var(--npe-color-boolean);
+}
+
+.npe-type-label.npe-type-date {
+    color: var(--npe-color-date);
+}
+
+.npe-type-label.npe-type-link {
+    color: var(--npe-color-link);
+}
+
+.npe-type-label.npe-type-external-link {
+    color: var(--npe-color-external-link);
+}
+
+.npe-type-label.npe-type-latex {
+    color: var(--npe-color-latex);
 }
 
 /* === Array and Object Containers === */
@@ -351,27 +478,31 @@
     cursor: default;
 }
 
-.npe-key-value-container .npe-button--remove,
-.npe-object-key-container .npe-button--remove {
-    margin-left: auto;
+.npe-value {
+    display: flex;
+    align-items: center;
 }
 
-.npe-value input {
+.npe-value .npe-list-item-latex {
+    font-size: var(--npe-value-font-size);
+    margin-left: var(--npe-value-padding-left);
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+.npe-value input[type="checkbox"] {
+    margin-left: var(--npe-value-padding-left);
+}
+
+.npe-value input[type="date"] {
     background-color: transparent;
     border: none;
-    padding: 0px;
-}
-
-.npe-value input:focus-visible {
-    box-shadow: none;
-}
-
-.npe-value input:not([type="date"]) {
     padding: var(--size-4-1) var(--size-4-2); /* Adjust as needed for alignment */
 }
 
 /* === Editable Div Styles === */
 .npe-editable-div {
+    align-items: center;
     background-color: transparent;
     border: none;
     padding: var(--size-4-1) var(--size-4-2);
@@ -419,8 +550,8 @@
     background-color: var(--background-modifier-error);
 }
 
-/* === Enhanced Input Component Styles === */
-.enhanced-input-wrapper {
+/* === NPE Enhanced Input Component Styles === */
+.npe-enhanced-input-wrapper {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -428,65 +559,76 @@
     border-radius: var(--radius-s);
 }
 
-.enhanced-input-wrapper:hover {
+.npe-enhanced-input-wrapper:hover {
     background-color: var(--background-modifier-hover);
 }
 
-.enhanced-input-key-section {
+.npe-enhanced-input-key-section {
     min-width: 120px;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
 }
 
-.enhanced-input-key-editable {
+.npe-enhanced-input-key-editable {
     font-weight: 500;
     color: var(--metadata-label-text-color);
     border: 1px solid transparent;
     border-radius: var(--radius-s);
     padding: 2px 4px;
+    line-height: 1.4;
 }
 
-.enhanced-input-key-editable:hover {
+.npe-enhanced-input-key-editable:hover {
     border-color: var(--background-modifier-border);
 }
 
-.enhanced-input-key-editable:focus {
+.npe-enhanced-input-key-editable:focus {
     border-color: var(--background-modifier-border-focus);
 }
 
-.enhanced-input-key-static {
+.npe-enhanced-input-key-static {
     font-weight: 500;
     color: var(--metadata-label-text-color);
     padding: 2px 4px;
+    line-height: 1.4;
 }
 
-.enhanced-input-value-section {
+.npe-enhanced-input-value-section {
     flex: 1;
     min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-.enhanced-input-unit-section {
+.npe-enhanced-input-unit-section {
     flex-shrink: 0;
-    min-width: 60px;
+    display: flex;
+    align-items: center;
 }
 
-.enhanced-input-unit-static {
+.npe-enhanced-input-unit-static {
     color: var(--text-faint);
     font-size: var(--font-ui-smaller);
     padding: 2px 4px;
+    line-height: 1.4;
+    white-space: nowrap;
 }
 
-.enhanced-input-controls {
+.npe-enhanced-input-controls {
     display: flex;
     gap: 4px;
     opacity: 0;
     transition: opacity 0.2s;
+    align-items: center;
 }
 
-.enhanced-input-wrapper:hover .enhanced-input-controls {
+.npe-enhanced-input-wrapper:hover .npe-enhanced-input-controls {
     opacity: 1;
 }
 
-.enhanced-input-controls button {
+.npe-enhanced-input-controls button {
     padding: 2px !important;
     min-height: 20px !important;
     min-width: 20px !important;
@@ -495,11 +637,11 @@
     box-shadow: none !important;
 }
 
-.enhanced-input-controls button:hover {
+.npe-enhanced-input-controls button:hover {
     background: var(--background-modifier-hover) !important;
 }
 
-.enhanced-input-type-menu {
+.npe-enhanced-input-type-menu {
     background: var(--background-primary);
     border: 1px solid var(--background-modifier-border);
     border-radius: var(--radius-s);
@@ -508,14 +650,14 @@
     z-index: 1000;
 }
 
-.enhanced-input-type-menu-item {
+.npe-enhanced-input-type-menu-item {
     padding: 4px 8px;
     cursor: pointer;
     border-radius: var(--radius-s);
     font-size: var(--font-ui-small);
 }
 
-.enhanced-input-type-menu-item:hover {
+.npe-enhanced-input-type-menu-item:hover {
     background-color: var(--background-modifier-hover);
 }
 
@@ -629,6 +771,57 @@
     width: 10px;
     height: var(--npe-key-font-size);
     cursor: text;
+}
+
+/* === Boolean Elements === */
+.npe-editable-boolean {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.npe-boolean-value {
+    cursor: pointer;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-weight: 500;
+    font-size: var(--npe-value-font-size);
+    transition: background-color 0.15s ease;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.npe-boolean-value:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+.npe-boolean-true {
+    color: var(--npe-color-boolean-true);
+}
+
+.npe-boolean-false {
+    color: var(--npe-color-boolean-false);
+}
+
+/* When boolean is being edited (contentEditable=true) */
+.npe-boolean-value[contenteditable="true"] {
+    background-color: var(--background-primary);
+    border: 1px solid var(--background-modifier-border-focus);
+    outline: none;
+    cursor: text;
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+/* Array context styling for booleans */
+.npe-list-item[data-type="boolean"] .npe-editable-boolean {
+    flex: 1;
+    margin: 0 5px 0 10px; /* Match .npe-list-item-value margin */
+}
+
+.npe-list-item[data-type="boolean"] .npe-boolean-value {
+    min-width: 30px;
+    text-align: center;
 }
 
 .npe-latex {
@@ -873,4 +1066,87 @@
 
 .npe-editable-div[data-input-type="number"]:focus {
     text-align: left;
+}
+
+/* External link improvements for usability */
+.npe-external-link {
+    /* Allow text wrapping for long external links */
+    white-space: normal !important;
+    word-wrap: break-word;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    max-width: 100%;
+    display: inline-block;
+    line-height: 1.3;
+}
+
+/* When editing external links, show different styling */
+.npe-external-link.npe-editing {
+    background-color: var(--background-modifier-form-field);
+    border: 1px solid var(--background-modifier-border-focus);
+    border-radius: var(--input-radius);
+    padding: 2px 4px;
+    cursor: text;
+    /* Remove link styling during editing */
+    color: var(--text-normal) !important;
+    text-decoration: none !important;
+}
+
+/* Override the general nowrap for external links specifically */
+.npe-list-item[data-type="external-link"] .npe-editable-link a {
+    white-space: normal !important;
+    word-wrap: break-word;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+}
+
+/* === Date Element Styles === */
+.npe-date-element {
+    position: relative;
+    display: inline-block;
+}
+
+.npe-date-text-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 20px; /* Leave space for date picker icon */
+    bottom: 0;
+    cursor: text;
+    z-index: 1;
+    background-color: transparent;
+}
+
+.npe-date-text-overlay:hover {
+    background-color: rgba(var(--mono-rgb-100), 0.05);
+    border-radius: 2px;
+}
+
+.npe-date-text-edit {
+    font-family: inherit;
+    font-size: inherit;
+    padding: 2px 4px;
+    border: 1px solid var(--background-modifier-border-focus);
+    border-radius: var(--input-radius);
+    background-color: var(--background-modifier-form-field);
+    color: var(--text-normal);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* === Error Message Styles === */
+.eln-npe-error-container {
+    padding: 1em;
+    border-radius: 4px;
+}
+
+.eln-npe-error {
+    color: var(--text-error);
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
+
+.eln-npe-error-detail {
+    color: var(--text-muted);
+    font-size: 0.9em;
 }

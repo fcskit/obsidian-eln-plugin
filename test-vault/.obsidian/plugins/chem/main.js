@@ -9,6 +9,7 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -33,6 +34,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __publicField = (obj, key, value) => {
+  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
 
 // node_modules/smiles-drawer/src/ArrayHelper.js
 var require_ArrayHelper = __commonJS({
@@ -6963,8 +6968,8 @@ var require_SvgWrapper = __commonJS({
         mask.setAttributeNS(null, "fill", "white");
         masks.appendChild(mask);
         masks.setAttributeNS(null, "id", this.uid + "-text-mask");
-        for (let path2 of pathChildNodes) {
-          paths.appendChild(path2);
+        for (let path of pathChildNodes) {
+          paths.appendChild(path);
         }
         for (let backgroundItem of this.backgroundItems) {
           background.appendChild(backgroundItem);
@@ -7757,22 +7762,21 @@ var require_PixelsToSvg = __commonJS({
   }
 });
 
-// node_modules/chroma-js/chroma.js
+// node_modules/chroma-js/dist/chroma.cjs
 var require_chroma = __commonJS({
-  "node_modules/chroma-js/chroma.js"(exports, module2) {
+  "node_modules/chroma-js/dist/chroma.cjs"(exports, module2) {
     (function(global2, factory) {
       typeof exports === "object" && typeof module2 !== "undefined" ? module2.exports = factory() : typeof define === "function" && define.amd ? define(factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, global2.chroma = factory());
     })(exports, function() {
       "use strict";
-      var limit$2 = function(x, min2, max2) {
-        if (min2 === void 0)
-          min2 = 0;
-        if (max2 === void 0)
-          max2 = 1;
-        return x < min2 ? min2 : x > max2 ? max2 : x;
-      };
-      var limit$1 = limit$2;
-      var clip_rgb$3 = function(rgb2) {
+      function limit(x, low, high) {
+        if (low === void 0)
+          low = 0;
+        if (high === void 0)
+          high = 1;
+        return min$3(max$3(low, x), high);
+      }
+      function clip_rgb(rgb2) {
         rgb2._clipped = false;
         rgb2._unclipped = rgb2.slice(0);
         for (var i2 = 0; i2 <= 3; i2++) {
@@ -7780,29 +7784,38 @@ var require_chroma = __commonJS({
             if (rgb2[i2] < 0 || rgb2[i2] > 255) {
               rgb2._clipped = true;
             }
-            rgb2[i2] = limit$1(rgb2[i2], 0, 255);
+            rgb2[i2] = limit(rgb2[i2], 0, 255);
           } else if (i2 === 3) {
-            rgb2[i2] = limit$1(rgb2[i2], 0, 1);
+            rgb2[i2] = limit(rgb2[i2], 0, 1);
           }
         }
         return rgb2;
-      };
+      }
       var classToType = {};
-      for (var i$1 = 0, list$1 = ["Boolean", "Number", "String", "Function", "Array", "Date", "RegExp", "Undefined", "Null"]; i$1 < list$1.length; i$1 += 1) {
+      for (var i$1 = 0, list$1 = [
+        "Boolean",
+        "Number",
+        "String",
+        "Function",
+        "Array",
+        "Date",
+        "RegExp",
+        "Undefined",
+        "Null"
+      ]; i$1 < list$1.length; i$1 += 1) {
         var name = list$1[i$1];
         classToType["[object " + name + "]"] = name.toLowerCase();
       }
-      var type$p = function(obj) {
+      function type(obj) {
         return classToType[Object.prototype.toString.call(obj)] || "object";
-      };
-      var type$o = type$p;
-      var unpack$B = function(args, keyOrder) {
+      }
+      function unpack(args, keyOrder) {
         if (keyOrder === void 0)
           keyOrder = null;
         if (args.length >= 3) {
           return Array.prototype.slice.call(args);
         }
-        if (type$o(args[0]) == "object" && keyOrder) {
+        if (type(args[0]) == "object" && keyOrder) {
           return keyOrder.split("").filter(function(k) {
             return args[0][k] !== void 0;
           }).map(function(k) {
@@ -7810,58 +7823,47 @@ var require_chroma = __commonJS({
           });
         }
         return args[0];
-      };
-      var type$n = type$p;
-      var last$4 = function(args) {
+      }
+      function last(args) {
         if (args.length < 2) {
           return null;
         }
         var l = args.length - 1;
-        if (type$n(args[l]) == "string") {
+        if (type(args[l]) == "string") {
           return args[l].toLowerCase();
         }
         return null;
-      };
+      }
       var PI$2 = Math.PI;
-      var utils = {
-        clip_rgb: clip_rgb$3,
-        limit: limit$2,
-        type: type$p,
-        unpack: unpack$B,
-        last: last$4,
-        PI: PI$2,
-        TWOPI: PI$2 * 2,
-        PITHIRD: PI$2 / 3,
-        DEG2RAD: PI$2 / 180,
-        RAD2DEG: 180 / PI$2
-      };
-      var input$h = {
+      var min$3 = Math.min;
+      var max$3 = Math.max;
+      var TWOPI = PI$2 * 2;
+      var PITHIRD = PI$2 / 3;
+      var DEG2RAD = PI$2 / 180;
+      var RAD2DEG = 180 / PI$2;
+      var input = {
         format: {},
         autodetect: []
       };
-      var last$3 = utils.last;
-      var clip_rgb$2 = utils.clip_rgb;
-      var type$m = utils.type;
-      var _input = input$h;
-      var Color$D = function Color2() {
+      var Color = function Color2() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
         var me = this;
-        if (type$m(args[0]) === "object" && args[0].constructor && args[0].constructor === this.constructor) {
+        if (type(args[0]) === "object" && args[0].constructor && args[0].constructor === this.constructor) {
           return args[0];
         }
-        var mode = last$3(args);
+        var mode = last(args);
         var autodetect = false;
         if (!mode) {
           autodetect = true;
-          if (!_input.sorted) {
-            _input.autodetect = _input.autodetect.sort(function(a, b) {
+          if (!input.sorted) {
+            input.autodetect = input.autodetect.sort(function(a, b) {
               return b.p - a.p;
             });
-            _input.sorted = true;
+            input.sorted = true;
           }
-          for (var i2 = 0, list2 = _input.autodetect; i2 < list2.length; i2 += 1) {
+          for (var i2 = 0, list2 = input.autodetect; i2 < list2.length; i2 += 1) {
             var chk = list2[i2];
             mode = chk.test.apply(chk, args);
             if (mode) {
@@ -7869,9 +7871,12 @@ var require_chroma = __commonJS({
             }
           }
         }
-        if (_input.format[mode]) {
-          var rgb2 = _input.format[mode].apply(null, autodetect ? args : args.slice(0, -1));
-          me._rgb = clip_rgb$2(rgb2);
+        if (input.format[mode]) {
+          var rgb2 = input.format[mode].apply(
+            null,
+            autodetect ? args : args.slice(0, -1)
+          );
+          me._rgb = clip_rgb(rgb2);
         } else {
           throw new Error("unknown format: " + args);
         }
@@ -7879,49 +7884,26 @@ var require_chroma = __commonJS({
           me._rgb.push(1);
         }
       };
-      Color$D.prototype.toString = function toString() {
-        if (type$m(this.hex) == "function") {
+      Color.prototype.toString = function toString() {
+        if (type(this.hex) == "function") {
           return this.hex();
         }
         return "[" + this._rgb.join(",") + "]";
       };
-      var Color_1 = Color$D;
-      var chroma$k = function() {
+      var version = "2.6.0";
+      var chroma = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        return new (Function.prototype.bind.apply(chroma$k.Color, [null].concat(args)))();
+        return new (Function.prototype.bind.apply(chroma.Color, [null].concat(args)))();
       };
-      chroma$k.Color = Color_1;
-      chroma$k.version = "2.4.2";
-      var chroma_1 = chroma$k;
-      var unpack$A = utils.unpack;
-      var max$2 = Math.max;
-      var rgb2cmyk$1 = function() {
-        var args = [], len = arguments.length;
-        while (len--)
-          args[len] = arguments[len];
-        var ref = unpack$A(args, "rgb");
-        var r = ref[0];
-        var g = ref[1];
-        var b = ref[2];
-        r = r / 255;
-        g = g / 255;
-        b = b / 255;
-        var k = 1 - max$2(r, max$2(g, b));
-        var f = k < 1 ? 1 / (1 - k) : 0;
-        var c = (1 - r - k) * f;
-        var m = (1 - g - k) * f;
-        var y = (1 - b - k) * f;
-        return [c, m, y, k];
-      };
-      var rgb2cmyk_1 = rgb2cmyk$1;
-      var unpack$z = utils.unpack;
+      chroma.Color = Color;
+      chroma.version = version;
       var cmyk2rgb = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        args = unpack$z(args, "cmyk");
+        args = unpack(args, "cmyk");
         var c = args[0];
         var m = args[1];
         var y = args[2];
@@ -7940,46 +7922,56 @@ var require_chroma = __commonJS({
           alpha
         ];
       };
-      var cmyk2rgb_1 = cmyk2rgb;
-      var chroma$j = chroma_1;
-      var Color$C = Color_1;
-      var input$g = input$h;
-      var unpack$y = utils.unpack;
-      var type$l = utils.type;
-      var rgb2cmyk = rgb2cmyk_1;
-      Color$C.prototype.cmyk = function() {
-        return rgb2cmyk(this._rgb);
-      };
-      chroma$j.cmyk = function() {
+      var max$2 = Math.max;
+      var rgb2cmyk = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        return new (Function.prototype.bind.apply(Color$C, [null].concat(args, ["cmyk"])))();
+        var ref = unpack(args, "rgb");
+        var r = ref[0];
+        var g = ref[1];
+        var b = ref[2];
+        r = r / 255;
+        g = g / 255;
+        b = b / 255;
+        var k = 1 - max$2(r, max$2(g, b));
+        var f = k < 1 ? 1 / (1 - k) : 0;
+        var c = (1 - r - k) * f;
+        var m = (1 - g - k) * f;
+        var y = (1 - b - k) * f;
+        return [c, m, y, k];
       };
-      input$g.format.cmyk = cmyk2rgb_1;
-      input$g.autodetect.push({
+      Color.prototype.cmyk = function() {
+        return rgb2cmyk(this._rgb);
+      };
+      chroma.cmyk = function() {
+        var args = [], len = arguments.length;
+        while (len--)
+          args[len] = arguments[len];
+        return new (Function.prototype.bind.apply(Color, [null].concat(args, ["cmyk"])))();
+      };
+      input.format.cmyk = cmyk2rgb;
+      input.autodetect.push({
         p: 2,
         test: function() {
           var args = [], len = arguments.length;
           while (len--)
             args[len] = arguments[len];
-          args = unpack$y(args, "cmyk");
-          if (type$l(args) === "array" && args.length === 4) {
+          args = unpack(args, "cmyk");
+          if (type(args) === "array" && args.length === 4) {
             return "cmyk";
           }
         }
       });
-      var unpack$x = utils.unpack;
-      var last$2 = utils.last;
       var rnd = function(a) {
         return Math.round(a * 100) / 100;
       };
-      var hsl2css$1 = function() {
+      var hsl2css = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        var hsla = unpack$x(args, "hsla");
-        var mode = last$2(args) || "lsa";
+        var hsla = unpack(args, "hsla");
+        var mode = last(args) || "lsa";
         hsla[0] = rnd(hsla[0] || 0);
         hsla[1] = rnd(hsla[1] * 100) + "%";
         hsla[2] = rnd(hsla[2] * 100) + "%";
@@ -7991,35 +7983,33 @@ var require_chroma = __commonJS({
         }
         return mode + "(" + hsla.join(",") + ")";
       };
-      var hsl2css_1 = hsl2css$1;
-      var unpack$w = utils.unpack;
-      var rgb2hsl$3 = function() {
+      var rgb2hsl$1 = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        args = unpack$w(args, "rgba");
+        args = unpack(args, "rgba");
         var r = args[0];
         var g = args[1];
         var b = args[2];
         r /= 255;
         g /= 255;
         b /= 255;
-        var min2 = Math.min(r, g, b);
-        var max2 = Math.max(r, g, b);
-        var l = (max2 + min2) / 2;
+        var minRgb = min$3(r, g, b);
+        var maxRgb = max$3(r, g, b);
+        var l = (maxRgb + minRgb) / 2;
         var s, h;
-        if (max2 === min2) {
+        if (maxRgb === minRgb) {
           s = 0;
           h = Number.NaN;
         } else {
-          s = l < 0.5 ? (max2 - min2) / (max2 + min2) : (max2 - min2) / (2 - max2 - min2);
+          s = l < 0.5 ? (maxRgb - minRgb) / (maxRgb + minRgb) : (maxRgb - minRgb) / (2 - maxRgb - minRgb);
         }
-        if (r == max2) {
-          h = (g - b) / (max2 - min2);
-        } else if (g == max2) {
-          h = 2 + (b - r) / (max2 - min2);
-        } else if (b == max2) {
-          h = 4 + (r - g) / (max2 - min2);
+        if (r == maxRgb) {
+          h = (g - b) / (maxRgb - minRgb);
+        } else if (g == maxRgb) {
+          h = 2 + (b - r) / (maxRgb - minRgb);
+        } else if (b == maxRgb) {
+          h = 4 + (r - g) / (maxRgb - minRgb);
         }
         h *= 60;
         if (h < 0) {
@@ -8030,20 +8020,15 @@ var require_chroma = __commonJS({
         }
         return [h, s, l];
       };
-      var rgb2hsl_1 = rgb2hsl$3;
-      var unpack$v = utils.unpack;
-      var last$1 = utils.last;
-      var hsl2css = hsl2css_1;
-      var rgb2hsl$2 = rgb2hsl_1;
       var round$6 = Math.round;
-      var rgb2css$1 = function() {
+      var rgb2css = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        var rgba = unpack$v(args, "rgba");
-        var mode = last$1(args) || "rgb";
+        var rgba = unpack(args, "rgba");
+        var mode = last(args) || "rgb";
         if (mode.substr(0, 3) == "hsl") {
-          return hsl2css(rgb2hsl$2(rgba), mode);
+          return hsl2css(rgb2hsl$1(rgba), mode);
         }
         rgba[0] = round$6(rgba[0]);
         rgba[1] = round$6(rgba[1]);
@@ -8054,15 +8039,13 @@ var require_chroma = __commonJS({
         }
         return mode + "(" + rgba.slice(0, mode === "rgb" ? 3 : 4).join(",") + ")";
       };
-      var rgb2css_1 = rgb2css$1;
-      var unpack$u = utils.unpack;
       var round$5 = Math.round;
-      var hsl2rgb$1 = function() {
+      var hsl2rgb = function() {
         var assign;
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        args = unpack$u(args, "hsl");
+        args = unpack(args, "hsl");
         var h = args[0];
         var s = args[1];
         var l = args[2];
@@ -8102,9 +8085,6 @@ var require_chroma = __commonJS({
         }
         return [r, g, b, 1];
       };
-      var hsl2rgb_1 = hsl2rgb$1;
-      var hsl2rgb = hsl2rgb_1;
-      var input$f = input$h;
       var RE_RGB = /^rgb\(\s*(-?\d+),\s*(-?\d+)\s*,\s*(-?\d+)\s*\)$/;
       var RE_RGBA = /^rgba\(\s*(-?\d+),\s*(-?\d+)\s*,\s*(-?\d+)\s*,\s*([01]|[01]?\.\d+)\)$/;
       var RE_RGB_PCT = /^rgb\(\s*(-?\d+(?:\.\d+)?)%,\s*(-?\d+(?:\.\d+)?)%\s*,\s*(-?\d+(?:\.\d+)?)%\s*\)$/;
@@ -8112,12 +8092,12 @@ var require_chroma = __commonJS({
       var RE_HSL = /^hsl\(\s*(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)%\s*,\s*(-?\d+(?:\.\d+)?)%\s*\)$/;
       var RE_HSLA = /^hsla\(\s*(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)%\s*,\s*(-?\d+(?:\.\d+)?)%\s*,\s*([01]|[01]?\.\d+)\)$/;
       var round$4 = Math.round;
-      var css2rgb$1 = function(css) {
+      var css2rgb = function(css) {
         css = css.toLowerCase().trim();
         var m;
-        if (input$f.format.named) {
+        if (input.format.named) {
           try {
-            return input$f.format.named(css);
+            return input.format.named(css);
           } catch (e) {
           }
         }
@@ -8169,104 +8149,57 @@ var require_chroma = __commonJS({
           return rgb$5;
         }
       };
-      css2rgb$1.test = function(s) {
+      css2rgb.test = function(s) {
         return RE_RGB.test(s) || RE_RGBA.test(s) || RE_RGB_PCT.test(s) || RE_RGBA_PCT.test(s) || RE_HSL.test(s) || RE_HSLA.test(s);
       };
-      var css2rgb_1 = css2rgb$1;
-      var chroma$i = chroma_1;
-      var Color$B = Color_1;
-      var input$e = input$h;
-      var type$k = utils.type;
-      var rgb2css = rgb2css_1;
-      var css2rgb = css2rgb_1;
-      Color$B.prototype.css = function(mode) {
+      Color.prototype.css = function(mode) {
         return rgb2css(this._rgb, mode);
       };
-      chroma$i.css = function() {
+      chroma.css = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        return new (Function.prototype.bind.apply(Color$B, [null].concat(args, ["css"])))();
+        return new (Function.prototype.bind.apply(Color, [null].concat(args, ["css"])))();
       };
-      input$e.format.css = css2rgb;
-      input$e.autodetect.push({
+      input.format.css = css2rgb;
+      input.autodetect.push({
         p: 5,
         test: function(h) {
           var rest = [], len = arguments.length - 1;
           while (len-- > 0)
             rest[len] = arguments[len + 1];
-          if (!rest.length && type$k(h) === "string" && css2rgb.test(h)) {
+          if (!rest.length && type(h) === "string" && css2rgb.test(h)) {
             return "css";
           }
         }
       });
-      var Color$A = Color_1;
-      var chroma$h = chroma_1;
-      var input$d = input$h;
-      var unpack$t = utils.unpack;
-      input$d.format.gl = function() {
+      input.format.gl = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        var rgb2 = unpack$t(args, "rgba");
+        var rgb2 = unpack(args, "rgba");
         rgb2[0] *= 255;
         rgb2[1] *= 255;
         rgb2[2] *= 255;
         return rgb2;
       };
-      chroma$h.gl = function() {
+      chroma.gl = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        return new (Function.prototype.bind.apply(Color$A, [null].concat(args, ["gl"])))();
+        return new (Function.prototype.bind.apply(Color, [null].concat(args, ["gl"])))();
       };
-      Color$A.prototype.gl = function() {
+      Color.prototype.gl = function() {
         var rgb2 = this._rgb;
         return [rgb2[0] / 255, rgb2[1] / 255, rgb2[2] / 255, rgb2[3]];
       };
-      var unpack$s = utils.unpack;
-      var rgb2hcg$1 = function() {
-        var args = [], len = arguments.length;
-        while (len--)
-          args[len] = arguments[len];
-        var ref = unpack$s(args, "rgb");
-        var r = ref[0];
-        var g = ref[1];
-        var b = ref[2];
-        var min2 = Math.min(r, g, b);
-        var max2 = Math.max(r, g, b);
-        var delta = max2 - min2;
-        var c = delta * 100 / 255;
-        var _g = min2 / (255 - delta) * 100;
-        var h;
-        if (delta === 0) {
-          h = Number.NaN;
-        } else {
-          if (r === max2) {
-            h = (g - b) / delta;
-          }
-          if (g === max2) {
-            h = 2 + (b - r) / delta;
-          }
-          if (b === max2) {
-            h = 4 + (r - g) / delta;
-          }
-          h *= 60;
-          if (h < 0) {
-            h += 360;
-          }
-        }
-        return [h, c, _g];
-      };
-      var rgb2hcg_1 = rgb2hcg$1;
-      var unpack$r = utils.unpack;
       var floor$3 = Math.floor;
       var hcg2rgb = function() {
         var assign, assign$1, assign$2, assign$3, assign$4, assign$5;
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        args = unpack$r(args, "hcg");
+        args = unpack(args, "hcg");
         var h = args[0];
         var c = args[1];
         var _g = args[2];
@@ -8315,75 +8248,64 @@ var require_chroma = __commonJS({
         }
         return [r, g, b, args.length > 3 ? args[3] : 1];
       };
-      var hcg2rgb_1 = hcg2rgb;
-      var unpack$q = utils.unpack;
-      var type$j = utils.type;
-      var chroma$g = chroma_1;
-      var Color$z = Color_1;
-      var input$c = input$h;
-      var rgb2hcg = rgb2hcg_1;
-      Color$z.prototype.hcg = function() {
-        return rgb2hcg(this._rgb);
-      };
-      chroma$g.hcg = function() {
+      var rgb2hcg = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        return new (Function.prototype.bind.apply(Color$z, [null].concat(args, ["hcg"])))();
+        var ref = unpack(args, "rgb");
+        var r = ref[0];
+        var g = ref[1];
+        var b = ref[2];
+        var minRgb = min$3(r, g, b);
+        var maxRgb = max$3(r, g, b);
+        var delta = maxRgb - minRgb;
+        var c = delta * 100 / 255;
+        var _g = minRgb / (255 - delta) * 100;
+        var h;
+        if (delta === 0) {
+          h = Number.NaN;
+        } else {
+          if (r === maxRgb) {
+            h = (g - b) / delta;
+          }
+          if (g === maxRgb) {
+            h = 2 + (b - r) / delta;
+          }
+          if (b === maxRgb) {
+            h = 4 + (r - g) / delta;
+          }
+          h *= 60;
+          if (h < 0) {
+            h += 360;
+          }
+        }
+        return [h, c, _g];
       };
-      input$c.format.hcg = hcg2rgb_1;
-      input$c.autodetect.push({
+      Color.prototype.hcg = function() {
+        return rgb2hcg(this._rgb);
+      };
+      chroma.hcg = function() {
+        var args = [], len = arguments.length;
+        while (len--)
+          args[len] = arguments[len];
+        return new (Function.prototype.bind.apply(Color, [null].concat(args, ["hcg"])))();
+      };
+      input.format.hcg = hcg2rgb;
+      input.autodetect.push({
         p: 1,
         test: function() {
           var args = [], len = arguments.length;
           while (len--)
             args[len] = arguments[len];
-          args = unpack$q(args, "hcg");
-          if (type$j(args) === "array" && args.length === 3) {
+          args = unpack(args, "hcg");
+          if (type(args) === "array" && args.length === 3) {
             return "hcg";
           }
         }
       });
-      var unpack$p = utils.unpack;
-      var last = utils.last;
-      var round$3 = Math.round;
-      var rgb2hex$2 = function() {
-        var args = [], len = arguments.length;
-        while (len--)
-          args[len] = arguments[len];
-        var ref = unpack$p(args, "rgba");
-        var r = ref[0];
-        var g = ref[1];
-        var b = ref[2];
-        var a = ref[3];
-        var mode = last(args) || "auto";
-        if (a === void 0) {
-          a = 1;
-        }
-        if (mode === "auto") {
-          mode = a < 1 ? "rgba" : "rgb";
-        }
-        r = round$3(r);
-        g = round$3(g);
-        b = round$3(b);
-        var u = r << 16 | g << 8 | b;
-        var str = "000000" + u.toString(16);
-        str = str.substr(str.length - 6);
-        var hxa = "0" + round$3(a * 255).toString(16);
-        hxa = hxa.substr(hxa.length - 2);
-        switch (mode.toLowerCase()) {
-          case "rgba":
-            return "#" + str + hxa;
-          case "argb":
-            return "#" + hxa + str;
-          default:
-            return "#" + str;
-        }
-      };
-      var rgb2hex_1 = rgb2hex$2;
       var RE_HEX = /^#?([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
       var RE_HEXA = /^#?([A-Fa-f0-9]{8}|[A-Fa-f0-9]{4})$/;
-      var hex2rgb$1 = function(hex) {
+      var hex2rgb = function(hex) {
         if (hex.match(RE_HEX)) {
           if (hex.length === 4 || hex.length === 7) {
             hex = hex.substr(1);
@@ -8415,77 +8337,67 @@ var require_chroma = __commonJS({
         }
         throw new Error("unknown hex color: " + hex);
       };
-      var hex2rgb_1 = hex2rgb$1;
-      var chroma$f = chroma_1;
-      var Color$y = Color_1;
-      var type$i = utils.type;
-      var input$b = input$h;
-      var rgb2hex$1 = rgb2hex_1;
-      Color$y.prototype.hex = function(mode) {
-        return rgb2hex$1(this._rgb, mode);
-      };
-      chroma$f.hex = function() {
+      var round$3 = Math.round;
+      var rgb2hex = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        return new (Function.prototype.bind.apply(Color$y, [null].concat(args, ["hex"])))();
+        var ref = unpack(args, "rgba");
+        var r = ref[0];
+        var g = ref[1];
+        var b = ref[2];
+        var a = ref[3];
+        var mode = last(args) || "auto";
+        if (a === void 0) {
+          a = 1;
+        }
+        if (mode === "auto") {
+          mode = a < 1 ? "rgba" : "rgb";
+        }
+        r = round$3(r);
+        g = round$3(g);
+        b = round$3(b);
+        var u = r << 16 | g << 8 | b;
+        var str = "000000" + u.toString(16);
+        str = str.substr(str.length - 6);
+        var hxa = "0" + round$3(a * 255).toString(16);
+        hxa = hxa.substr(hxa.length - 2);
+        switch (mode.toLowerCase()) {
+          case "rgba":
+            return "#" + str + hxa;
+          case "argb":
+            return "#" + hxa + str;
+          default:
+            return "#" + str;
+        }
       };
-      input$b.format.hex = hex2rgb_1;
-      input$b.autodetect.push({
+      Color.prototype.hex = function(mode) {
+        return rgb2hex(this._rgb, mode);
+      };
+      chroma.hex = function() {
+        var args = [], len = arguments.length;
+        while (len--)
+          args[len] = arguments[len];
+        return new (Function.prototype.bind.apply(Color, [null].concat(args, ["hex"])))();
+      };
+      input.format.hex = hex2rgb;
+      input.autodetect.push({
         p: 4,
         test: function(h) {
           var rest = [], len = arguments.length - 1;
           while (len-- > 0)
             rest[len] = arguments[len + 1];
-          if (!rest.length && type$i(h) === "string" && [3, 4, 5, 6, 7, 8, 9].indexOf(h.length) >= 0) {
+          if (!rest.length && type(h) === "string" && [3, 4, 5, 6, 7, 8, 9].indexOf(h.length) >= 0) {
             return "hex";
           }
         }
       });
-      var unpack$o = utils.unpack;
-      var TWOPI$2 = utils.TWOPI;
-      var min$2 = Math.min;
-      var sqrt$4 = Math.sqrt;
-      var acos = Math.acos;
-      var rgb2hsi$1 = function() {
-        var args = [], len = arguments.length;
-        while (len--)
-          args[len] = arguments[len];
-        var ref = unpack$o(args, "rgb");
-        var r = ref[0];
-        var g = ref[1];
-        var b = ref[2];
-        r /= 255;
-        g /= 255;
-        b /= 255;
-        var h;
-        var min_ = min$2(r, g, b);
-        var i2 = (r + g + b) / 3;
-        var s = i2 > 0 ? 1 - min_ / i2 : 0;
-        if (s === 0) {
-          h = NaN;
-        } else {
-          h = (r - g + (r - b)) / 2;
-          h /= sqrt$4((r - g) * (r - g) + (r - b) * (g - b));
-          h = acos(h);
-          if (b > g) {
-            h = TWOPI$2 - h;
-          }
-          h /= TWOPI$2;
-        }
-        return [h * 360, s, i2];
-      };
-      var rgb2hsi_1 = rgb2hsi$1;
-      var unpack$n = utils.unpack;
-      var limit = utils.limit;
-      var TWOPI$1 = utils.TWOPI;
-      var PITHIRD = utils.PITHIRD;
       var cos$4 = Math.cos;
       var hsi2rgb = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        args = unpack$n(args, "hsi");
+        args = unpack(args, "hsi");
         var h = args[0];
         var s = args[1];
         var i2 = args[2];
@@ -8505,17 +8417,17 @@ var require_chroma = __commonJS({
         h /= 360;
         if (h < 1 / 3) {
           b = (1 - s) / 3;
-          r = (1 + s * cos$4(TWOPI$1 * h) / cos$4(PITHIRD - TWOPI$1 * h)) / 3;
+          r = (1 + s * cos$4(TWOPI * h) / cos$4(PITHIRD - TWOPI * h)) / 3;
           g = 1 - (b + r);
         } else if (h < 2 / 3) {
           h -= 1 / 3;
           r = (1 - s) / 3;
-          g = (1 + s * cos$4(TWOPI$1 * h) / cos$4(PITHIRD - TWOPI$1 * h)) / 3;
+          g = (1 + s * cos$4(TWOPI * h) / cos$4(PITHIRD - TWOPI * h)) / 3;
           b = 1 - (r + g);
         } else {
           h -= 2 / 3;
           g = (1 - s) / 3;
-          b = (1 + s * cos$4(TWOPI$1 * h) / cos$4(PITHIRD - TWOPI$1 * h)) / 3;
+          b = (1 + s * cos$4(TWOPI * h) / cos$4(PITHIRD - TWOPI * h)) / 3;
           r = 1 - (g + b);
         }
         r = limit(i2 * r * 3);
@@ -8523,109 +8435,88 @@ var require_chroma = __commonJS({
         b = limit(i2 * b * 3);
         return [r * 255, g * 255, b * 255, args.length > 3 ? args[3] : 1];
       };
-      var hsi2rgb_1 = hsi2rgb;
-      var unpack$m = utils.unpack;
-      var type$h = utils.type;
-      var chroma$e = chroma_1;
-      var Color$x = Color_1;
-      var input$a = input$h;
-      var rgb2hsi = rgb2hsi_1;
-      Color$x.prototype.hsi = function() {
-        return rgb2hsi(this._rgb);
-      };
-      chroma$e.hsi = function() {
+      var min$2 = Math.min;
+      var sqrt$4 = Math.sqrt;
+      var acos = Math.acos;
+      var rgb2hsi = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        return new (Function.prototype.bind.apply(Color$x, [null].concat(args, ["hsi"])))();
+        var ref = unpack(args, "rgb");
+        var r = ref[0];
+        var g = ref[1];
+        var b = ref[2];
+        r /= 255;
+        g /= 255;
+        b /= 255;
+        var h;
+        var min_ = min$2(r, g, b);
+        var i2 = (r + g + b) / 3;
+        var s = i2 > 0 ? 1 - min_ / i2 : 0;
+        if (s === 0) {
+          h = NaN;
+        } else {
+          h = (r - g + (r - b)) / 2;
+          h /= sqrt$4((r - g) * (r - g) + (r - b) * (g - b));
+          h = acos(h);
+          if (b > g) {
+            h = TWOPI - h;
+          }
+          h /= TWOPI;
+        }
+        return [h * 360, s, i2];
       };
-      input$a.format.hsi = hsi2rgb_1;
-      input$a.autodetect.push({
+      Color.prototype.hsi = function() {
+        return rgb2hsi(this._rgb);
+      };
+      chroma.hsi = function() {
+        var args = [], len = arguments.length;
+        while (len--)
+          args[len] = arguments[len];
+        return new (Function.prototype.bind.apply(Color, [null].concat(args, ["hsi"])))();
+      };
+      input.format.hsi = hsi2rgb;
+      input.autodetect.push({
         p: 2,
         test: function() {
           var args = [], len = arguments.length;
           while (len--)
             args[len] = arguments[len];
-          args = unpack$m(args, "hsi");
-          if (type$h(args) === "array" && args.length === 3) {
+          args = unpack(args, "hsi");
+          if (type(args) === "array" && args.length === 3) {
             return "hsi";
           }
         }
       });
-      var unpack$l = utils.unpack;
-      var type$g = utils.type;
-      var chroma$d = chroma_1;
-      var Color$w = Color_1;
-      var input$9 = input$h;
-      var rgb2hsl$1 = rgb2hsl_1;
-      Color$w.prototype.hsl = function() {
+      Color.prototype.hsl = function() {
         return rgb2hsl$1(this._rgb);
       };
-      chroma$d.hsl = function() {
+      chroma.hsl = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        return new (Function.prototype.bind.apply(Color$w, [null].concat(args, ["hsl"])))();
+        return new (Function.prototype.bind.apply(Color, [null].concat(args, ["hsl"])))();
       };
-      input$9.format.hsl = hsl2rgb_1;
-      input$9.autodetect.push({
+      input.format.hsl = hsl2rgb;
+      input.autodetect.push({
         p: 2,
         test: function() {
           var args = [], len = arguments.length;
           while (len--)
             args[len] = arguments[len];
-          args = unpack$l(args, "hsl");
-          if (type$g(args) === "array" && args.length === 3) {
+          args = unpack(args, "hsl");
+          if (type(args) === "array" && args.length === 3) {
             return "hsl";
           }
         }
       });
-      var unpack$k = utils.unpack;
-      var min$1 = Math.min;
-      var max$1 = Math.max;
-      var rgb2hsl = function() {
-        var args = [], len = arguments.length;
-        while (len--)
-          args[len] = arguments[len];
-        args = unpack$k(args, "rgb");
-        var r = args[0];
-        var g = args[1];
-        var b = args[2];
-        var min_ = min$1(r, g, b);
-        var max_ = max$1(r, g, b);
-        var delta = max_ - min_;
-        var h, s, v;
-        v = max_ / 255;
-        if (max_ === 0) {
-          h = Number.NaN;
-          s = 0;
-        } else {
-          s = delta / max_;
-          if (r === max_) {
-            h = (g - b) / delta;
-          }
-          if (g === max_) {
-            h = 2 + (b - r) / delta;
-          }
-          if (b === max_) {
-            h = 4 + (r - g) / delta;
-          }
-          h *= 60;
-          if (h < 0) {
-            h += 360;
-          }
-        }
-        return [h, s, v];
-      };
-      var rgb2hsv$1 = rgb2hsl;
-      var unpack$j = utils.unpack;
       var floor$2 = Math.floor;
       var hsv2rgb = function() {
         var assign, assign$1, assign$2, assign$3, assign$4, assign$5;
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        args = unpack$j(args, "hsv");
+        args = unpack(args, "hsv");
         var h = args[0];
         var s = args[1];
         var v = args[2];
@@ -8672,36 +8563,65 @@ var require_chroma = __commonJS({
         }
         return [r, g, b, args.length > 3 ? args[3] : 1];
       };
-      var hsv2rgb_1 = hsv2rgb;
-      var unpack$i = utils.unpack;
-      var type$f = utils.type;
-      var chroma$c = chroma_1;
-      var Color$v = Color_1;
-      var input$8 = input$h;
-      var rgb2hsv = rgb2hsv$1;
-      Color$v.prototype.hsv = function() {
-        return rgb2hsv(this._rgb);
-      };
-      chroma$c.hsv = function() {
+      var min$1 = Math.min;
+      var max$1 = Math.max;
+      var rgb2hsl = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        return new (Function.prototype.bind.apply(Color$v, [null].concat(args, ["hsv"])))();
+        args = unpack(args, "rgb");
+        var r = args[0];
+        var g = args[1];
+        var b = args[2];
+        var min_ = min$1(r, g, b);
+        var max_ = max$1(r, g, b);
+        var delta = max_ - min_;
+        var h, s, v;
+        v = max_ / 255;
+        if (max_ === 0) {
+          h = Number.NaN;
+          s = 0;
+        } else {
+          s = delta / max_;
+          if (r === max_) {
+            h = (g - b) / delta;
+          }
+          if (g === max_) {
+            h = 2 + (b - r) / delta;
+          }
+          if (b === max_) {
+            h = 4 + (r - g) / delta;
+          }
+          h *= 60;
+          if (h < 0) {
+            h += 360;
+          }
+        }
+        return [h, s, v];
       };
-      input$8.format.hsv = hsv2rgb_1;
-      input$8.autodetect.push({
+      Color.prototype.hsv = function() {
+        return rgb2hsl(this._rgb);
+      };
+      chroma.hsv = function() {
+        var args = [], len = arguments.length;
+        while (len--)
+          args[len] = arguments[len];
+        return new (Function.prototype.bind.apply(Color, [null].concat(args, ["hsv"])))();
+      };
+      input.format.hsv = hsv2rgb;
+      input.autodetect.push({
         p: 2,
         test: function() {
           var args = [], len = arguments.length;
           while (len--)
             args[len] = arguments[len];
-          args = unpack$i(args, "hsv");
-          if (type$f(args) === "array" && args.length === 3) {
+          args = unpack(args, "hsv");
+          if (type(args) === "array" && args.length === 3) {
             return "hsv";
           }
         }
       });
-      var labConstants = {
+      var LAB_CONSTANTS = {
         // Corresponds roughly to RGB brighter/darker
         Kn: 18,
         // D65 standard referent
@@ -8717,14 +8637,39 @@ var require_chroma = __commonJS({
         t3: 8856452e-9
         // t1 * t1 * t1
       };
-      var LAB_CONSTANTS$3 = labConstants;
-      var unpack$h = utils.unpack;
       var pow$a = Math.pow;
-      var rgb2lab$2 = function() {
+      var lab2rgb = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        var ref = unpack$h(args, "rgb");
+        args = unpack(args, "lab");
+        var l = args[0];
+        var a = args[1];
+        var b = args[2];
+        var x, y, z, r, g, b_;
+        y = (l + 16) / 116;
+        x = isNaN(a) ? y : y + a / 500;
+        z = isNaN(b) ? y : y - b / 200;
+        y = LAB_CONSTANTS.Yn * lab_xyz(y);
+        x = LAB_CONSTANTS.Xn * lab_xyz(x);
+        z = LAB_CONSTANTS.Zn * lab_xyz(z);
+        r = xyz_rgb(3.2404542 * x - 1.5371385 * y - 0.4985314 * z);
+        g = xyz_rgb(-0.969266 * x + 1.8760108 * y + 0.041556 * z);
+        b_ = xyz_rgb(0.0556434 * x - 0.2040259 * y + 1.0572252 * z);
+        return [r, g, b_, args.length > 3 ? args[3] : 1];
+      };
+      var xyz_rgb = function(r) {
+        return 255 * (r <= 304e-5 ? 12.92 * r : 1.055 * pow$a(r, 1 / 2.4) - 0.055);
+      };
+      var lab_xyz = function(t2) {
+        return t2 > LAB_CONSTANTS.t1 ? t2 * t2 * t2 : LAB_CONSTANTS.t2 * (t2 - LAB_CONSTANTS.t0);
+      };
+      var pow$9 = Math.pow;
+      var rgb2lab = function() {
+        var args = [], len = arguments.length;
+        while (len--)
+          args[len] = arguments[len];
+        var ref = unpack(args, "rgb");
         var r = ref[0];
         var g = ref[1];
         var b = ref[2];
@@ -8739,92 +8684,100 @@ var require_chroma = __commonJS({
         if ((r /= 255) <= 0.04045) {
           return r / 12.92;
         }
-        return pow$a((r + 0.055) / 1.055, 2.4);
+        return pow$9((r + 0.055) / 1.055, 2.4);
       };
       var xyz_lab = function(t2) {
-        if (t2 > LAB_CONSTANTS$3.t3) {
-          return pow$a(t2, 1 / 3);
+        if (t2 > LAB_CONSTANTS.t3) {
+          return pow$9(t2, 1 / 3);
         }
-        return t2 / LAB_CONSTANTS$3.t2 + LAB_CONSTANTS$3.t0;
+        return t2 / LAB_CONSTANTS.t2 + LAB_CONSTANTS.t0;
       };
       var rgb2xyz = function(r, g, b) {
         r = rgb_xyz(r);
         g = rgb_xyz(g);
         b = rgb_xyz(b);
-        var x = xyz_lab((0.4124564 * r + 0.3575761 * g + 0.1804375 * b) / LAB_CONSTANTS$3.Xn);
-        var y = xyz_lab((0.2126729 * r + 0.7151522 * g + 0.072175 * b) / LAB_CONSTANTS$3.Yn);
-        var z = xyz_lab((0.0193339 * r + 0.119192 * g + 0.9503041 * b) / LAB_CONSTANTS$3.Zn);
+        var x = xyz_lab(
+          (0.4124564 * r + 0.3575761 * g + 0.1804375 * b) / LAB_CONSTANTS.Xn
+        );
+        var y = xyz_lab(
+          (0.2126729 * r + 0.7151522 * g + 0.072175 * b) / LAB_CONSTANTS.Yn
+        );
+        var z = xyz_lab(
+          (0.0193339 * r + 0.119192 * g + 0.9503041 * b) / LAB_CONSTANTS.Zn
+        );
         return [x, y, z];
       };
-      var rgb2lab_1 = rgb2lab$2;
-      var LAB_CONSTANTS$2 = labConstants;
-      var unpack$g = utils.unpack;
-      var pow$9 = Math.pow;
-      var lab2rgb$1 = function() {
+      Color.prototype.lab = function() {
+        return rgb2lab(this._rgb);
+      };
+      chroma.lab = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        args = unpack$g(args, "lab");
-        var l = args[0];
-        var a = args[1];
-        var b = args[2];
-        var x, y, z, r, g, b_;
-        y = (l + 16) / 116;
-        x = isNaN(a) ? y : y + a / 500;
-        z = isNaN(b) ? y : y - b / 200;
-        y = LAB_CONSTANTS$2.Yn * lab_xyz(y);
-        x = LAB_CONSTANTS$2.Xn * lab_xyz(x);
-        z = LAB_CONSTANTS$2.Zn * lab_xyz(z);
-        r = xyz_rgb(3.2404542 * x - 1.5371385 * y - 0.4985314 * z);
-        g = xyz_rgb(-0.969266 * x + 1.8760108 * y + 0.041556 * z);
-        b_ = xyz_rgb(0.0556434 * x - 0.2040259 * y + 1.0572252 * z);
-        return [r, g, b_, args.length > 3 ? args[3] : 1];
+        return new (Function.prototype.bind.apply(Color, [null].concat(args, ["lab"])))();
       };
-      var xyz_rgb = function(r) {
-        return 255 * (r <= 304e-5 ? 12.92 * r : 1.055 * pow$9(r, 1 / 2.4) - 0.055);
-      };
-      var lab_xyz = function(t2) {
-        return t2 > LAB_CONSTANTS$2.t1 ? t2 * t2 * t2 : LAB_CONSTANTS$2.t2 * (t2 - LAB_CONSTANTS$2.t0);
-      };
-      var lab2rgb_1 = lab2rgb$1;
-      var unpack$f = utils.unpack;
-      var type$e = utils.type;
-      var chroma$b = chroma_1;
-      var Color$u = Color_1;
-      var input$7 = input$h;
-      var rgb2lab$1 = rgb2lab_1;
-      Color$u.prototype.lab = function() {
-        return rgb2lab$1(this._rgb);
-      };
-      chroma$b.lab = function() {
-        var args = [], len = arguments.length;
-        while (len--)
-          args[len] = arguments[len];
-        return new (Function.prototype.bind.apply(Color$u, [null].concat(args, ["lab"])))();
-      };
-      input$7.format.lab = lab2rgb_1;
-      input$7.autodetect.push({
+      input.format.lab = lab2rgb;
+      input.autodetect.push({
         p: 2,
         test: function() {
           var args = [], len = arguments.length;
           while (len--)
             args[len] = arguments[len];
-          args = unpack$f(args, "lab");
-          if (type$e(args) === "array" && args.length === 3) {
+          args = unpack(args, "lab");
+          if (type(args) === "array" && args.length === 3) {
             return "lab";
           }
         }
       });
-      var unpack$e = utils.unpack;
-      var RAD2DEG = utils.RAD2DEG;
-      var sqrt$3 = Math.sqrt;
-      var atan2$2 = Math.atan2;
-      var round$2 = Math.round;
-      var lab2lch$2 = function() {
+      var sin$3 = Math.sin;
+      var cos$3 = Math.cos;
+      var lch2lab = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        var ref = unpack$e(args, "lab");
+        var ref = unpack(args, "lch");
+        var l = ref[0];
+        var c = ref[1];
+        var h = ref[2];
+        if (isNaN(h)) {
+          h = 0;
+        }
+        h = h * DEG2RAD;
+        return [l, cos$3(h) * c, sin$3(h) * c];
+      };
+      var lch2rgb = function() {
+        var args = [], len = arguments.length;
+        while (len--)
+          args[len] = arguments[len];
+        args = unpack(args, "lch");
+        var l = args[0];
+        var c = args[1];
+        var h = args[2];
+        var ref = lch2lab(l, c, h);
+        var L = ref[0];
+        var a = ref[1];
+        var b_ = ref[2];
+        var ref$1 = lab2rgb(L, a, b_);
+        var r = ref$1[0];
+        var g = ref$1[1];
+        var b = ref$1[2];
+        return [r, g, b, args.length > 3 ? args[3] : 1];
+      };
+      var hcl2rgb = function() {
+        var args = [], len = arguments.length;
+        while (len--)
+          args[len] = arguments[len];
+        var hcl = unpack(args, "hcl").reverse();
+        return lch2rgb.apply(void 0, hcl);
+      };
+      var sqrt$3 = Math.sqrt;
+      var atan2$2 = Math.atan2;
+      var round$2 = Math.round;
+      var lab2lch = function() {
+        var args = [], len = arguments.length;
+        while (len--)
+          args[len] = arguments[len];
+        var ref = unpack(args, "lab");
         var l = ref[0];
         var a = ref[1];
         var b = ref[2];
@@ -8835,15 +8788,11 @@ var require_chroma = __commonJS({
         }
         return [l, c, h];
       };
-      var lab2lch_1 = lab2lch$2;
-      var unpack$d = utils.unpack;
-      var rgb2lab = rgb2lab_1;
-      var lab2lch$1 = lab2lch_1;
-      var rgb2lch$1 = function() {
+      var rgb2lch = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        var ref = unpack$d(args, "rgb");
+        var ref = unpack(args, "rgb");
         var r = ref[0];
         var g = ref[1];
         var b = ref[2];
@@ -8851,101 +8800,45 @@ var require_chroma = __commonJS({
         var l = ref$1[0];
         var a = ref$1[1];
         var b_ = ref$1[2];
-        return lab2lch$1(l, a, b_);
+        return lab2lch(l, a, b_);
       };
-      var rgb2lch_1 = rgb2lch$1;
-      var unpack$c = utils.unpack;
-      var DEG2RAD = utils.DEG2RAD;
-      var sin$3 = Math.sin;
-      var cos$3 = Math.cos;
-      var lch2lab$2 = function() {
-        var args = [], len = arguments.length;
-        while (len--)
-          args[len] = arguments[len];
-        var ref = unpack$c(args, "lch");
-        var l = ref[0];
-        var c = ref[1];
-        var h = ref[2];
-        if (isNaN(h)) {
-          h = 0;
-        }
-        h = h * DEG2RAD;
-        return [l, cos$3(h) * c, sin$3(h) * c];
-      };
-      var lch2lab_1 = lch2lab$2;
-      var unpack$b = utils.unpack;
-      var lch2lab$1 = lch2lab_1;
-      var lab2rgb = lab2rgb_1;
-      var lch2rgb$1 = function() {
-        var args = [], len = arguments.length;
-        while (len--)
-          args[len] = arguments[len];
-        args = unpack$b(args, "lch");
-        var l = args[0];
-        var c = args[1];
-        var h = args[2];
-        var ref = lch2lab$1(l, c, h);
-        var L = ref[0];
-        var a = ref[1];
-        var b_ = ref[2];
-        var ref$1 = lab2rgb(L, a, b_);
-        var r = ref$1[0];
-        var g = ref$1[1];
-        var b = ref$1[2];
-        return [r, g, b, args.length > 3 ? args[3] : 1];
-      };
-      var lch2rgb_1 = lch2rgb$1;
-      var unpack$a = utils.unpack;
-      var lch2rgb = lch2rgb_1;
-      var hcl2rgb = function() {
-        var args = [], len = arguments.length;
-        while (len--)
-          args[len] = arguments[len];
-        var hcl = unpack$a(args, "hcl").reverse();
-        return lch2rgb.apply(void 0, hcl);
-      };
-      var hcl2rgb_1 = hcl2rgb;
-      var unpack$9 = utils.unpack;
-      var type$d = utils.type;
-      var chroma$a = chroma_1;
-      var Color$t = Color_1;
-      var input$6 = input$h;
-      var rgb2lch = rgb2lch_1;
-      Color$t.prototype.lch = function() {
+      Color.prototype.lch = function() {
         return rgb2lch(this._rgb);
       };
-      Color$t.prototype.hcl = function() {
+      Color.prototype.hcl = function() {
         return rgb2lch(this._rgb).reverse();
       };
-      chroma$a.lch = function() {
+      chroma.lch = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        return new (Function.prototype.bind.apply(Color$t, [null].concat(args, ["lch"])))();
+        return new (Function.prototype.bind.apply(Color, [null].concat(args, ["lch"])))();
       };
-      chroma$a.hcl = function() {
+      chroma.hcl = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        return new (Function.prototype.bind.apply(Color$t, [null].concat(args, ["hcl"])))();
+        return new (Function.prototype.bind.apply(Color, [null].concat(args, ["hcl"])))();
       };
-      input$6.format.lch = lch2rgb_1;
-      input$6.format.hcl = hcl2rgb_1;
-      ["lch", "hcl"].forEach(function(m) {
-        return input$6.autodetect.push({
-          p: 2,
-          test: function() {
-            var args = [], len = arguments.length;
-            while (len--)
-              args[len] = arguments[len];
-            args = unpack$9(args, m);
-            if (type$d(args) === "array" && args.length === 3) {
-              return m;
+      input.format.lch = lch2rgb;
+      input.format.hcl = hcl2rgb;
+      ["lch", "hcl"].forEach(
+        function(m) {
+          return input.autodetect.push({
+            p: 2,
+            test: function() {
+              var args = [], len = arguments.length;
+              while (len--)
+                args[len] = arguments[len];
+              args = unpack(args, m);
+              if (type(args) === "array" && args.length === 3) {
+                return m;
+              }
             }
-          }
-        });
-      });
-      var w3cx11$1 = {
+          });
+        }
+      );
+      var w3cx11 = {
         aliceblue: "#f0f8ff",
         antiquewhite: "#faebd7",
         aqua: "#00ffff",
@@ -8963,7 +8856,6 @@ var require_chroma = __commonJS({
         chartreuse: "#7fff00",
         chocolate: "#d2691e",
         coral: "#ff7f50",
-        cornflower: "#6495ed",
         cornflowerblue: "#6495ed",
         cornsilk: "#fff8dc",
         crimson: "#dc143c",
@@ -9102,14 +8994,7 @@ var require_chroma = __commonJS({
         yellow: "#ffff00",
         yellowgreen: "#9acd32"
       };
-      var w3cx11_1 = w3cx11$1;
-      var Color$s = Color_1;
-      var input$5 = input$h;
-      var type$c = utils.type;
-      var w3cx11 = w3cx11_1;
-      var hex2rgb = hex2rgb_1;
-      var rgb2hex = rgb2hex_1;
-      Color$s.prototype.name = function() {
+      Color.prototype.name = function() {
         var hex = rgb2hex(this._rgb, "rgb");
         for (var i2 = 0, list2 = Object.keys(w3cx11); i2 < list2.length; i2 += 1) {
           var n = list2[i2];
@@ -9119,39 +9004,26 @@ var require_chroma = __commonJS({
         }
         return hex;
       };
-      input$5.format.named = function(name2) {
+      input.format.named = function(name2) {
         name2 = name2.toLowerCase();
         if (w3cx11[name2]) {
           return hex2rgb(w3cx11[name2]);
         }
         throw new Error("unknown color name: " + name2);
       };
-      input$5.autodetect.push({
+      input.autodetect.push({
         p: 5,
         test: function(h) {
           var rest = [], len = arguments.length - 1;
           while (len-- > 0)
             rest[len] = arguments[len + 1];
-          if (!rest.length && type$c(h) === "string" && w3cx11[h.toLowerCase()]) {
+          if (!rest.length && type(h) === "string" && w3cx11[h.toLowerCase()]) {
             return "named";
           }
         }
       });
-      var unpack$8 = utils.unpack;
-      var rgb2num$1 = function() {
-        var args = [], len = arguments.length;
-        while (len--)
-          args[len] = arguments[len];
-        var ref = unpack$8(args, "rgb");
-        var r = ref[0];
-        var g = ref[1];
-        var b = ref[2];
-        return (r << 16) + (g << 8) + b;
-      };
-      var rgb2num_1 = rgb2num$1;
-      var type$b = utils.type;
       var num2rgb = function(num2) {
-        if (type$b(num2) == "number" && num2 >= 0 && num2 <= 16777215) {
+        if (type(num2) == "number" && num2 >= 0 && num2 <= 16777215) {
           var r = num2 >> 16;
           var g = num2 >> 8 & 255;
           var b = num2 & 255;
@@ -9159,40 +9031,39 @@ var require_chroma = __commonJS({
         }
         throw new Error("unknown num color: " + num2);
       };
-      var num2rgb_1 = num2rgb;
-      var chroma$9 = chroma_1;
-      var Color$r = Color_1;
-      var input$4 = input$h;
-      var type$a = utils.type;
-      var rgb2num = rgb2num_1;
-      Color$r.prototype.num = function() {
-        return rgb2num(this._rgb);
-      };
-      chroma$9.num = function() {
+      var rgb2num = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        return new (Function.prototype.bind.apply(Color$r, [null].concat(args, ["num"])))();
+        var ref = unpack(args, "rgb");
+        var r = ref[0];
+        var g = ref[1];
+        var b = ref[2];
+        return (r << 16) + (g << 8) + b;
       };
-      input$4.format.num = num2rgb_1;
-      input$4.autodetect.push({
+      Color.prototype.num = function() {
+        return rgb2num(this._rgb);
+      };
+      chroma.num = function() {
+        var args = [], len = arguments.length;
+        while (len--)
+          args[len] = arguments[len];
+        return new (Function.prototype.bind.apply(Color, [null].concat(args, ["num"])))();
+      };
+      input.format.num = num2rgb;
+      input.autodetect.push({
         p: 5,
         test: function() {
           var args = [], len = arguments.length;
           while (len--)
             args[len] = arguments[len];
-          if (args.length === 1 && type$a(args[0]) === "number" && args[0] >= 0 && args[0] <= 16777215) {
+          if (args.length === 1 && type(args[0]) === "number" && args[0] >= 0 && args[0] <= 16777215) {
             return "num";
           }
         }
       });
-      var chroma$8 = chroma_1;
-      var Color$q = Color_1;
-      var input$3 = input$h;
-      var unpack$7 = utils.unpack;
-      var type$9 = utils.type;
       var round$1 = Math.round;
-      Color$q.prototype.rgb = function(rnd2) {
+      Color.prototype.rgb = function(rnd2) {
         if (rnd2 === void 0)
           rnd2 = true;
         if (rnd2 === false) {
@@ -9200,43 +9071,43 @@ var require_chroma = __commonJS({
         }
         return this._rgb.slice(0, 3).map(round$1);
       };
-      Color$q.prototype.rgba = function(rnd2) {
+      Color.prototype.rgba = function(rnd2) {
         if (rnd2 === void 0)
           rnd2 = true;
         return this._rgb.slice(0, 4).map(function(v, i2) {
           return i2 < 3 ? rnd2 === false ? v : round$1(v) : v;
         });
       };
-      chroma$8.rgb = function() {
+      chroma.rgb = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        return new (Function.prototype.bind.apply(Color$q, [null].concat(args, ["rgb"])))();
+        return new (Function.prototype.bind.apply(Color, [null].concat(args, ["rgb"])))();
       };
-      input$3.format.rgb = function() {
+      input.format.rgb = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        var rgba = unpack$7(args, "rgba");
+        var rgba = unpack(args, "rgba");
         if (rgba[3] === void 0) {
           rgba[3] = 1;
         }
         return rgba;
       };
-      input$3.autodetect.push({
+      input.autodetect.push({
         p: 3,
         test: function() {
           var args = [], len = arguments.length;
           while (len--)
             args[len] = arguments[len];
-          args = unpack$7(args, "rgba");
-          if (type$9(args) === "array" && (args.length === 3 || args.length === 4 && type$9(args[3]) == "number" && args[3] >= 0 && args[3] <= 1)) {
+          args = unpack(args, "rgba");
+          if (type(args) === "array" && (args.length === 3 || args.length === 4 && type(args[3]) == "number" && args[3] >= 0 && args[3] <= 1)) {
             return "rgb";
           }
         }
       });
       var log$1 = Math.log;
-      var temperature2rgb$1 = function(kelvin) {
+      var temperature2rgb = function(kelvin) {
         var temp = kelvin / 100;
         var r, g, b;
         if (temp < 66) {
@@ -9250,15 +9121,12 @@ var require_chroma = __commonJS({
         }
         return [r, g, b, 1];
       };
-      var temperature2rgb_1 = temperature2rgb$1;
-      var temperature2rgb = temperature2rgb_1;
-      var unpack$6 = utils.unpack;
       var round = Math.round;
-      var rgb2temperature$1 = function() {
+      var rgb2temperature = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        var rgb2 = unpack$6(args, "rgb");
+        var rgb2 = unpack(args, "rgb");
         var r = rgb2[0], b = rgb2[2];
         var minTemp = 1e3;
         var maxTemp = 4e4;
@@ -9275,34 +9143,59 @@ var require_chroma = __commonJS({
         }
         return round(temp);
       };
-      var rgb2temperature_1 = rgb2temperature$1;
-      var chroma$7 = chroma_1;
-      var Color$p = Color_1;
-      var input$2 = input$h;
-      var rgb2temperature = rgb2temperature_1;
-      Color$p.prototype.temp = Color$p.prototype.kelvin = Color$p.prototype.temperature = function() {
+      Color.prototype.temp = Color.prototype.kelvin = Color.prototype.temperature = function() {
         return rgb2temperature(this._rgb);
       };
-      chroma$7.temp = chroma$7.kelvin = chroma$7.temperature = function() {
+      chroma.temp = chroma.kelvin = chroma.temperature = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        return new (Function.prototype.bind.apply(Color$p, [null].concat(args, ["temp"])))();
+        return new (Function.prototype.bind.apply(Color, [null].concat(args, ["temp"])))();
       };
-      input$2.format.temp = input$2.format.kelvin = input$2.format.temperature = temperature2rgb_1;
-      var unpack$5 = utils.unpack;
-      var cbrt = Math.cbrt;
+      input.format.temp = input.format.kelvin = input.format.temperature = temperature2rgb;
       var pow$8 = Math.pow;
       var sign$1 = Math.sign;
-      var rgb2oklab$2 = function() {
+      var oklab2rgb = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        var ref = unpack$5(args, "rgb");
+        args = unpack(args, "lab");
+        var L = args[0];
+        var a = args[1];
+        var b = args[2];
+        var l = pow$8(L + 0.3963377774 * a + 0.2158037573 * b, 3);
+        var m = pow$8(L - 0.1055613458 * a - 0.0638541728 * b, 3);
+        var s = pow$8(L - 0.0894841775 * a - 1.291485548 * b, 3);
+        return [
+          255 * lrgb2rgb(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s),
+          255 * lrgb2rgb(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s),
+          255 * lrgb2rgb(-0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s),
+          args.length > 3 ? args[3] : 1
+        ];
+      };
+      function lrgb2rgb(c) {
+        var abs2 = Math.abs(c);
+        if (abs2 > 31308e-7) {
+          return (sign$1(c) || 1) * (1.055 * pow$8(abs2, 1 / 2.4) - 0.055);
+        }
+        return c * 12.92;
+      }
+      var cbrt = Math.cbrt;
+      var pow$7 = Math.pow;
+      var sign = Math.sign;
+      var rgb2oklab = function() {
+        var args = [], len = arguments.length;
+        while (len--)
+          args[len] = arguments[len];
+        var ref = unpack(args, "rgb");
         var r = ref[0];
         var g = ref[1];
         var b = ref[2];
-        var ref$1 = [rgb2lrgb(r / 255), rgb2lrgb(g / 255), rgb2lrgb(b / 255)];
+        var ref$1 = [
+          rgb2lrgb(r / 255),
+          rgb2lrgb(g / 255),
+          rgb2lrgb(b / 255)
+        ];
         var lr = ref$1[0];
         var lg = ref$1[1];
         var lb = ref$1[2];
@@ -9315,97 +9208,40 @@ var require_chroma = __commonJS({
           0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s
         ];
       };
-      var rgb2oklab_1 = rgb2oklab$2;
       function rgb2lrgb(c) {
         var abs2 = Math.abs(c);
         if (abs2 < 0.04045) {
           return c / 12.92;
         }
-        return (sign$1(c) || 1) * pow$8((abs2 + 0.055) / 1.055, 2.4);
+        return (sign(c) || 1) * pow$7((abs2 + 0.055) / 1.055, 2.4);
       }
-      var unpack$4 = utils.unpack;
-      var pow$7 = Math.pow;
-      var sign = Math.sign;
-      var oklab2rgb$1 = function() {
+      Color.prototype.oklab = function() {
+        return rgb2oklab(this._rgb);
+      };
+      chroma.oklab = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        args = unpack$4(args, "lab");
-        var L = args[0];
-        var a = args[1];
-        var b = args[2];
-        var l = pow$7(L + 0.3963377774 * a + 0.2158037573 * b, 3);
-        var m = pow$7(L - 0.1055613458 * a - 0.0638541728 * b, 3);
-        var s = pow$7(L - 0.0894841775 * a - 1.291485548 * b, 3);
-        return [
-          255 * lrgb2rgb(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s),
-          255 * lrgb2rgb(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s),
-          255 * lrgb2rgb(-0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s),
-          args.length > 3 ? args[3] : 1
-        ];
+        return new (Function.prototype.bind.apply(Color, [null].concat(args, ["oklab"])))();
       };
-      var oklab2rgb_1 = oklab2rgb$1;
-      function lrgb2rgb(c) {
-        var abs2 = Math.abs(c);
-        if (abs2 > 31308e-7) {
-          return (sign(c) || 1) * (1.055 * pow$7(abs2, 1 / 2.4) - 0.055);
-        }
-        return c * 12.92;
-      }
-      var unpack$3 = utils.unpack;
-      var type$8 = utils.type;
-      var chroma$6 = chroma_1;
-      var Color$o = Color_1;
-      var input$1 = input$h;
-      var rgb2oklab$1 = rgb2oklab_1;
-      Color$o.prototype.oklab = function() {
-        return rgb2oklab$1(this._rgb);
-      };
-      chroma$6.oklab = function() {
-        var args = [], len = arguments.length;
-        while (len--)
-          args[len] = arguments[len];
-        return new (Function.prototype.bind.apply(Color$o, [null].concat(args, ["oklab"])))();
-      };
-      input$1.format.oklab = oklab2rgb_1;
-      input$1.autodetect.push({
+      input.format.oklab = oklab2rgb;
+      input.autodetect.push({
         p: 3,
         test: function() {
           var args = [], len = arguments.length;
           while (len--)
             args[len] = arguments[len];
-          args = unpack$3(args, "oklab");
-          if (type$8(args) === "array" && args.length === 3) {
+          args = unpack(args, "oklab");
+          if (type(args) === "array" && args.length === 3) {
             return "oklab";
           }
         }
       });
-      var unpack$2 = utils.unpack;
-      var rgb2oklab = rgb2oklab_1;
-      var lab2lch = lab2lch_1;
-      var rgb2oklch$1 = function() {
-        var args = [], len = arguments.length;
-        while (len--)
-          args[len] = arguments[len];
-        var ref = unpack$2(args, "rgb");
-        var r = ref[0];
-        var g = ref[1];
-        var b = ref[2];
-        var ref$1 = rgb2oklab(r, g, b);
-        var l = ref$1[0];
-        var a = ref$1[1];
-        var b_ = ref$1[2];
-        return lab2lch(l, a, b_);
-      };
-      var rgb2oklch_1 = rgb2oklch$1;
-      var unpack$1 = utils.unpack;
-      var lch2lab = lch2lab_1;
-      var oklab2rgb = oklab2rgb_1;
       var oklch2rgb = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        args = unpack$1(args, "lch");
+        args = unpack(args, "lch");
         var l = args[0];
         var c = args[1];
         var h = args[2];
@@ -9419,23 +9255,30 @@ var require_chroma = __commonJS({
         var b = ref$1[2];
         return [r, g, b, args.length > 3 ? args[3] : 1];
       };
-      var oklch2rgb_1 = oklch2rgb;
-      var unpack = utils.unpack;
-      var type$7 = utils.type;
-      var chroma$5 = chroma_1;
-      var Color$n = Color_1;
-      var input = input$h;
-      var rgb2oklch = rgb2oklch_1;
-      Color$n.prototype.oklch = function() {
-        return rgb2oklch(this._rgb);
-      };
-      chroma$5.oklch = function() {
+      var rgb2oklch = function() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
-        return new (Function.prototype.bind.apply(Color$n, [null].concat(args, ["oklch"])))();
+        var ref = unpack(args, "rgb");
+        var r = ref[0];
+        var g = ref[1];
+        var b = ref[2];
+        var ref$1 = rgb2oklab(r, g, b);
+        var l = ref$1[0];
+        var a = ref$1[1];
+        var b_ = ref$1[2];
+        return lab2lch(l, a, b_);
       };
-      input.format.oklch = oklch2rgb_1;
+      Color.prototype.oklch = function() {
+        return rgb2oklch(this._rgb);
+      };
+      chroma.oklch = function() {
+        var args = [], len = arguments.length;
+        while (len--)
+          args[len] = arguments[len];
+        return new (Function.prototype.bind.apply(Color, [null].concat(args, ["oklch"])))();
+      };
+      input.format.oklch = oklch2rgb;
       input.autodetect.push({
         p: 3,
         test: function() {
@@ -9443,48 +9286,42 @@ var require_chroma = __commonJS({
           while (len--)
             args[len] = arguments[len];
           args = unpack(args, "oklch");
-          if (type$7(args) === "array" && args.length === 3) {
+          if (type(args) === "array" && args.length === 3) {
             return "oklch";
           }
         }
       });
-      var Color$m = Color_1;
-      var type$6 = utils.type;
-      Color$m.prototype.alpha = function(a, mutate) {
+      Color.prototype.alpha = function(a, mutate) {
         if (mutate === void 0)
           mutate = false;
-        if (a !== void 0 && type$6(a) === "number") {
+        if (a !== void 0 && type(a) === "number") {
           if (mutate) {
             this._rgb[3] = a;
             return this;
           }
-          return new Color$m([this._rgb[0], this._rgb[1], this._rgb[2], a], "rgb");
+          return new Color([this._rgb[0], this._rgb[1], this._rgb[2], a], "rgb");
         }
         return this._rgb[3];
       };
-      var Color$l = Color_1;
-      Color$l.prototype.clipped = function() {
+      Color.prototype.clipped = function() {
         return this._rgb._clipped || false;
       };
-      var Color$k = Color_1;
-      var LAB_CONSTANTS$1 = labConstants;
-      Color$k.prototype.darken = function(amount) {
+      Color.prototype.darken = function(amount) {
         if (amount === void 0)
           amount = 1;
         var me = this;
         var lab2 = me.lab();
-        lab2[0] -= LAB_CONSTANTS$1.Kn * amount;
-        return new Color$k(lab2, "lab").alpha(me.alpha(), true);
+        lab2[0] -= LAB_CONSTANTS.Kn * amount;
+        return new Color(lab2, "lab").alpha(me.alpha(), true);
       };
-      Color$k.prototype.brighten = function(amount) {
+      Color.prototype.brighten = function(amount) {
         if (amount === void 0)
           amount = 1;
         return this.darken(-amount);
       };
-      Color$k.prototype.darker = Color$k.prototype.darken;
-      Color$k.prototype.brighter = Color$k.prototype.brighten;
-      var Color$j = Color_1;
-      Color$j.prototype.get = function(mc) {
+      Color.prototype.darker = Color.prototype.darken;
+      Color.prototype.brighter = Color.prototype.brighten;
+      Color.prototype.get = function(mc) {
         var ref = mc.split(".");
         var mode = ref[0];
         var channel = ref[1];
@@ -9499,21 +9336,20 @@ var require_chroma = __commonJS({
           return src;
         }
       };
-      var Color$i = Color_1;
-      var type$5 = utils.type;
       var pow$6 = Math.pow;
       var EPS = 1e-7;
       var MAX_ITER = 20;
-      Color$i.prototype.luminance = function(lum) {
-        if (lum !== void 0 && type$5(lum) === "number") {
+      Color.prototype.luminance = function(lum, mode) {
+        if (mode === void 0)
+          mode = "rgb";
+        if (lum !== void 0 && type(lum) === "number") {
           if (lum === 0) {
-            return new Color$i([0, 0, 0, this._rgb[3]], "rgb");
+            return new Color([0, 0, 0, this._rgb[3]], "rgb");
           }
           if (lum === 1) {
-            return new Color$i([255, 255, 255, this._rgb[3]], "rgb");
+            return new Color([255, 255, 255, this._rgb[3]], "rgb");
           }
           var cur_lum = this.luminance();
-          var mode = "rgb";
           var max_iter = MAX_ITER;
           var test = function(low, high) {
             var mid = low.interpolate(high, 0.5, mode);
@@ -9523,8 +9359,8 @@ var require_chroma = __commonJS({
             }
             return lm > lum ? test(low, mid) : test(mid, high);
           };
-          var rgb2 = (cur_lum > lum ? test(new Color$i([0, 0, 0]), this) : test(this, new Color$i([255, 255, 255]))).rgb();
-          return new Color$i(rgb2.concat([this._rgb[3]]));
+          var rgb2 = (cur_lum > lum ? test(new Color([0, 0, 0]), this) : test(this, new Color([255, 255, 255]))).rgb();
+          return new Color(rgb2.concat([this._rgb[3]]));
         }
         return rgb2luminance.apply(void 0, this._rgb.slice(0, 3));
       };
@@ -9538,34 +9374,31 @@ var require_chroma = __commonJS({
         x /= 255;
         return x <= 0.03928 ? x / 12.92 : pow$6((x + 0.055) / 1.055, 2.4);
       };
-      var interpolator$1 = {};
-      var Color$h = Color_1;
-      var type$4 = utils.type;
-      var interpolator = interpolator$1;
-      var mix$1 = function(col1, col2, f) {
+      var index = {};
+      function mix(col1, col2, f) {
         if (f === void 0)
           f = 0.5;
         var rest = [], len = arguments.length - 3;
         while (len-- > 0)
           rest[len] = arguments[len + 3];
         var mode = rest[0] || "lrgb";
-        if (!interpolator[mode] && !rest.length) {
-          mode = Object.keys(interpolator)[0];
+        if (!index[mode] && !rest.length) {
+          mode = Object.keys(index)[0];
         }
-        if (!interpolator[mode]) {
+        if (!index[mode]) {
           throw new Error("interpolation mode " + mode + " is not defined");
         }
-        if (type$4(col1) !== "object") {
-          col1 = new Color$h(col1);
+        if (type(col1) !== "object") {
+          col1 = new Color(col1);
         }
-        if (type$4(col2) !== "object") {
-          col2 = new Color$h(col2);
+        if (type(col2) !== "object") {
+          col2 = new Color(col2);
         }
-        return interpolator[mode](col1, col2, f).alpha(col1.alpha() + f * (col2.alpha() - col1.alpha()));
-      };
-      var Color$g = Color_1;
-      var mix = mix$1;
-      Color$g.prototype.mix = Color$g.prototype.interpolate = function(col2, f) {
+        return index[mode](col1, col2, f).alpha(
+          col1.alpha() + f * (col2.alpha() - col1.alpha())
+        );
+      }
+      Color.prototype.mix = Color.prototype.interpolate = function(col2, f) {
         if (f === void 0)
           f = 0.5;
         var rest = [], len = arguments.length - 2;
@@ -9573,8 +9406,7 @@ var require_chroma = __commonJS({
           rest[len] = arguments[len + 2];
         return mix.apply(void 0, [this, col2, f].concat(rest));
       };
-      var Color$f = Color_1;
-      Color$f.prototype.premultiply = function(mutate) {
+      Color.prototype.premultiply = function(mutate) {
         if (mutate === void 0)
           mutate = false;
         var rgb2 = this._rgb;
@@ -9583,12 +9415,10 @@ var require_chroma = __commonJS({
           this._rgb = [rgb2[0] * a, rgb2[1] * a, rgb2[2] * a, a];
           return this;
         } else {
-          return new Color$f([rgb2[0] * a, rgb2[1] * a, rgb2[2] * a, a], "rgb");
+          return new Color([rgb2[0] * a, rgb2[1] * a, rgb2[2] * a, a], "rgb");
         }
       };
-      var Color$e = Color_1;
-      var LAB_CONSTANTS = labConstants;
-      Color$e.prototype.saturate = function(amount) {
+      Color.prototype.saturate = function(amount) {
         if (amount === void 0)
           amount = 1;
         var me = this;
@@ -9597,16 +9427,14 @@ var require_chroma = __commonJS({
         if (lch2[1] < 0) {
           lch2[1] = 0;
         }
-        return new Color$e(lch2, "lch").alpha(me.alpha(), true);
+        return new Color(lch2, "lch").alpha(me.alpha(), true);
       };
-      Color$e.prototype.desaturate = function(amount) {
+      Color.prototype.desaturate = function(amount) {
         if (amount === void 0)
           amount = 1;
         return this.saturate(-amount);
       };
-      var Color$d = Color_1;
-      var type$3 = utils.type;
-      Color$d.prototype.set = function(mc, value, mutate) {
+      Color.prototype.set = function(mc, value, mutate) {
         if (mutate === void 0)
           mutate = false;
         var ref = mc.split(".");
@@ -9616,7 +9444,7 @@ var require_chroma = __commonJS({
         if (channel) {
           var i2 = mode.indexOf(channel) - (mode.substr(0, 2) === "ok" ? 2 : 0);
           if (i2 > -1) {
-            if (type$3(value) == "string") {
+            if (type(value) == "string") {
               switch (value.charAt(0)) {
                 case "+":
                   src[i2] += +value;
@@ -9633,12 +9461,12 @@ var require_chroma = __commonJS({
                 default:
                   src[i2] = +value;
               }
-            } else if (type$3(value) === "number") {
+            } else if (type(value) === "number") {
               src[i2] = value;
             } else {
               throw new Error("unsupported value for Color.set");
             }
-            var out = new Color$d(src, mode);
+            var out = new Color(src, mode);
             if (mutate) {
               this._rgb = out._rgb;
               return this;
@@ -9650,19 +9478,33 @@ var require_chroma = __commonJS({
           return src;
         }
       };
-      var Color$c = Color_1;
+      Color.prototype.tint = function(f) {
+        if (f === void 0)
+          f = 0.5;
+        var rest = [], len = arguments.length - 1;
+        while (len-- > 0)
+          rest[len] = arguments[len + 1];
+        return mix.apply(void 0, [this, "white", f].concat(rest));
+      };
+      Color.prototype.shade = function(f) {
+        if (f === void 0)
+          f = 0.5;
+        var rest = [], len = arguments.length - 1;
+        while (len-- > 0)
+          rest[len] = arguments[len + 1];
+        return mix.apply(void 0, [this, "black", f].concat(rest));
+      };
       var rgb = function(col1, col2, f) {
         var xyz0 = col1._rgb;
         var xyz1 = col2._rgb;
-        return new Color$c(
+        return new Color(
           xyz0[0] + f * (xyz1[0] - xyz0[0]),
           xyz0[1] + f * (xyz1[1] - xyz0[1]),
           xyz0[2] + f * (xyz1[2] - xyz0[2]),
           "rgb"
         );
       };
-      interpolator$1.rgb = rgb;
-      var Color$b = Color_1;
+      index.rgb = rgb;
       var sqrt$2 = Math.sqrt;
       var pow$5 = Math.pow;
       var lrgb = function(col1, col2, f) {
@@ -9674,28 +9516,26 @@ var require_chroma = __commonJS({
         var x2 = ref$1[0];
         var y2 = ref$1[1];
         var z2 = ref$1[2];
-        return new Color$b(
+        return new Color(
           sqrt$2(pow$5(x1, 2) * (1 - f) + pow$5(x2, 2) * f),
           sqrt$2(pow$5(y1, 2) * (1 - f) + pow$5(y2, 2) * f),
           sqrt$2(pow$5(z1, 2) * (1 - f) + pow$5(z2, 2) * f),
           "rgb"
         );
       };
-      interpolator$1.lrgb = lrgb;
-      var Color$a = Color_1;
+      index.lrgb = lrgb;
       var lab = function(col1, col2, f) {
         var xyz0 = col1.lab();
         var xyz1 = col2.lab();
-        return new Color$a(
+        return new Color(
           xyz0[0] + f * (xyz1[0] - xyz0[0]),
           xyz0[1] + f * (xyz1[1] - xyz0[1]),
           xyz0[2] + f * (xyz1[2] - xyz0[2]),
           "lab"
         );
       };
-      interpolator$1.lab = lab;
-      var Color$9 = Color_1;
-      var _hsx = function(col1, col2, f, m) {
+      index.lab = lab;
+      function interpolate_hsx(col1, col2, f, m) {
         var assign, assign$1;
         var xyz0, xyz1;
         if (m === "hsl") {
@@ -9750,67 +9590,57 @@ var require_chroma = __commonJS({
           sat = sat0 + f * (sat1 - sat0);
         }
         lbv = lbv0 + f * (lbv1 - lbv0);
-        return m === "oklch" ? new Color$9([lbv, sat, hue], m) : new Color$9([hue, sat, lbv], m);
-      };
-      var interpolate_hsx$5 = _hsx;
+        return m === "oklch" ? new Color([lbv, sat, hue], m) : new Color([hue, sat, lbv], m);
+      }
       var lch = function(col1, col2, f) {
-        return interpolate_hsx$5(col1, col2, f, "lch");
+        return interpolate_hsx(col1, col2, f, "lch");
       };
-      interpolator$1.lch = lch;
-      interpolator$1.hcl = lch;
-      var Color$8 = Color_1;
+      index.lch = lch;
+      index.hcl = lch;
       var num = function(col1, col2, f) {
         var c1 = col1.num();
         var c2 = col2.num();
-        return new Color$8(c1 + f * (c2 - c1), "num");
+        return new Color(c1 + f * (c2 - c1), "num");
       };
-      interpolator$1.num = num;
-      var interpolate_hsx$4 = _hsx;
+      index.num = num;
       var hcg = function(col1, col2, f) {
-        return interpolate_hsx$4(col1, col2, f, "hcg");
+        return interpolate_hsx(col1, col2, f, "hcg");
       };
-      interpolator$1.hcg = hcg;
-      var interpolate_hsx$3 = _hsx;
+      index.hcg = hcg;
       var hsi = function(col1, col2, f) {
-        return interpolate_hsx$3(col1, col2, f, "hsi");
+        return interpolate_hsx(col1, col2, f, "hsi");
       };
-      interpolator$1.hsi = hsi;
-      var interpolate_hsx$2 = _hsx;
+      index.hsi = hsi;
       var hsl = function(col1, col2, f) {
-        return interpolate_hsx$2(col1, col2, f, "hsl");
+        return interpolate_hsx(col1, col2, f, "hsl");
       };
-      interpolator$1.hsl = hsl;
-      var interpolate_hsx$1 = _hsx;
+      index.hsl = hsl;
       var hsv = function(col1, col2, f) {
-        return interpolate_hsx$1(col1, col2, f, "hsv");
+        return interpolate_hsx(col1, col2, f, "hsv");
       };
-      interpolator$1.hsv = hsv;
-      var Color$7 = Color_1;
+      index.hsv = hsv;
       var oklab = function(col1, col2, f) {
         var xyz0 = col1.oklab();
         var xyz1 = col2.oklab();
-        return new Color$7(
+        return new Color(
           xyz0[0] + f * (xyz1[0] - xyz0[0]),
           xyz0[1] + f * (xyz1[1] - xyz0[1]),
           xyz0[2] + f * (xyz1[2] - xyz0[2]),
           "oklab"
         );
       };
-      interpolator$1.oklab = oklab;
-      var interpolate_hsx = _hsx;
+      index.oklab = oklab;
       var oklch = function(col1, col2, f) {
         return interpolate_hsx(col1, col2, f, "oklch");
       };
-      interpolator$1.oklch = oklch;
-      var Color$6 = Color_1;
-      var clip_rgb$1 = utils.clip_rgb;
+      index.oklch = oklch;
       var pow$4 = Math.pow;
       var sqrt$1 = Math.sqrt;
       var PI$1 = Math.PI;
       var cos$2 = Math.cos;
       var sin$2 = Math.sin;
       var atan2$1 = Math.atan2;
-      var average = function(colors, mode, weights) {
+      function average(colors, mode, weights) {
         if (mode === void 0)
           mode = "lrgb";
         if (weights === void 0)
@@ -9828,7 +9658,7 @@ var require_chroma = __commonJS({
           weights[i3] *= k;
         });
         colors = colors.map(function(c) {
-          return new Color$6(c);
+          return new Color(c);
         });
         if (mode === "lrgb") {
           return _average_lrgb(colors, weights);
@@ -9879,8 +9709,8 @@ var require_chroma = __commonJS({
           }
         }
         alpha /= l;
-        return new Color$6(xyz, mode).alpha(alpha > 0.99999 ? 1 : alpha, true);
-      };
+        return new Color(xyz, mode).alpha(alpha > 0.99999 ? 1 : alpha, true);
+      }
       var _average_lrgb = function(colors, weights) {
         var l = colors.length;
         var xyz = [0, 0, 0, 0];
@@ -9899,14 +9729,12 @@ var require_chroma = __commonJS({
         if (xyz[3] > 0.9999999) {
           xyz[3] = 1;
         }
-        return new Color$6(clip_rgb$1(xyz));
+        return new Color(clip_rgb(xyz));
       };
-      var chroma$4 = chroma_1;
-      var type$2 = utils.type;
       var pow$3 = Math.pow;
-      var scale$2 = function(colors) {
+      function scale(colors) {
         var _mode = "rgb";
-        var _nacol = chroma$4("#ccc");
+        var _nacol = chroma("#ccc");
         var _spread = 0;
         var _domain = [0, 1];
         var _pos = [];
@@ -9922,16 +9750,16 @@ var require_chroma = __commonJS({
         var _gamma = 1;
         var setColors = function(colors2) {
           colors2 = colors2 || ["#fff", "#000"];
-          if (colors2 && type$2(colors2) === "string" && chroma$4.brewer && chroma$4.brewer[colors2.toLowerCase()]) {
-            colors2 = chroma$4.brewer[colors2.toLowerCase()];
+          if (colors2 && type(colors2) === "string" && chroma.brewer && chroma.brewer[colors2.toLowerCase()]) {
+            colors2 = chroma.brewer[colors2.toLowerCase()];
           }
-          if (type$2(colors2) === "array") {
+          if (type(colors2) === "array") {
             if (colors2.length === 1) {
               colors2 = [colors2[0], colors2[0]];
             }
             colors2 = colors2.slice(0);
             for (var c = 0; c < colors2.length; c++) {
-              colors2[c] = chroma$4(colors2[c]);
+              colors2[c] = chroma(colors2[c]);
             }
             _pos.length = 0;
             for (var c$1 = 0; c$1 < colors2.length; c$1++) {
@@ -9986,12 +9814,12 @@ var require_chroma = __commonJS({
             t2 = pow$3(t2, _gamma);
           }
           t2 = _padding[0] + t2 * (1 - _padding[0] - _padding[1]);
-          t2 = Math.min(1, Math.max(0, t2));
+          t2 = limit(t2, 0, 1);
           var k = Math.floor(t2 * 1e4);
           if (_useCache && _colorCache[k]) {
             col = _colorCache[k];
           } else {
-            if (type$2(_colors) === "array") {
+            if (type(_colors) === "array") {
               for (var i2 = 0; i2 < _pos.length; i2++) {
                 var p = _pos[i2];
                 if (t2 <= p) {
@@ -10004,11 +9832,16 @@ var require_chroma = __commonJS({
                 }
                 if (t2 > p && t2 < _pos[i2 + 1]) {
                   t2 = (t2 - p) / (_pos[i2 + 1] - p);
-                  col = chroma$4.interpolate(_colors[i2], _colors[i2 + 1], t2, _mode);
+                  col = chroma.interpolate(
+                    _colors[i2],
+                    _colors[i2 + 1],
+                    t2,
+                    _mode
+                  );
                   break;
                 }
               }
-            } else if (type$2(_colors) === "function") {
+            } else if (type(_colors) === "function") {
               col = _colors(t2);
             }
             if (_useCache) {
@@ -10022,7 +9855,7 @@ var require_chroma = __commonJS({
         };
         setColors(colors);
         var f = function(v) {
-          var c = chroma$4(getColor(v));
+          var c = chroma(getColor(v));
           if (_out && c[_out]) {
             return c[_out]();
           } else {
@@ -10031,15 +9864,15 @@ var require_chroma = __commonJS({
         };
         f.classes = function(classes) {
           if (classes != null) {
-            if (type$2(classes) === "array") {
+            if (type(classes) === "array") {
               _classes = classes;
               _domain = [classes[0], classes[classes.length - 1]];
             } else {
-              var d = chroma$4.analyze(_domain);
+              var d = chroma.analyze(_domain);
               if (classes === 0) {
                 _classes = [d.min, d.max];
               } else {
-                _classes = chroma$4.limits(d, "e", classes);
+                _classes = chroma.limits(d, "e", classes);
               }
             }
             return f;
@@ -10158,7 +9991,7 @@ var require_chroma = __commonJS({
         };
         f.padding = function(p) {
           if (p != null) {
-            if (type$2(p) === "number") {
+            if (type(p) === "number") {
               p = [p, p];
             }
             _padding = p;
@@ -10179,9 +10012,11 @@ var require_chroma = __commonJS({
           } else if (numColors > 1) {
             var dm = _domain[0];
             var dd = _domain[1] - dm;
-            result = __range__(0, numColors, false).map(function(i3) {
-              return f(dm + i3 / (numColors - 1) * dd);
-            });
+            result = __range__(0, numColors).map(
+              function(i3) {
+                return f(dm + i3 / (numColors - 1) * dd);
+              }
+            );
           } else {
             colors = [];
             var samples = [];
@@ -10196,7 +10031,7 @@ var require_chroma = __commonJS({
               return f(v);
             });
           }
-          if (chroma$4[out]) {
+          if (chroma[out]) {
             result = result.map(function(c) {
               return c[out]();
             });
@@ -10221,25 +10056,23 @@ var require_chroma = __commonJS({
         };
         f.nodata = function(d) {
           if (d != null) {
-            _nacol = chroma$4(d);
+            _nacol = chroma(d);
             return f;
           } else {
             return _nacol;
           }
         };
         return f;
-      };
+      }
       function __range__(left, right, inclusive) {
         var range = [];
         var ascending = left < right;
-        var end = !inclusive ? right : ascending ? right + 1 : right - 1;
+        var end = right;
         for (var i2 = left; ascending ? i2 < end : i2 > end; ascending ? i2++ : i2--) {
           range.push(i2);
         }
         return range;
       }
-      var Color$5 = Color_1;
-      var scale$1 = scale$2;
       var binom_row = function(n) {
         var row = [1, 1];
         for (var i2 = 1; i2 < n; i2++) {
@@ -10255,7 +10088,7 @@ var require_chroma = __commonJS({
         var assign, assign$1, assign$2;
         var I, lab0, lab1, lab2;
         colors = colors.map(function(c) {
-          return new Color$5(c);
+          return new Color(c);
         });
         if (colors.length === 2) {
           assign = colors.map(function(c) {
@@ -10265,17 +10098,19 @@ var require_chroma = __commonJS({
             var lab4 = [0, 1, 2].map(function(i2) {
               return lab0[i2] + t2 * (lab1[i2] - lab0[i2]);
             });
-            return new Color$5(lab4, "lab");
+            return new Color(lab4, "lab");
           };
         } else if (colors.length === 3) {
           assign$1 = colors.map(function(c) {
             return c.lab();
           }), lab0 = assign$1[0], lab1 = assign$1[1], lab2 = assign$1[2];
           I = function(t2) {
-            var lab4 = [0, 1, 2].map(function(i2) {
-              return (1 - t2) * (1 - t2) * lab0[i2] + 2 * (1 - t2) * t2 * lab1[i2] + t2 * t2 * lab2[i2];
-            });
-            return new Color$5(lab4, "lab");
+            var lab4 = [0, 1, 2].map(
+              function(i2) {
+                return (1 - t2) * (1 - t2) * lab0[i2] + 2 * (1 - t2) * t2 * lab1[i2] + t2 * t2 * lab2[i2];
+              }
+            );
+            return new Color(lab4, "lab");
           };
         } else if (colors.length === 4) {
           var lab3;
@@ -10283,10 +10118,12 @@ var require_chroma = __commonJS({
             return c.lab();
           }), lab0 = assign$2[0], lab1 = assign$2[1], lab2 = assign$2[2], lab3 = assign$2[3];
           I = function(t2) {
-            var lab4 = [0, 1, 2].map(function(i2) {
-              return (1 - t2) * (1 - t2) * (1 - t2) * lab0[i2] + 3 * (1 - t2) * (1 - t2) * t2 * lab1[i2] + 3 * (1 - t2) * t2 * t2 * lab2[i2] + t2 * t2 * t2 * lab3[i2];
-            });
-            return new Color$5(lab4, "lab");
+            var lab4 = [0, 1, 2].map(
+              function(i2) {
+                return (1 - t2) * (1 - t2) * (1 - t2) * lab0[i2] + 3 * (1 - t2) * (1 - t2) * t2 * lab1[i2] + 3 * (1 - t2) * t2 * t2 * lab2[i2] + t2 * t2 * t2 * lab3[i2];
+              }
+            );
+            return new Color(lab4, "lab");
           };
         } else if (colors.length >= 5) {
           var labs, row, n;
@@ -10297,26 +10134,30 @@ var require_chroma = __commonJS({
           row = binom_row(n);
           I = function(t2) {
             var u = 1 - t2;
-            var lab4 = [0, 1, 2].map(function(i2) {
-              return labs.reduce(function(sum, el, j) {
-                return sum + row[j] * Math.pow(u, n - j) * Math.pow(t2, j) * el[i2];
-              }, 0);
-            });
-            return new Color$5(lab4, "lab");
+            var lab4 = [0, 1, 2].map(
+              function(i2) {
+                return labs.reduce(
+                  function(sum, el, j) {
+                    return sum + row[j] * Math.pow(u, n - j) * Math.pow(t2, j) * el[i2];
+                  },
+                  0
+                );
+              }
+            );
+            return new Color(lab4, "lab");
           };
         } else {
           throw new RangeError("No point in running bezier with only one color.");
         }
         return I;
       };
-      var bezier_1 = function(colors) {
+      function bezier$1(colors) {
         var f = bezier(colors);
         f.scale = function() {
-          return scale$1(f);
+          return scale(f);
         };
         return f;
-      };
-      var chroma$3 = chroma_1;
+      }
       var blend = function(bottom, top, mode) {
         if (!blend[mode]) {
           throw new Error("unknown blend mode " + mode);
@@ -10325,9 +10166,9 @@ var require_chroma = __commonJS({
       };
       var blend_f = function(f) {
         return function(bottom, top) {
-          var c0 = chroma$3(top).rgb();
-          var c1 = chroma$3(bottom).rgb();
-          return chroma$3.rgb(f(c0, c1));
+          var c0 = chroma(top).rgb();
+          var c1 = chroma(bottom).rgb();
+          return chroma.rgb(f(c0, c1));
         };
       };
       var each = function(f) {
@@ -10375,15 +10216,10 @@ var require_chroma = __commonJS({
       blend.lighten = blend_f(each(lighten));
       blend.dodge = blend_f(each(dodge));
       blend.burn = blend_f(each(burn));
-      var blend_1 = blend;
-      var type$1 = utils.type;
-      var clip_rgb = utils.clip_rgb;
-      var TWOPI = utils.TWOPI;
       var pow$2 = Math.pow;
       var sin$1 = Math.sin;
       var cos$1 = Math.cos;
-      var chroma$2 = chroma_1;
-      var cubehelix = function(start, rotations, hue, gamma, lightness) {
+      function cubehelix(start, rotations, hue, gamma, lightness) {
         if (start === void 0)
           start = 300;
         if (rotations === void 0)
@@ -10395,7 +10231,7 @@ var require_chroma = __commonJS({
         if (lightness === void 0)
           lightness = [0, 1];
         var dh = 0, dl;
-        if (type$1(lightness) === "array") {
+        if (type(lightness) === "array") {
           dl = lightness[1] - lightness[0];
         } else {
           dl = 0;
@@ -10411,7 +10247,7 @@ var require_chroma = __commonJS({
           var r = l + amp * (-0.14861 * cos_a + 1.78277 * sin_a);
           var g = l + amp * (-0.29227 * cos_a - 0.90649 * sin_a);
           var b = l + amp * (1.97294 * cos_a);
-          return chroma$2(clip_rgb([r * 255, g * 255, b * 255, 1]));
+          return chroma(clip_rgb([r * 255, g * 255, b * 255, 1]));
         };
         f.start = function(s) {
           if (s == null) {
@@ -10439,7 +10275,7 @@ var require_chroma = __commonJS({
             return hue;
           }
           hue = h;
-          if (type$1(hue) === "array") {
+          if (type(hue) === "array") {
             dh = hue[1] - hue[0];
             if (dh === 0) {
               hue = hue[1];
@@ -10453,7 +10289,7 @@ var require_chroma = __commonJS({
           if (h == null) {
             return lightness;
           }
-          if (type$1(h) === "array") {
+          if (type(h) === "array") {
             lightness = h;
             dl = h[1] - h[0];
           } else {
@@ -10463,28 +10299,26 @@ var require_chroma = __commonJS({
           return f;
         };
         f.scale = function() {
-          return chroma$2.scale(f);
+          return chroma.scale(f);
         };
         f.hue(hue);
         return f;
-      };
-      var Color$4 = Color_1;
+      }
       var digits = "0123456789abcdef";
       var floor$1 = Math.floor;
       var random = Math.random;
-      var random_1 = function() {
+      function random$1() {
         var code = "#";
         for (var i2 = 0; i2 < 6; i2++) {
           code += digits.charAt(floor$1(random() * 16));
         }
-        return new Color$4(code, "hex");
-      };
-      var type = type$p;
+        return new Color(code, "hex");
+      }
       var log = Math.log;
       var pow$1 = Math.pow;
       var floor = Math.floor;
       var abs$1 = Math.abs;
-      var analyze = function(data, key2) {
+      function analyze(data, key2) {
         if (key2 === void 0)
           key2 = null;
         var r = {
@@ -10518,8 +10352,8 @@ var require_chroma = __commonJS({
           return limits(r, mode, num2);
         };
         return r;
-      };
-      var limits = function(data, mode, num2) {
+      }
+      function limits(data, mode, num2) {
         if (mode === void 0)
           mode = "equal";
         if (num2 === void 0)
@@ -10548,7 +10382,9 @@ var require_chroma = __commonJS({
           limits2.push(max2);
         } else if (mode.substr(0, 1) === "l") {
           if (min2 <= 0) {
-            throw new Error("Logarithmic scales are only possible for values > 0");
+            throw new Error(
+              "Logarithmic scales are only possible for values > 0"
+            );
           }
           var min_log = Math.LOG10E * log(min2);
           var max_log = Math.LOG10E * log(max2);
@@ -10655,17 +10491,14 @@ var require_chroma = __commonJS({
           }
         }
         return limits2;
-      };
-      var analyze_1 = { analyze, limits };
-      var Color$3 = Color_1;
-      var contrast = function(a, b) {
-        a = new Color$3(a);
-        b = new Color$3(b);
+      }
+      function contrast(a, b) {
+        a = new Color(a);
+        b = new Color(b);
         var l1 = a.luminance();
         var l2 = b.luminance();
         return l1 > l2 ? (l1 + 0.05) / (l2 + 0.05) : (l2 + 0.05) / (l1 + 0.05);
-      };
-      var Color$2 = Color_1;
+      }
       var sqrt = Math.sqrt;
       var pow = Math.pow;
       var min = Math.min;
@@ -10676,7 +10509,7 @@ var require_chroma = __commonJS({
       var sin = Math.sin;
       var exp = Math.exp;
       var PI = Math.PI;
-      var deltaE = function(a, b, Kl, Kc, Kh) {
+      function deltaE(a, b, Kl, Kc, Kh) {
         if (Kl === void 0)
           Kl = 1;
         if (Kc === void 0)
@@ -10689,8 +10522,8 @@ var require_chroma = __commonJS({
         var deg2rad = function(deg) {
           return 2 * PI * deg / 360;
         };
-        a = new Color$2(a);
-        b = new Color$2(b);
+        a = new Color(a);
+        b = new Color(b);
         var ref = Array.from(a.lab());
         var L1 = ref[0];
         var a1 = ref[1];
@@ -10726,15 +10559,16 @@ var require_chroma = __commonJS({
         var deltaTheta = 30 * exp(-pow((avgHp - 275) / 25, 2));
         var Rc = 2 * sqrt(pow(avgCp, 7) / (pow(avgCp, 7) + pow(25, 7)));
         var Rt = -Rc * sin(2 * deg2rad(deltaTheta));
-        var result = sqrt(pow(deltaL / (Kl * sl), 2) + pow(deltaCp / (Kc * sc), 2) + pow(deltaHp / (Kh * sh), 2) + Rt * (deltaCp / (Kc * sc)) * (deltaHp / (Kh * sh)));
+        var result = sqrt(
+          pow(deltaL / (Kl * sl), 2) + pow(deltaCp / (Kc * sc), 2) + pow(deltaHp / (Kh * sh), 2) + Rt * (deltaCp / (Kc * sc)) * (deltaHp / (Kh * sh))
+        );
         return max(0, min(100, result));
-      };
-      var Color$1 = Color_1;
-      var distance = function(a, b, mode) {
+      }
+      function distance(a, b, mode) {
         if (mode === void 0)
           mode = "lab";
-        a = new Color$1(a);
-        b = new Color$1(b);
+        a = new Color(a);
+        b = new Color(b);
         var l1 = a.get(mode);
         var l2 = b.get(mode);
         var sum_sq = 0;
@@ -10743,9 +10577,8 @@ var require_chroma = __commonJS({
           sum_sq += d * d;
         }
         return Math.sqrt(sum_sq);
-      };
-      var Color = Color_1;
-      var valid = function() {
+      }
+      function valid() {
         var args = [], len = arguments.length;
         while (len--)
           args[len] = arguments[len];
@@ -10755,15 +10588,15 @@ var require_chroma = __commonJS({
         } catch (e) {
           return false;
         }
-      };
-      var chroma$1 = chroma_1;
-      var scale = scale$2;
+      }
       var scales = {
         cool: function cool() {
-          return scale([chroma$1.hsl(180, 1, 0.9), chroma$1.hsl(250, 0.7, 0.4)]);
+          return scale([chroma.hsl(180, 1, 0.9), chroma.hsl(250, 0.7, 0.4)]);
         },
         hot: function hot() {
-          return scale(["#000", "#f00", "#ff0", "#fff"]).mode("rgb");
+          return scale(["#000", "#f00", "#ff0", "#fff"]).mode(
+            "rgb"
+          );
         }
       };
       var colorbrewer = {
@@ -10811,26 +10644,27 @@ var require_chroma = __commonJS({
         var key = list[i];
         colorbrewer[key.toLowerCase()] = colorbrewer[key];
       }
-      var colorbrewer_1 = colorbrewer;
-      var chroma = chroma_1;
-      chroma.average = average;
-      chroma.bezier = bezier_1;
-      chroma.blend = blend_1;
-      chroma.cubehelix = cubehelix;
-      chroma.mix = chroma.interpolate = mix$1;
-      chroma.random = random_1;
-      chroma.scale = scale$2;
-      chroma.analyze = analyze_1.analyze;
-      chroma.contrast = contrast;
-      chroma.deltaE = deltaE;
-      chroma.distance = distance;
-      chroma.limits = analyze_1.limits;
-      chroma.valid = valid;
-      chroma.scales = scales;
-      chroma.colors = w3cx11_1;
-      chroma.brewer = colorbrewer_1;
-      var chroma_js = chroma;
-      return chroma_js;
+      Object.assign(chroma, {
+        average,
+        bezier: bezier$1,
+        blend,
+        cubehelix,
+        mix,
+        interpolate: mix,
+        random: random$1,
+        scale,
+        analyze,
+        contrast,
+        deltaE,
+        distance,
+        limits,
+        valid,
+        scales,
+        input,
+        colors: w3cx11,
+        brewer: colorbrewer
+      });
+      return chroma;
     });
   }
 });
@@ -13349,7 +13183,7 @@ var require_ReactionDrawer = __commonJS({
         let s = this.opts.arrow.headSize;
         let sw = s * (7 / 4.5);
         let marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
-        let path2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         marker.setAttributeNS(null, "id", "arrowhead");
         marker.setAttributeNS(null, "viewBox", `0 0 ${sw} ${s}`);
         marker.setAttributeNS(null, "markerUnits", "userSpaceOnUse");
@@ -13359,9 +13193,9 @@ var require_ReactionDrawer = __commonJS({
         marker.setAttributeNS(null, "refY", 2.2);
         marker.setAttributeNS(null, "orient", "auto");
         marker.setAttributeNS(null, "fill", this.themeManager.getColor("C"));
-        path2.setAttributeNS(null, "style", "fill-rule:nonzero;");
-        path2.setAttributeNS(null, "d", "m 0 0 l 7 2.25 l -7 2.25 c 0 0 0.735 -1.084 0.735 -2.28 c 0 -1.196 -0.735 -2.22 -0.735 -2.22 z");
-        marker.appendChild(path2);
+        path.setAttributeNS(null, "style", "fill-rule:nonzero;");
+        path.setAttributeNS(null, "d", "m 0 0 l 7 2.25 l -7 2.25 c 0 0 0.735 -1.084 0.735 -2.28 c 0 -1.196 -0.735 -2.22 -0.735 -2.22 z");
+        marker.appendChild(path);
         return marker;
       }
       getArrow() {
@@ -14701,7 +14535,7 @@ var require_lib = __commonJS({
         return defaultZone2;
       } else if (input instanceof Zone) {
         return input;
-      } else if (isString(input)) {
+      } else if (isString2(input)) {
         const lowered = input.toLowerCase();
         if (lowered === "default")
           return defaultZone2;
@@ -14852,7 +14686,7 @@ var require_lib = __commonJS({
     function isInteger(o) {
       return typeof o === "number" && o % 1 === 0;
     }
-    function isString(o) {
+    function isString2(o) {
       return typeof o === "string";
     }
     function isDate(o) {
@@ -19657,6 +19491,8 @@ var require_lib = __commonJS({
     });
     var Success = class {
       constructor(value) {
+        __publicField(this, "value");
+        __publicField(this, "successful");
         this.value = value;
         this.successful = true;
       }
@@ -19684,6 +19520,8 @@ var require_lib = __commonJS({
     };
     var Failure = class {
       constructor(error) {
+        __publicField(this, "error");
+        __publicField(this, "successful");
         this.error = error;
         this.successful = false;
       }
@@ -20373,12 +20211,12 @@ var require_lib = __commonJS({
         return dur;
       return dur.shiftToAll().normalize();
     }
-    function getFileTitle(path2) {
-      if (path2.includes("/"))
-        path2 = path2.substring(path2.lastIndexOf("/") + 1);
-      if (path2.endsWith(".md"))
-        path2 = path2.substring(0, path2.length - 3);
-      return path2;
+    function getFileTitle(path) {
+      if (path.includes("/"))
+        path = path.substring(path.lastIndexOf("/") + 1);
+      if (path.endsWith(".md"))
+        path = path.substring(0, path.length - 3);
+      return path;
     }
     parsimmon_umd_minExports.alt(parsimmon_umd_minExports.regex(new RegExp(emojiRegex(), "")), parsimmon_umd_minExports.regex(/[0-9\p{Letter}_-]+/u).map((str) => str.toLocaleLowerCase()), parsimmon_umd_minExports.whitespace.map((_) => "-"), parsimmon_umd_minExports.any.map((_) => "")).many().map((result) => result.join(""));
     var HEADER_CANONICALIZER = parsimmon_umd_minExports.alt(parsimmon_umd_minExports.regex(new RegExp(emojiRegex(), "")), parsimmon_umd_minExports.regex(/[0-9\p{Letter}_-]+/u), parsimmon_umd_minExports.whitespace.map((_) => " "), parsimmon_umd_minExports.any.map((_) => " ")).many().map((result) => {
@@ -20439,7 +20277,7 @@ var require_lib = __commonJS({
           return { type: "null", value: val };
         else if (isNumber2(val))
           return { type: "number", value: val };
-        else if (isString2(val))
+        else if (isString3(val))
           return { type: "string", value: val };
         else if (isBoolean(val))
           return { type: "boolean", value: val };
@@ -20522,7 +20360,7 @@ var require_lib = __commonJS({
           case "link":
             let link1 = wrap1.value;
             let link2 = wrap2.value;
-            let normalize = linkNormalizer !== null && linkNormalizer !== void 0 ? linkNormalizer : (x) => x;
+            let normalize = linkNormalizer != null ? linkNormalizer : (x) => x;
             let pathCompare = normalize(link1.path).localeCompare(normalize(link2.path));
             if (pathCompare != 0)
               return pathCompare;
@@ -20535,7 +20373,7 @@ var require_lib = __commonJS({
               return -1;
             if (!link1.subpath && !link2.subpath)
               return 0;
-            return ((_a = link1.subpath) !== null && _a !== void 0 ? _a : "").localeCompare((_b = link2.subpath) !== null && _b !== void 0 ? _b : "");
+            return ((_a = link1.subpath) != null ? _a : "").localeCompare((_b = link2.subpath) != null ? _b : "");
           case "date":
             return wrap1.value < wrap2.value ? -1 : wrap1.value.equals(wrap2.value) ? 0 : 1;
           case "duration":
@@ -20574,7 +20412,7 @@ var require_lib = __commonJS({
       Values2.compareValue = compareValue;
       function typeOf(val) {
         var _a;
-        return (_a = wrapValue(val)) === null || _a === void 0 ? void 0 : _a.type;
+        return (_a = wrapValue(val)) == null ? void 0 : _a.type;
       }
       Values2.typeOf = typeOf;
       function isTruthy(field) {
@@ -20622,10 +20460,10 @@ var require_lib = __commonJS({
         }
       }
       Values2.deepCopy = deepCopy;
-      function isString2(val) {
+      function isString3(val) {
         return typeof val == "string";
       }
-      Values2.isString = isString2;
+      Values2.isString = isString3;
       function isNumber2(val) {
         return typeof val == "number";
       }
@@ -20701,10 +20539,23 @@ var require_lib = __commonJS({
       Groupings2.count = count;
     })(Groupings || (Groupings = {}));
     var Link = class {
+      constructor(fields) {
+        /** The file path this link points to. */
+        __publicField(this, "path");
+        /** The display name associated with the link. */
+        __publicField(this, "display");
+        /** The block ID or header this link points to within a file, if relevant. */
+        __publicField(this, "subpath");
+        /** Is this link an embedded link (!)? */
+        __publicField(this, "embed");
+        /** The type of this link, which determines what 'subpath' refers to, if anything. */
+        __publicField(this, "type");
+        Object.assign(this, fields);
+      }
       /** Create a link to a specific file. */
-      static file(path2, embed = false, display) {
+      static file(path, embed = false, display) {
         return new Link({
-          path: path2,
+          path,
           embed,
           display,
           subpath: void 0,
@@ -20722,9 +20573,9 @@ var require_lib = __commonJS({
           return Link.file(linkpath, embed, display);
       }
       /** Create a link to a specific file and header in that file. */
-      static header(path2, header, embed, display) {
+      static header(path, header, embed, display) {
         return new Link({
-          path: path2,
+          path,
           embed,
           display,
           subpath: normalizeHeaderForLink(header),
@@ -20732,9 +20583,9 @@ var require_lib = __commonJS({
         });
       }
       /** Create a link to a specific file and block in that file. */
-      static block(path2, blockId, embed, display) {
+      static block(path, blockId, embed, display) {
         return new Link({
-          path: path2,
+          path,
           embed,
           display,
           subpath: blockId,
@@ -20743,9 +20594,6 @@ var require_lib = __commonJS({
       }
       static fromObject(object) {
         return new Link(object);
-      }
-      constructor(fields) {
-        Object.assign(this, fields);
       }
       /** Checks for link equality (i.e., that the links are pointing to the same exact location). */
       equals(other) {
@@ -20763,8 +20611,8 @@ var require_lib = __commonJS({
       }
       /** Update this link with a new path. */
       //@ts-ignore; error appeared after updating Obsidian to 0.15.4; it also updated other packages but didn't say which
-      withPath(path2) {
-        return new Link(Object.assign({}, this, { path: path2 }));
+      withPath(path) {
+        return new Link(Object.assign({}, this, { path }));
       }
       /** Return a new link which points to the same location but with a new display value. */
       withDisplay(display) {
@@ -20814,11 +20662,11 @@ var require_lib = __commonJS({
       /** Convert the inner part of the link to something that Obsidian can open / understand. */
       obsidianLink() {
         var _a, _b;
-        const escaped = this.path.replace("|", "\\|");
+        const escaped = this.path.replaceAll("|", "\\|");
         if (this.type == "header")
-          return escaped + "#" + ((_a = this.subpath) === null || _a === void 0 ? void 0 : _a.replace("|", "\\|"));
+          return escaped + "#" + ((_a = this.subpath) == null ? void 0 : _a.replaceAll("|", "\\|"));
         if (this.type == "block")
-          return escaped + "#^" + ((_b = this.subpath) === null || _b === void 0 ? void 0 : _b.replace("|", "\\|"));
+          return escaped + "#^" + ((_b = this.subpath) == null ? void 0 : _b.replaceAll("|", "\\|"));
         else
           return escaped;
       }
@@ -20829,12 +20677,15 @@ var require_lib = __commonJS({
     };
     var Widget = class {
       constructor($widget) {
+        __publicField(this, "$widget");
         this.$widget = $widget;
       }
     };
     var ListPairWidget = class extends Widget {
       constructor(key, value) {
         super("dataview:list-pair");
+        __publicField(this, "key");
+        __publicField(this, "value");
         this.key = key;
         this.value = value;
       }
@@ -20845,12 +20696,14 @@ var require_lib = __commonJS({
     var ExternalLinkWidget = class extends Widget {
       constructor(url, display) {
         super("dataview:external-link");
+        __publicField(this, "url");
+        __publicField(this, "display");
         this.url = url;
         this.display = display;
       }
       markdown() {
         var _a;
-        return `[${(_a = this.display) !== null && _a !== void 0 ? _a : this.url}](${this.url})`;
+        return `[${(_a = this.display) != null ? _a : this.url}](${this.url})`;
       }
     };
     var Widgets;
@@ -20935,8 +20788,8 @@ var require_lib = __commonJS({
         return { type: "tag", tag: tag2 };
       }
       Sources2.tag = tag;
-      function csv(path2) {
-        return { type: "csv", path: path2 };
+      function csv(path) {
+        return { type: "csv", path };
       }
       Sources2.csv = csv;
       function folder(prefix) {
@@ -21123,7 +20976,7 @@ var require_lib = __commonJS({
       rawNull: (_) => parsimmon_umd_minExports.string("null"),
       // Source parsing.
       tagSource: (q) => q.tag.map((tag) => Sources.tag(tag)),
-      csvSource: (q) => parsimmon_umd_minExports.seqMap(parsimmon_umd_minExports.string("csv(").skip(parsimmon_umd_minExports.optWhitespace), q.string, parsimmon_umd_minExports.string(")"), (_1, path2, _2) => Sources.csv(path2)),
+      csvSource: (q) => parsimmon_umd_minExports.seqMap(parsimmon_umd_minExports.string("csv(").skip(parsimmon_umd_minExports.optWhitespace), q.string, parsimmon_umd_minExports.string(")"), (_1, path, _2) => Sources.csv(path)),
       linkIncomingSource: (q) => q.link.map((link) => Sources.link(link.path, true)),
       linkOutgoingSource: (q) => parsimmon_umd_minExports.seqMap(parsimmon_umd_minExports.string("outgoing(").skip(parsimmon_umd_minExports.optWhitespace), q.link, parsimmon_umd_minExports.string(")"), (_1, link, _2) => Sources.link(link.path, false)),
       folderSource: (q) => q.string.map((str) => Sources.folder(str)),
@@ -21160,7 +21013,7 @@ var require_lib = __commonJS({
       inlineFieldList: (q) => q.atomInlineField.sepBy(parsimmon_umd_minExports.string(",").trim(parsimmon_umd_minExports.optWhitespace).lookahead(q.atomInlineField)),
       inlineField: (q) => parsimmon_umd_minExports.alt(parsimmon_umd_minExports.seqMap(q.atomInlineField, parsimmon_umd_minExports.string(",").trim(parsimmon_umd_minExports.optWhitespace), q.inlineFieldList, (f, _s, l2) => [f].concat(l2)), q.atomInlineField),
       atomField: (q) => parsimmon_umd_minExports.alt(
-        // Place embed links above negated fields as they are the special parser case '![[thing]]' and are generally unambigious.
+        // Place embed links above negated fields as they are the special parser case '![[thing]]' and are generally unambiguous.
         q.embedLink.map((l2) => Fields.literal(l2)),
         q.negatedField,
         q.linkField,
@@ -21253,6 +21106,14 @@ var require_lib = __commonJS({
       // Simple atom parsing, like words, identifiers, numbers.
       queryType: (q) => parsimmon_umd_minExports.alt(parsimmon_umd_minExports.regexp(/TABLE|LIST|TASK|CALENDAR/i)).map((str) => str.toLowerCase()).desc("query type ('TABLE', 'LIST', 'TASK', or 'CALENDAR')"),
       explicitNamedField: (q) => parsimmon_umd_minExports.seqMap(EXPRESSION.field.skip(parsimmon_umd_minExports.whitespace), parsimmon_umd_minExports.regexp(/AS/i).skip(parsimmon_umd_minExports.whitespace), EXPRESSION.identifier.or(EXPRESSION.string), (field, _as, ident) => QueryFields.named(ident, field)),
+      comment: () => parsimmon_umd_minExports.Parser((input, i) => {
+        let line = input.substring(i);
+        if (!line.startsWith("//"))
+          return parsimmon_umd_minExports.makeFailure(i, "Not a comment");
+        line = line.split("\n")[0];
+        let comment = line.substring(2).trim();
+        return parsimmon_umd_minExports.makeSuccess(i + line.length, comment);
+      }),
       namedField: (q) => parsimmon_umd_minExports.alt(q.explicitNamedField, captureRaw(EXPRESSION.field).map(([value, text]) => QueryFields.named(stripNewlines(text), value))),
       sortField: (q) => parsimmon_umd_minExports.seqMap(EXPRESSION.field.skip(parsimmon_umd_minExports.optWhitespace), parsimmon_umd_minExports.regexp(/ASCENDING|DESCENDING|ASC|DESC/i).atMost(1), (field, dir2) => {
         let direction = dir2.length == 0 ? "ascending" : dir2[0].toLowerCase();
@@ -21312,7 +21173,7 @@ var require_lib = __commonJS({
       }).desc("GROUP BY <value> [AS <name>]"),
       // Full query parsing.
       clause: (q) => parsimmon_umd_minExports.alt(q.fromClause, q.whereClause, q.sortByClause, q.limitClause, q.groupByClause, q.flattenClause),
-      query: (q) => parsimmon_umd_minExports.seqMap(q.headerClause.trim(parsimmon_umd_minExports.optWhitespace), q.fromClause.trim(parsimmon_umd_minExports.optWhitespace).atMost(1), q.clause.trim(parsimmon_umd_minExports.optWhitespace).many(), (header, from, clauses) => {
+      query: (q) => parsimmon_umd_minExports.seqMap(q.headerClause.trim(optionalWhitespaceOrComment), q.fromClause.trim(optionalWhitespaceOrComment).atMost(1), q.clause.trim(optionalWhitespaceOrComment).many(), (header, from, clauses) => {
         return {
           header,
           source: from.length == 0 ? Sources.folder("") : from[0],
@@ -21321,14 +21182,15 @@ var require_lib = __commonJS({
         };
       })
     });
-    var getAPI = (app2) => {
+    var optionalWhitespaceOrComment = parsimmon_umd_minExports.alt(parsimmon_umd_minExports.whitespace, QUERY_LANGUAGE.comment).many().map((arr) => arr.join(""));
+    var getAPI = (app) => {
       var _a;
-      if (app2)
-        return (_a = app2.plugins.plugins.dataview) === null || _a === void 0 ? void 0 : _a.api;
+      if (app)
+        return (_a = app.plugins.plugins.dataview) == null ? void 0 : _a.api;
       else
         return window.DataviewAPI;
     };
-    var isPluginEnabled3 = (app2) => app2.plugins.enabledPlugins.has("dataview");
+    var isPluginEnabled3 = (app) => app.plugins.enabledPlugins.has("dataview");
     exports.DATE_SHORTHANDS = DATE_SHORTHANDS;
     exports.DURATION_TYPES = DURATION_TYPES;
     exports.EXPRESSION = EXPRESSION;
@@ -21346,7 +21208,7 @@ __export(main_exports, {
   default: () => ChemPlugin
 });
 module.exports = __toCommonJS(main_exports);
-var import_obsidian6 = require("obsidian");
+var import_obsidian7 = require("obsidian");
 
 // src/settings/v1.ts
 var DEFAULT_SETTINGS_V1 = {
@@ -21712,6 +21574,36 @@ var SDThemes = {
     H: "#bdae93",
     BACKGROUND: "#282828"
   },
+  "catppuccin-dark": {
+    C: "#cdd6f4",
+    O: "#f38ba8",
+    N: "#89b4fa",
+    F: "#f9e2af",
+    CL: "#cba6f7",
+    BR: "#a6e3a1",
+    I: "#b4befe",
+    P: "#fab387",
+    S: "#f5e0dc",
+    B: "#eba0ac",
+    SI: "#89dceb",
+    H: "#94e2d5",
+    BACKGROUND: "#1e1e2e"
+  },
+  "catppuccin-light": {
+    C: "#4c4f69",
+    O: "#d20f39",
+    N: "#1e66f5",
+    F: "#df8e1d",
+    CL: "#8839ef",
+    BR: "#40a02b",
+    I: "#7287fd",
+    P: "#fe640b",
+    S: "#dc8a78",
+    B: "#e64553",
+    SI: "#04a5e5",
+    H: "#179299",
+    BACKGROUND: "#eff1f5"
+  },
   custom: {
     C: "#222",
     O: "#e74c3c",
@@ -21762,6 +21654,8 @@ var themeList = {
   cyberpunk: "Cyberpunk",
   gruvbox: "Gruvbox",
   "gruvbox-dark": "Gruvbox Dark",
+  "catppuccin-light": "Catppuccin Latte",
+  "catppuccin-dark": "Catppuccin Mocha",
   // from RDKit
   "rdkit-default": "Light (RDKit)",
   "rdkit-avalon": "Avalon (RDKit)",
@@ -21905,6 +21799,204 @@ var getCurrentTheme = (settings) => {
 };
 
 // node_modules/i18next/dist/esm/i18next.js
+var isString = (obj) => typeof obj === "string";
+var defer = () => {
+  let res;
+  let rej;
+  const promise = new Promise((resolve, reject) => {
+    res = resolve;
+    rej = reject;
+  });
+  promise.resolve = res;
+  promise.reject = rej;
+  return promise;
+};
+var makeString = (object) => {
+  if (object == null)
+    return "";
+  return "" + object;
+};
+var copy = (a, s, t2) => {
+  a.forEach((m) => {
+    if (s[m])
+      t2[m] = s[m];
+  });
+};
+var lastOfPathSeparatorRegExp = /###/g;
+var cleanKey = (key) => key && key.indexOf("###") > -1 ? key.replace(lastOfPathSeparatorRegExp, ".") : key;
+var canNotTraverseDeeper = (object) => !object || isString(object);
+var getLastOfPath = (object, path, Empty) => {
+  const stack = !isString(path) ? path : path.split(".");
+  let stackIndex = 0;
+  while (stackIndex < stack.length - 1) {
+    if (canNotTraverseDeeper(object))
+      return {};
+    const key = cleanKey(stack[stackIndex]);
+    if (!object[key] && Empty)
+      object[key] = new Empty();
+    if (Object.prototype.hasOwnProperty.call(object, key)) {
+      object = object[key];
+    } else {
+      object = {};
+    }
+    ++stackIndex;
+  }
+  if (canNotTraverseDeeper(object))
+    return {};
+  return {
+    obj: object,
+    k: cleanKey(stack[stackIndex])
+  };
+};
+var setPath = (object, path, newValue) => {
+  const {
+    obj,
+    k
+  } = getLastOfPath(object, path, Object);
+  if (obj !== void 0 || path.length === 1) {
+    obj[k] = newValue;
+    return;
+  }
+  let e = path[path.length - 1];
+  let p = path.slice(0, path.length - 1);
+  let last = getLastOfPath(object, p, Object);
+  while (last.obj === void 0 && p.length) {
+    e = `${p[p.length - 1]}.${e}`;
+    p = p.slice(0, p.length - 1);
+    last = getLastOfPath(object, p, Object);
+    if (last && last.obj && typeof last.obj[`${last.k}.${e}`] !== "undefined") {
+      last.obj = void 0;
+    }
+  }
+  last.obj[`${last.k}.${e}`] = newValue;
+};
+var pushPath = (object, path, newValue, concat) => {
+  const {
+    obj,
+    k
+  } = getLastOfPath(object, path, Object);
+  obj[k] = obj[k] || [];
+  obj[k].push(newValue);
+};
+var getPath = (object, path) => {
+  const {
+    obj,
+    k
+  } = getLastOfPath(object, path);
+  if (!obj)
+    return void 0;
+  return obj[k];
+};
+var getPathWithDefaults = (data, defaultData, key) => {
+  const value = getPath(data, key);
+  if (value !== void 0) {
+    return value;
+  }
+  return getPath(defaultData, key);
+};
+var deepExtend = (target, source, overwrite) => {
+  for (const prop in source) {
+    if (prop !== "__proto__" && prop !== "constructor") {
+      if (prop in target) {
+        if (isString(target[prop]) || target[prop] instanceof String || isString(source[prop]) || source[prop] instanceof String) {
+          if (overwrite)
+            target[prop] = source[prop];
+        } else {
+          deepExtend(target[prop], source[prop], overwrite);
+        }
+      } else {
+        target[prop] = source[prop];
+      }
+    }
+  }
+  return target;
+};
+var regexEscape = (str) => str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+var _entityMap = {
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&quot;",
+  "'": "&#39;",
+  "/": "&#x2F;"
+};
+var escape = (data) => {
+  if (isString(data)) {
+    return data.replace(/[&<>"'\/]/g, (s) => _entityMap[s]);
+  }
+  return data;
+};
+var RegExpCache = class {
+  constructor(capacity) {
+    this.capacity = capacity;
+    this.regExpMap = /* @__PURE__ */ new Map();
+    this.regExpQueue = [];
+  }
+  getRegExp(pattern) {
+    const regExpFromCache = this.regExpMap.get(pattern);
+    if (regExpFromCache !== void 0) {
+      return regExpFromCache;
+    }
+    const regExpNew = new RegExp(pattern);
+    if (this.regExpQueue.length === this.capacity) {
+      this.regExpMap.delete(this.regExpQueue.shift());
+    }
+    this.regExpMap.set(pattern, regExpNew);
+    this.regExpQueue.push(pattern);
+    return regExpNew;
+  }
+};
+var chars = [" ", ",", "?", "!", ";"];
+var looksLikeObjectPathRegExpCache = new RegExpCache(20);
+var looksLikeObjectPath = (key, nsSeparator, keySeparator) => {
+  nsSeparator = nsSeparator || "";
+  keySeparator = keySeparator || "";
+  const possibleChars = chars.filter((c) => nsSeparator.indexOf(c) < 0 && keySeparator.indexOf(c) < 0);
+  if (possibleChars.length === 0)
+    return true;
+  const r = looksLikeObjectPathRegExpCache.getRegExp(`(${possibleChars.map((c) => c === "?" ? "\\?" : c).join("|")})`);
+  let matched = !r.test(key);
+  if (!matched) {
+    const ki = key.indexOf(keySeparator);
+    if (ki > 0 && !r.test(key.substring(0, ki))) {
+      matched = true;
+    }
+  }
+  return matched;
+};
+var deepFind = function(obj, path) {
+  let keySeparator = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : ".";
+  if (!obj)
+    return void 0;
+  if (obj[path])
+    return obj[path];
+  const tokens = path.split(keySeparator);
+  let current = obj;
+  for (let i = 0; i < tokens.length; ) {
+    if (!current || typeof current !== "object") {
+      return void 0;
+    }
+    let next;
+    let nextPath = "";
+    for (let j = i; j < tokens.length; ++j) {
+      if (j !== i) {
+        nextPath += keySeparator;
+      }
+      nextPath += tokens[j];
+      next = current[nextPath];
+      if (next !== void 0) {
+        if (["string", "number", "boolean"].indexOf(typeof next) > -1 && j < tokens.length - 1) {
+          continue;
+        }
+        i += j - i + 1;
+        break;
+      }
+    }
+    current = next;
+  }
+  return current;
+};
+var getCleanedCode = (code) => code && code.replace("_", "-");
 var consoleLogger = {
   type: "logger",
   log(args) {
@@ -21960,7 +22052,7 @@ var Logger = class {
   forward(args, lvl, prefix, debugOnly) {
     if (debugOnly && !this.debug)
       return null;
-    if (typeof args[0] === "string")
+    if (isString(args[0]))
       args[0] = `${prefix}${this.prefix} ${args[0]}`;
     return this.logger[lvl](args);
   }
@@ -21985,8 +22077,10 @@ var EventEmitter = class {
   }
   on(events, listener) {
     events.split(" ").forEach((event) => {
-      this.observers[event] = this.observers[event] || [];
-      this.observers[event].push(listener);
+      if (!this.observers[event])
+        this.observers[event] = /* @__PURE__ */ new Map();
+      const numListeners = this.observers[event].get(listener) || 0;
+      this.observers[event].set(listener, numListeners + 1);
     });
     return this;
   }
@@ -21997,207 +22091,32 @@ var EventEmitter = class {
       delete this.observers[event];
       return;
     }
-    this.observers[event] = this.observers[event].filter((l) => l !== listener);
+    this.observers[event].delete(listener);
   }
   emit(event) {
     for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
       args[_key - 1] = arguments[_key];
     }
     if (this.observers[event]) {
-      const cloned = [].concat(this.observers[event]);
-      cloned.forEach((observer) => {
-        observer(...args);
+      const cloned = Array.from(this.observers[event].entries());
+      cloned.forEach((_ref) => {
+        let [observer, numTimesAdded] = _ref;
+        for (let i = 0; i < numTimesAdded; i++) {
+          observer(...args);
+        }
       });
     }
     if (this.observers["*"]) {
-      const cloned = [].concat(this.observers["*"]);
-      cloned.forEach((observer) => {
-        observer.apply(observer, [event, ...args]);
+      const cloned = Array.from(this.observers["*"].entries());
+      cloned.forEach((_ref2) => {
+        let [observer, numTimesAdded] = _ref2;
+        for (let i = 0; i < numTimesAdded; i++) {
+          observer.apply(observer, [event, ...args]);
+        }
       });
     }
   }
 };
-function defer() {
-  let res;
-  let rej;
-  const promise = new Promise((resolve, reject) => {
-    res = resolve;
-    rej = reject;
-  });
-  promise.resolve = res;
-  promise.reject = rej;
-  return promise;
-}
-function makeString(object) {
-  if (object == null)
-    return "";
-  return "" + object;
-}
-function copy(a, s, t2) {
-  a.forEach((m) => {
-    if (s[m])
-      t2[m] = s[m];
-  });
-}
-function getLastOfPath(object, path2, Empty) {
-  function cleanKey(key) {
-    return key && key.indexOf("###") > -1 ? key.replace(/###/g, ".") : key;
-  }
-  function canNotTraverseDeeper() {
-    return !object || typeof object === "string";
-  }
-  const stack = typeof path2 !== "string" ? [].concat(path2) : path2.split(".");
-  while (stack.length > 1) {
-    if (canNotTraverseDeeper())
-      return {};
-    const key = cleanKey(stack.shift());
-    if (!object[key] && Empty)
-      object[key] = new Empty();
-    if (Object.prototype.hasOwnProperty.call(object, key)) {
-      object = object[key];
-    } else {
-      object = {};
-    }
-  }
-  if (canNotTraverseDeeper())
-    return {};
-  return {
-    obj: object,
-    k: cleanKey(stack.shift())
-  };
-}
-function setPath(object, path2, newValue) {
-  const {
-    obj,
-    k
-  } = getLastOfPath(object, path2, Object);
-  obj[k] = newValue;
-}
-function pushPath(object, path2, newValue, concat) {
-  const {
-    obj,
-    k
-  } = getLastOfPath(object, path2, Object);
-  obj[k] = obj[k] || [];
-  if (concat)
-    obj[k] = obj[k].concat(newValue);
-  if (!concat)
-    obj[k].push(newValue);
-}
-function getPath(object, path2) {
-  const {
-    obj,
-    k
-  } = getLastOfPath(object, path2);
-  if (!obj)
-    return void 0;
-  return obj[k];
-}
-function getPathWithDefaults(data, defaultData, key) {
-  const value = getPath(data, key);
-  if (value !== void 0) {
-    return value;
-  }
-  return getPath(defaultData, key);
-}
-function deepExtend(target, source, overwrite) {
-  for (const prop in source) {
-    if (prop !== "__proto__" && prop !== "constructor") {
-      if (prop in target) {
-        if (typeof target[prop] === "string" || target[prop] instanceof String || typeof source[prop] === "string" || source[prop] instanceof String) {
-          if (overwrite)
-            target[prop] = source[prop];
-        } else {
-          deepExtend(target[prop], source[prop], overwrite);
-        }
-      } else {
-        target[prop] = source[prop];
-      }
-    }
-  }
-  return target;
-}
-function regexEscape(str) {
-  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-}
-var _entityMap = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#39;",
-  "/": "&#x2F;"
-};
-function escape(data) {
-  if (typeof data === "string") {
-    return data.replace(/[&<>"'\/]/g, (s) => _entityMap[s]);
-  }
-  return data;
-}
-var chars = [" ", ",", "?", "!", ";"];
-function looksLikeObjectPath(key, nsSeparator, keySeparator) {
-  nsSeparator = nsSeparator || "";
-  keySeparator = keySeparator || "";
-  const possibleChars = chars.filter((c) => nsSeparator.indexOf(c) < 0 && keySeparator.indexOf(c) < 0);
-  if (possibleChars.length === 0)
-    return true;
-  const r = new RegExp(`(${possibleChars.map((c) => c === "?" ? "\\?" : c).join("|")})`);
-  let matched = !r.test(key);
-  if (!matched) {
-    const ki = key.indexOf(keySeparator);
-    if (ki > 0 && !r.test(key.substring(0, ki))) {
-      matched = true;
-    }
-  }
-  return matched;
-}
-function deepFind(obj, path2) {
-  let keySeparator = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : ".";
-  if (!obj)
-    return void 0;
-  if (obj[path2])
-    return obj[path2];
-  const paths = path2.split(keySeparator);
-  let current = obj;
-  for (let i = 0; i < paths.length; ++i) {
-    if (!current)
-      return void 0;
-    if (typeof current[paths[i]] === "string" && i + 1 < paths.length) {
-      return void 0;
-    }
-    if (current[paths[i]] === void 0) {
-      let j = 2;
-      let p = paths.slice(i, i + j).join(keySeparator);
-      let mix = current[p];
-      while (mix === void 0 && paths.length > i + j) {
-        j++;
-        p = paths.slice(i, i + j).join(keySeparator);
-        mix = current[p];
-      }
-      if (mix === void 0)
-        return void 0;
-      if (mix === null)
-        return null;
-      if (path2.endsWith(p)) {
-        if (typeof mix === "string")
-          return mix;
-        if (p && typeof mix[p] === "string")
-          return mix[p];
-      }
-      const joinedPath = paths.slice(i + j).join(keySeparator);
-      if (joinedPath)
-        return deepFind(mix, joinedPath, keySeparator);
-      return void 0;
-    }
-    current = current[paths[i]];
-  }
-  return current;
-}
-function getCleanedCode(code) {
-  if (code && code.indexOf("_") > 0)
-    return code.replace("_", "-");
-  return code;
-}
 var ResourceStore = class extends EventEmitter {
   constructor(data) {
     let options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {
@@ -22229,16 +22148,28 @@ var ResourceStore = class extends EventEmitter {
     let options = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : {};
     const keySeparator = options.keySeparator !== void 0 ? options.keySeparator : this.options.keySeparator;
     const ignoreJSONStructure = options.ignoreJSONStructure !== void 0 ? options.ignoreJSONStructure : this.options.ignoreJSONStructure;
-    let path2 = [lng, ns];
-    if (key && typeof key !== "string")
-      path2 = path2.concat(key);
-    if (key && typeof key === "string")
-      path2 = path2.concat(keySeparator ? key.split(keySeparator) : key);
+    let path;
     if (lng.indexOf(".") > -1) {
-      path2 = lng.split(".");
+      path = lng.split(".");
+    } else {
+      path = [lng, ns];
+      if (key) {
+        if (Array.isArray(key)) {
+          path.push(...key);
+        } else if (isString(key) && keySeparator) {
+          path.push(...key.split(keySeparator));
+        } else {
+          path.push(key);
+        }
+      }
     }
-    const result = getPath(this.data, path2);
-    if (result || !ignoreJSONStructure || typeof key !== "string")
+    const result = getPath(this.data, path);
+    if (!result && !ns && !key && lng.indexOf(".") > -1) {
+      lng = path[0];
+      ns = path[1];
+      key = path.slice(2).join(".");
+    }
+    if (result || !ignoreJSONStructure || !isString(key))
       return result;
     return deepFind(this.data && this.data[lng] && this.data[lng][ns], key, keySeparator);
   }
@@ -22247,16 +22178,16 @@ var ResourceStore = class extends EventEmitter {
       silent: false
     };
     const keySeparator = options.keySeparator !== void 0 ? options.keySeparator : this.options.keySeparator;
-    let path2 = [lng, ns];
+    let path = [lng, ns];
     if (key)
-      path2 = path2.concat(keySeparator ? key.split(keySeparator) : key);
+      path = path.concat(keySeparator ? key.split(keySeparator) : key);
     if (lng.indexOf(".") > -1) {
-      path2 = lng.split(".");
+      path = lng.split(".");
       value = ns;
-      ns = path2[1];
+      ns = path[1];
     }
     this.addNamespaces(ns);
-    setPath(this.data, path2, value);
+    setPath(this.data, path, value);
     if (!options.silent)
       this.emit("added", lng, ns, key, value);
   }
@@ -22265,7 +22196,7 @@ var ResourceStore = class extends EventEmitter {
       silent: false
     };
     for (const m in resources) {
-      if (typeof resources[m] === "string" || Object.prototype.toString.apply(resources[m]) === "[object Array]")
+      if (isString(resources[m]) || Array.isArray(resources[m]))
         this.addResource(lng, ns, m, resources[m], {
           silent: true
         });
@@ -22275,17 +22206,20 @@ var ResourceStore = class extends EventEmitter {
   }
   addResourceBundle(lng, ns, resources, deep, overwrite) {
     let options = arguments.length > 5 && arguments[5] !== void 0 ? arguments[5] : {
-      silent: false
+      silent: false,
+      skipCopy: false
     };
-    let path2 = [lng, ns];
+    let path = [lng, ns];
     if (lng.indexOf(".") > -1) {
-      path2 = lng.split(".");
+      path = lng.split(".");
       deep = resources;
       resources = ns;
-      ns = path2[1];
+      ns = path[1];
     }
     this.addNamespaces(ns);
-    let pack = getPath(this.data, path2) || {};
+    let pack = getPath(this.data, path) || {};
+    if (!options.skipCopy)
+      resources = JSON.parse(JSON.stringify(resources));
     if (deep) {
       deepExtend(pack, resources, overwrite);
     } else {
@@ -22294,7 +22228,7 @@ var ResourceStore = class extends EventEmitter {
         ...resources
       };
     }
-    setPath(this.data, path2, pack);
+    setPath(this.data, path, pack);
     if (!options.silent)
       this.emit("added", lng, ns, resources);
   }
@@ -22382,7 +22316,7 @@ var Translator = class extends EventEmitter {
       if (m && m.length > 0) {
         return {
           key,
-          namespaces
+          namespaces: isString(namespaces) ? [namespaces] : namespaces
         };
       }
       const parts = key.split(nsSeparator);
@@ -22390,11 +22324,9 @@ var Translator = class extends EventEmitter {
         namespaces = parts.shift();
       key = parts.join(keySeparator);
     }
-    if (typeof namespaces === "string")
-      namespaces = [namespaces];
     return {
       key,
-      namespaces
+      namespaces: isString(namespaces) ? [namespaces] : namespaces
     };
   }
   translate(keys, options, lastKey) {
@@ -22429,7 +22361,8 @@ var Translator = class extends EventEmitter {
             usedKey: key,
             exactUsedKey: key,
             usedLng: lng,
-            usedNS: namespace
+            usedNS: namespace,
+            usedParams: this.getUsedParamsDetails(options)
           };
         }
         return `${namespace}${nsSeparator}${key}`;
@@ -22440,7 +22373,8 @@ var Translator = class extends EventEmitter {
           usedKey: key,
           exactUsedKey: key,
           usedLng: lng,
-          usedNS: namespace
+          usedNS: namespace,
+          usedParams: this.getUsedParamsDetails(options)
         };
       }
       return key;
@@ -22453,8 +22387,8 @@ var Translator = class extends EventEmitter {
     const noObject = ["[object Number]", "[object Function]", "[object RegExp]"];
     const joinArrays = options.joinArrays !== void 0 ? options.joinArrays : this.options.joinArrays;
     const handleAsObjectInI18nFormat = !this.i18nFormat || this.i18nFormat.handleAsObject;
-    const handleAsObject = typeof res !== "string" && typeof res !== "boolean" && typeof res !== "number";
-    if (handleAsObjectInI18nFormat && res && handleAsObject && noObject.indexOf(resType) < 0 && !(typeof joinArrays === "string" && resType === "[object Array]")) {
+    const handleAsObject = !isString(res) && typeof res !== "boolean" && typeof res !== "number";
+    if (handleAsObjectInI18nFormat && res && handleAsObject && noObject.indexOf(resType) < 0 && !(isString(joinArrays) && Array.isArray(res))) {
       if (!options.returnObjects && !this.options.returnObjects) {
         if (!this.options.returnedObjectHandler) {
           this.logger.warn("accessing an object - but returnObjects options is not enabled!");
@@ -22465,12 +22399,13 @@ var Translator = class extends EventEmitter {
         }) : `key '${key} (${this.language})' returned an object instead of string.`;
         if (returnDetails) {
           resolved.res = r;
+          resolved.usedParams = this.getUsedParamsDetails(options);
           return resolved;
         }
         return r;
       }
       if (keySeparator) {
-        const resTypeIsArray = resType === "[object Array]";
+        const resTypeIsArray = Array.isArray(res);
         const copy2 = resTypeIsArray ? [] : {};
         const newKeyToUse = resTypeIsArray ? resExactUsedKey : resUsedKey;
         for (const m in res) {
@@ -22489,20 +22424,21 @@ var Translator = class extends EventEmitter {
         }
         res = copy2;
       }
-    } else if (handleAsObjectInI18nFormat && typeof joinArrays === "string" && resType === "[object Array]") {
+    } else if (handleAsObjectInI18nFormat && isString(joinArrays) && Array.isArray(res)) {
       res = res.join(joinArrays);
       if (res)
         res = this.extendTranslation(res, keys, options, lastKey);
     } else {
       let usedDefault = false;
       let usedKey = false;
-      const needsPluralHandling = options.count !== void 0 && typeof options.count !== "string";
+      const needsPluralHandling = options.count !== void 0 && !isString(options.count);
       const hasDefaultValue = Translator.hasDefaultValue(options);
       const defaultValueSuffix = needsPluralHandling ? this.pluralResolver.getSuffix(lng, options.count, options) : "";
       const defaultValueSuffixOrdinalFallback = options.ordinal && needsPluralHandling ? this.pluralResolver.getSuffix(lng, options.count, {
         ordinal: false
       }) : "";
-      const defaultValue = options[`defaultValue${defaultValueSuffix}`] || options[`defaultValue${defaultValueSuffixOrdinalFallback}`] || options.defaultValue;
+      const needsZeroSuffixLookup = needsPluralHandling && !options.ordinal && options.count === 0 && this.pluralResolver.shouldUseIntlApi();
+      const defaultValue = needsZeroSuffixLookup && options[`defaultValue${this.options.pluralSeparator}zero`] || options[`defaultValue${defaultValueSuffix}`] || options[`defaultValue${defaultValueSuffixOrdinalFallback}`] || options.defaultValue;
       if (!this.isValidLookup(res) && hasDefaultValue) {
         usedDefault = true;
         res = defaultValue;
@@ -22547,7 +22483,11 @@ var Translator = class extends EventEmitter {
         if (this.options.saveMissing) {
           if (this.options.saveMissingPlurals && needsPluralHandling) {
             lngs.forEach((language) => {
-              this.pluralResolver.getSuffixes(language, options).forEach((suffix) => {
+              const suffixes = this.pluralResolver.getSuffixes(language, options);
+              if (needsZeroSuffixLookup && options[`defaultValue${this.options.pluralSeparator}zero`] && suffixes.indexOf(`${this.options.pluralSeparator}zero`) < 0) {
+                suffixes.push(`${this.options.pluralSeparator}zero`);
+              }
+              suffixes.forEach((suffix) => {
                 send([language], key + suffix, options[`defaultValue${suffix}`] || defaultValue);
               });
             });
@@ -22569,6 +22509,7 @@ var Translator = class extends EventEmitter {
     }
     if (returnDetails) {
       resolved.res = res;
+      resolved.usedParams = this.getUsedParamsDetails(options);
       return resolved;
     }
     return res;
@@ -22579,7 +22520,7 @@ var Translator = class extends EventEmitter {
       res = this.i18nFormat.parse(res, {
         ...this.options.interpolation.defaultVariables,
         ...options
-      }, resolved.usedLng, resolved.usedNS, resolved.usedKey, {
+      }, options.lng || this.language || resolved.usedLng, resolved.usedNS, resolved.usedKey, {
         resolved
       });
     } else if (!options.skipInterpolation) {
@@ -22593,19 +22534,19 @@ var Translator = class extends EventEmitter {
             }
           }
         });
-      const skipOnVariables = typeof res === "string" && (options && options.interpolation && options.interpolation.skipOnVariables !== void 0 ? options.interpolation.skipOnVariables : this.options.interpolation.skipOnVariables);
+      const skipOnVariables = isString(res) && (options && options.interpolation && options.interpolation.skipOnVariables !== void 0 ? options.interpolation.skipOnVariables : this.options.interpolation.skipOnVariables);
       let nestBef;
       if (skipOnVariables) {
         const nb = res.match(this.interpolator.nestingRegexp);
         nestBef = nb && nb.length;
       }
-      let data = options.replace && typeof options.replace !== "string" ? options.replace : options;
+      let data = options.replace && !isString(options.replace) ? options.replace : options;
       if (this.options.interpolation.defaultVariables)
         data = {
           ...this.options.interpolation.defaultVariables,
           ...data
         };
-      res = this.interpolator.interpolate(res, data, options.lng || this.language, options);
+      res = this.interpolator.interpolate(res, data, options.lng || this.language || resolved.usedLng, options);
       if (skipOnVariables) {
         const na = res.match(this.interpolator.nestingRegexp);
         const nestAft = na && na.length;
@@ -22613,7 +22554,7 @@ var Translator = class extends EventEmitter {
           options.nest = false;
       }
       if (!options.lng && this.options.compatibilityAPI !== "v1" && resolved && resolved.res)
-        options.lng = resolved.usedLng;
+        options.lng = this.language || resolved.usedLng;
       if (options.nest !== false)
         res = this.interpolator.nest(res, function() {
           for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
@@ -22629,10 +22570,13 @@ var Translator = class extends EventEmitter {
         this.interpolator.reset();
     }
     const postProcess = options.postProcess || this.options.postProcess;
-    const postProcessorNames = typeof postProcess === "string" ? [postProcess] : postProcess;
+    const postProcessorNames = isString(postProcess) ? [postProcess] : postProcess;
     if (res !== void 0 && res !== null && postProcessorNames && postProcessorNames.length && options.applyPostProcessor !== false) {
       res = postProcessor.handle(postProcessorNames, res, key, this.options && this.options.postProcessPassResolved ? {
-        i18nResolved: resolved,
+        i18nResolved: {
+          ...resolved,
+          usedParams: this.getUsedParamsDetails(options)
+        },
         ...options
       } : options, this);
     }
@@ -22645,7 +22589,7 @@ var Translator = class extends EventEmitter {
     let exactUsedKey;
     let usedLng;
     let usedNS;
-    if (typeof keys === "string")
+    if (isString(keys))
       keys = [keys];
     keys.forEach((k) => {
       if (this.isValidLookup(found))
@@ -22656,9 +22600,9 @@ var Translator = class extends EventEmitter {
       let namespaces = extracted.namespaces;
       if (this.options.fallbackNS)
         namespaces = namespaces.concat(this.options.fallbackNS);
-      const needsPluralHandling = options.count !== void 0 && typeof options.count !== "string";
+      const needsPluralHandling = options.count !== void 0 && !isString(options.count);
       const needsZeroSuffixLookup = needsPluralHandling && !options.ordinal && options.count === 0 && this.pluralResolver.shouldUseIntlApi();
-      const needsContextHandling = options.context !== void 0 && (typeof options.context === "string" || typeof options.context === "number") && options.context !== "";
+      const needsContextHandling = options.context !== void 0 && (isString(options.context) || typeof options.context === "number") && options.context !== "";
       const codes = options.lngs ? options.lngs : this.languageUtils.toResolveHierarchy(options.lng || this.language, options.fallbackLng);
       namespaces.forEach((ns) => {
         if (this.isValidLookup(found))
@@ -22731,6 +22675,30 @@ var Translator = class extends EventEmitter {
       return this.i18nFormat.getResource(code, ns, key, options);
     return this.resourceStore.getResource(code, ns, key, options);
   }
+  getUsedParamsDetails() {
+    let options = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
+    const optionsKeys = ["defaultValue", "ordinal", "context", "replace", "lng", "lngs", "fallbackLng", "ns", "keySeparator", "nsSeparator", "returnObjects", "returnDetails", "joinArrays", "postProcess", "interpolation"];
+    const useOptionsReplaceForData = options.replace && !isString(options.replace);
+    let data = useOptionsReplaceForData ? options.replace : options;
+    if (useOptionsReplaceForData && typeof options.count !== "undefined") {
+      data.count = options.count;
+    }
+    if (this.options.interpolation.defaultVariables) {
+      data = {
+        ...this.options.interpolation.defaultVariables,
+        ...data
+      };
+    }
+    if (!useOptionsReplaceForData) {
+      data = {
+        ...data
+      };
+      for (const key of optionsKeys) {
+        delete data[key];
+      }
+    }
+    return data;
+  }
   static hasDefaultValue(options) {
     const prefix = "defaultValue";
     for (const option in options) {
@@ -22741,9 +22709,7 @@ var Translator = class extends EventEmitter {
     return false;
   }
 };
-function capitalize(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
+var capitalize = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 var LanguageUtil = class {
   constructor(options) {
     this.options = options;
@@ -22770,7 +22736,18 @@ var LanguageUtil = class {
     return this.formatLanguageCode(p[0]);
   }
   formatLanguageCode(code) {
-    if (typeof code === "string" && code.indexOf("-") > -1) {
+    if (isString(code) && code.indexOf("-") > -1) {
+      if (typeof Intl !== "undefined" && typeof Intl.getCanonicalLocales !== "undefined") {
+        try {
+          let formattedCode = Intl.getCanonicalLocales(code)[0];
+          if (formattedCode && this.options.lowerCaseLng) {
+            formattedCode = formattedCode.toLowerCase();
+          }
+          if (formattedCode)
+            return formattedCode;
+        } catch (e) {
+        }
+      }
       const specialCases = ["hans", "hant", "latn", "cyrl", "cans", "mong", "arab"];
       let p = code.split("-");
       if (this.options.lowerCaseLng) {
@@ -22824,7 +22801,9 @@ var LanguageUtil = class {
             return supportedLng;
           if (supportedLng.indexOf("-") < 0 && lngOnly.indexOf("-") < 0)
             return;
-          if (supportedLng.indexOf(lngOnly) === 0)
+          if (supportedLng.indexOf("-") > 0 && lngOnly.indexOf("-") < 0 && supportedLng.substring(0, supportedLng.indexOf("-")) === lngOnly)
+            return supportedLng;
+          if (supportedLng.indexOf(lngOnly) === 0 && lngOnly.length > 1)
             return supportedLng;
         });
       });
@@ -22838,9 +22817,9 @@ var LanguageUtil = class {
       return [];
     if (typeof fallbacks === "function")
       fallbacks = fallbacks(code);
-    if (typeof fallbacks === "string")
+    if (isString(fallbacks))
       fallbacks = [fallbacks];
-    if (Object.prototype.toString.apply(fallbacks) === "[object Array]")
+    if (Array.isArray(fallbacks))
       return fallbacks;
     if (!code)
       return fallbacks.default || [];
@@ -22867,14 +22846,14 @@ var LanguageUtil = class {
         this.logger.warn(`rejecting language code not found in supportedLngs: ${c}`);
       }
     };
-    if (typeof code === "string" && (code.indexOf("-") > -1 || code.indexOf("_") > -1)) {
+    if (isString(code) && (code.indexOf("-") > -1 || code.indexOf("_") > -1)) {
       if (this.options.load !== "languageOnly")
         addCode(this.formatLanguageCode(code));
       if (this.options.load !== "languageOnly" && this.options.load !== "currentOnly")
         addCode(this.getScriptPartFromCode(code));
       if (this.options.load !== "currentOnly")
         addCode(this.getLanguagePartFromCode(code));
-    } else if (typeof code === "string") {
+    } else if (isString(code)) {
       addCode(this.formatLanguageCode(code));
     }
     fallbackCodes.forEach((fc) => {
@@ -22978,72 +22957,28 @@ var sets = [{
   fc: 22
 }];
 var _rulesPluralsTypes = {
-  1: function(n) {
-    return Number(n > 1);
-  },
-  2: function(n) {
-    return Number(n != 1);
-  },
-  3: function(n) {
-    return 0;
-  },
-  4: function(n) {
-    return Number(n % 10 == 1 && n % 100 != 11 ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2);
-  },
-  5: function(n) {
-    return Number(n == 0 ? 0 : n == 1 ? 1 : n == 2 ? 2 : n % 100 >= 3 && n % 100 <= 10 ? 3 : n % 100 >= 11 ? 4 : 5);
-  },
-  6: function(n) {
-    return Number(n == 1 ? 0 : n >= 2 && n <= 4 ? 1 : 2);
-  },
-  7: function(n) {
-    return Number(n == 1 ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2);
-  },
-  8: function(n) {
-    return Number(n == 1 ? 0 : n == 2 ? 1 : n != 8 && n != 11 ? 2 : 3);
-  },
-  9: function(n) {
-    return Number(n >= 2);
-  },
-  10: function(n) {
-    return Number(n == 1 ? 0 : n == 2 ? 1 : n < 7 ? 2 : n < 11 ? 3 : 4);
-  },
-  11: function(n) {
-    return Number(n == 1 || n == 11 ? 0 : n == 2 || n == 12 ? 1 : n > 2 && n < 20 ? 2 : 3);
-  },
-  12: function(n) {
-    return Number(n % 10 != 1 || n % 100 == 11);
-  },
-  13: function(n) {
-    return Number(n !== 0);
-  },
-  14: function(n) {
-    return Number(n == 1 ? 0 : n == 2 ? 1 : n == 3 ? 2 : 3);
-  },
-  15: function(n) {
-    return Number(n % 10 == 1 && n % 100 != 11 ? 0 : n % 10 >= 2 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2);
-  },
-  16: function(n) {
-    return Number(n % 10 == 1 && n % 100 != 11 ? 0 : n !== 0 ? 1 : 2);
-  },
-  17: function(n) {
-    return Number(n == 1 || n % 10 == 1 && n % 100 != 11 ? 0 : 1);
-  },
-  18: function(n) {
-    return Number(n == 0 ? 0 : n == 1 ? 1 : 2);
-  },
-  19: function(n) {
-    return Number(n == 1 ? 0 : n == 0 || n % 100 > 1 && n % 100 < 11 ? 1 : n % 100 > 10 && n % 100 < 20 ? 2 : 3);
-  },
-  20: function(n) {
-    return Number(n == 1 ? 0 : n == 0 || n % 100 > 0 && n % 100 < 20 ? 1 : 2);
-  },
-  21: function(n) {
-    return Number(n % 100 == 1 ? 1 : n % 100 == 2 ? 2 : n % 100 == 3 || n % 100 == 4 ? 3 : 0);
-  },
-  22: function(n) {
-    return Number(n == 1 ? 0 : n == 2 ? 1 : (n < 0 || n > 10) && n % 10 == 0 ? 2 : 3);
-  }
+  1: (n) => Number(n > 1),
+  2: (n) => Number(n != 1),
+  3: (n) => 0,
+  4: (n) => Number(n % 10 == 1 && n % 100 != 11 ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2),
+  5: (n) => Number(n == 0 ? 0 : n == 1 ? 1 : n == 2 ? 2 : n % 100 >= 3 && n % 100 <= 10 ? 3 : n % 100 >= 11 ? 4 : 5),
+  6: (n) => Number(n == 1 ? 0 : n >= 2 && n <= 4 ? 1 : 2),
+  7: (n) => Number(n == 1 ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2),
+  8: (n) => Number(n == 1 ? 0 : n == 2 ? 1 : n != 8 && n != 11 ? 2 : 3),
+  9: (n) => Number(n >= 2),
+  10: (n) => Number(n == 1 ? 0 : n == 2 ? 1 : n < 7 ? 2 : n < 11 ? 3 : 4),
+  11: (n) => Number(n == 1 || n == 11 ? 0 : n == 2 || n == 12 ? 1 : n > 2 && n < 20 ? 2 : 3),
+  12: (n) => Number(n % 10 != 1 || n % 100 == 11),
+  13: (n) => Number(n !== 0),
+  14: (n) => Number(n == 1 ? 0 : n == 2 ? 1 : n == 3 ? 2 : 3),
+  15: (n) => Number(n % 10 == 1 && n % 100 != 11 ? 0 : n % 10 >= 2 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2),
+  16: (n) => Number(n % 10 == 1 && n % 100 != 11 ? 0 : n !== 0 ? 1 : 2),
+  17: (n) => Number(n == 1 || n % 10 == 1 && n % 100 != 11 ? 0 : 1),
+  18: (n) => Number(n == 0 ? 0 : n == 1 ? 1 : 2),
+  19: (n) => Number(n == 1 ? 0 : n == 0 || n % 100 > 1 && n % 100 < 11 ? 1 : n % 100 > 10 && n % 100 < 20 ? 2 : 3),
+  20: (n) => Number(n == 1 ? 0 : n == 0 || n % 100 > 0 && n % 100 < 20 ? 1 : 2),
+  21: (n) => Number(n % 100 == 1 ? 1 : n % 100 == 2 ? 2 : n % 100 == 3 || n % 100 == 4 ? 3 : 0),
+  22: (n) => Number(n == 1 ? 0 : n == 2 ? 1 : (n < 0 || n > 10) && n % 10 == 0 ? 2 : 3)
 };
 var nonIntlVersions = ["v1", "v2", "v3"];
 var intlVersions = ["v4"];
@@ -23055,7 +22990,7 @@ var suffixesOrder = {
   many: 4,
   other: 5
 };
-function createRules() {
+var createRules = () => {
   const rules = {};
   sets.forEach((set) => {
     set.lngs.forEach((l) => {
@@ -23066,7 +23001,7 @@ function createRules() {
     });
   });
   return rules;
-}
+};
 var PluralResolver = class {
   constructor(languageUtils) {
     let options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
@@ -23078,20 +23013,39 @@ var PluralResolver = class {
       this.logger.error("Your environment seems not to be Intl API compatible, use an Intl.PluralRules polyfill. Will fallback to the compatibilityJSON v3 format handling.");
     }
     this.rules = createRules();
+    this.pluralRulesCache = {};
   }
   addRule(lng, obj) {
     this.rules[lng] = obj;
   }
+  clearCache() {
+    this.pluralRulesCache = {};
+  }
   getRule(code) {
     let options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
     if (this.shouldUseIntlApi()) {
-      try {
-        return new Intl.PluralRules(getCleanedCode(code), {
-          type: options.ordinal ? "ordinal" : "cardinal"
-        });
-      } catch (e) {
-        return;
+      const cleanedCode = getCleanedCode(code === "dev" ? "en" : code);
+      const type = options.ordinal ? "ordinal" : "cardinal";
+      const cacheKey = JSON.stringify({
+        cleanedCode,
+        type
+      });
+      if (cacheKey in this.pluralRulesCache) {
+        return this.pluralRulesCache[cacheKey];
       }
+      let rule;
+      try {
+        rule = new Intl.PluralRules(cleanedCode, {
+          type
+        });
+      } catch (err) {
+        if (!code.match(/-|_/))
+          return;
+        const lngPart = this.languageUtils.getLanguagePartFromCode(code);
+        rule = this.getRule(lngPart, options);
+      }
+      this.pluralRulesCache[cacheKey] = rule;
+      return rule;
     }
     return this.rules[code] || this.rules[this.languageUtils.getLanguagePartFromCode(code)];
   }
@@ -23158,17 +23112,18 @@ var PluralResolver = class {
     return !nonIntlVersions.includes(this.options.compatibilityJSON);
   }
 };
-function deepFindWithDefaults(data, defaultData, key) {
+var deepFindWithDefaults = function(data, defaultData, key) {
   let keySeparator = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : ".";
   let ignoreJSONStructure = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : true;
-  let path2 = getPathWithDefaults(data, defaultData, key);
-  if (!path2 && ignoreJSONStructure && typeof key === "string") {
-    path2 = deepFind(data, key, keySeparator);
-    if (path2 === void 0)
-      path2 = deepFind(defaultData, key, keySeparator);
+  let path = getPathWithDefaults(data, defaultData, key);
+  if (!path && ignoreJSONStructure && isString(key)) {
+    path = deepFind(data, key, keySeparator);
+    if (path === void 0)
+      path = deepFind(defaultData, key, keySeparator);
   }
-  return path2;
-}
+  return path;
+};
+var regexSafe = (val) => val.replace(/\$/g, "$$$$");
 var Interpolator = class {
   constructor() {
     let options = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
@@ -23183,20 +23138,38 @@ var Interpolator = class {
       options.interpolation = {
         escapeValue: true
       };
-    const iOpts = options.interpolation;
-    this.escape = iOpts.escape !== void 0 ? iOpts.escape : escape;
-    this.escapeValue = iOpts.escapeValue !== void 0 ? iOpts.escapeValue : true;
-    this.useRawValueToEscape = iOpts.useRawValueToEscape !== void 0 ? iOpts.useRawValueToEscape : false;
-    this.prefix = iOpts.prefix ? regexEscape(iOpts.prefix) : iOpts.prefixEscaped || "{{";
-    this.suffix = iOpts.suffix ? regexEscape(iOpts.suffix) : iOpts.suffixEscaped || "}}";
-    this.formatSeparator = iOpts.formatSeparator ? iOpts.formatSeparator : iOpts.formatSeparator || ",";
-    this.unescapePrefix = iOpts.unescapeSuffix ? "" : iOpts.unescapePrefix || "-";
-    this.unescapeSuffix = this.unescapePrefix ? "" : iOpts.unescapeSuffix || "";
-    this.nestingPrefix = iOpts.nestingPrefix ? regexEscape(iOpts.nestingPrefix) : iOpts.nestingPrefixEscaped || regexEscape("$t(");
-    this.nestingSuffix = iOpts.nestingSuffix ? regexEscape(iOpts.nestingSuffix) : iOpts.nestingSuffixEscaped || regexEscape(")");
-    this.nestingOptionsSeparator = iOpts.nestingOptionsSeparator ? iOpts.nestingOptionsSeparator : iOpts.nestingOptionsSeparator || ",";
-    this.maxReplaces = iOpts.maxReplaces ? iOpts.maxReplaces : 1e3;
-    this.alwaysFormat = iOpts.alwaysFormat !== void 0 ? iOpts.alwaysFormat : false;
+    const {
+      escape: escape$1,
+      escapeValue,
+      useRawValueToEscape,
+      prefix,
+      prefixEscaped,
+      suffix,
+      suffixEscaped,
+      formatSeparator,
+      unescapeSuffix,
+      unescapePrefix,
+      nestingPrefix,
+      nestingPrefixEscaped,
+      nestingSuffix,
+      nestingSuffixEscaped,
+      nestingOptionsSeparator,
+      maxReplaces,
+      alwaysFormat
+    } = options.interpolation;
+    this.escape = escape$1 !== void 0 ? escape$1 : escape;
+    this.escapeValue = escapeValue !== void 0 ? escapeValue : true;
+    this.useRawValueToEscape = useRawValueToEscape !== void 0 ? useRawValueToEscape : false;
+    this.prefix = prefix ? regexEscape(prefix) : prefixEscaped || "{{";
+    this.suffix = suffix ? regexEscape(suffix) : suffixEscaped || "}}";
+    this.formatSeparator = formatSeparator || ",";
+    this.unescapePrefix = unescapeSuffix ? "" : unescapePrefix || "-";
+    this.unescapeSuffix = this.unescapePrefix ? "" : unescapeSuffix || "";
+    this.nestingPrefix = nestingPrefix ? regexEscape(nestingPrefix) : nestingPrefixEscaped || regexEscape("$t(");
+    this.nestingSuffix = nestingSuffix ? regexEscape(nestingSuffix) : nestingSuffixEscaped || regexEscape(")");
+    this.nestingOptionsSeparator = nestingOptionsSeparator || ",";
+    this.maxReplaces = maxReplaces || 1e3;
+    this.alwaysFormat = alwaysFormat !== void 0 ? alwaysFormat : false;
     this.resetRegExp();
   }
   reset() {
@@ -23204,29 +23177,30 @@ var Interpolator = class {
       this.init(this.options);
   }
   resetRegExp() {
-    const regexpStr = `${this.prefix}(.+?)${this.suffix}`;
-    this.regexp = new RegExp(regexpStr, "g");
-    const regexpUnescapeStr = `${this.prefix}${this.unescapePrefix}(.+?)${this.unescapeSuffix}${this.suffix}`;
-    this.regexpUnescape = new RegExp(regexpUnescapeStr, "g");
-    const nestingRegexpStr = `${this.nestingPrefix}(.+?)${this.nestingSuffix}`;
-    this.nestingRegexp = new RegExp(nestingRegexpStr, "g");
+    const getOrResetRegExp = (existingRegExp, pattern) => {
+      if (existingRegExp && existingRegExp.source === pattern) {
+        existingRegExp.lastIndex = 0;
+        return existingRegExp;
+      }
+      return new RegExp(pattern, "g");
+    };
+    this.regexp = getOrResetRegExp(this.regexp, `${this.prefix}(.+?)${this.suffix}`);
+    this.regexpUnescape = getOrResetRegExp(this.regexpUnescape, `${this.prefix}${this.unescapePrefix}(.+?)${this.unescapeSuffix}${this.suffix}`);
+    this.nestingRegexp = getOrResetRegExp(this.nestingRegexp, `${this.nestingPrefix}(.+?)${this.nestingSuffix}`);
   }
   interpolate(str, data, lng, options) {
     let match;
     let value;
     let replaces;
     const defaultData = this.options && this.options.interpolation && this.options.interpolation.defaultVariables || {};
-    function regexSafe(val) {
-      return val.replace(/\$/g, "$$$$");
-    }
     const handleFormat = (key) => {
       if (key.indexOf(this.formatSeparator) < 0) {
-        const path2 = deepFindWithDefaults(data, defaultData, key, this.options.keySeparator, this.options.ignoreJSONStructure);
-        return this.alwaysFormat ? this.format(path2, void 0, lng, {
+        const path = deepFindWithDefaults(data, defaultData, key, this.options.keySeparator, this.options.ignoreJSONStructure);
+        return this.alwaysFormat ? this.format(path, void 0, lng, {
           ...options,
           ...data,
           interpolationkey: key
-        }) : path2;
+        }) : path;
       }
       const p = key.split(this.formatSeparator);
       const k = p.shift().trim();
@@ -23255,7 +23229,7 @@ var Interpolator = class {
         if (value === void 0) {
           if (typeof missingInterpolationHandler === "function") {
             const temp = missingInterpolationHandler(str, match, options);
-            value = typeof temp === "string" ? temp : "";
+            value = isString(temp) ? temp : "";
           } else if (options && Object.prototype.hasOwnProperty.call(options, matchedVar)) {
             value = "";
           } else if (skipOnVariables) {
@@ -23265,7 +23239,7 @@ var Interpolator = class {
             this.logger.warn(`missed to pass in variable ${matchedVar} for interpolating ${str}`);
             value = "";
           }
-        } else if (typeof value !== "string" && !this.useRawValueToEscape) {
+        } else if (!isString(value) && !this.useRawValueToEscape) {
           value = makeString(value);
         }
         const safeValue = todo.safeValue(value);
@@ -23289,7 +23263,7 @@ var Interpolator = class {
     let match;
     let value;
     let clonedOptions;
-    function handleHasOptions(key, inheritedOptions) {
+    const handleHasOptions = (key, inheritedOptions) => {
       const sep = this.nestingOptionsSeparator;
       if (key.indexOf(sep) < 0)
         return key;
@@ -23313,15 +23287,16 @@ var Interpolator = class {
         this.logger.warn(`failed parsing options string in nesting for key ${key}`, e);
         return `${key}${sep}${optionsString}`;
       }
-      delete clonedOptions.defaultValue;
+      if (clonedOptions.defaultValue && clonedOptions.defaultValue.indexOf(this.prefix) > -1)
+        delete clonedOptions.defaultValue;
       return key;
-    }
+    };
     while (match = this.nestingRegexp.exec(str)) {
       let formatters = [];
       clonedOptions = {
         ...options
       };
-      clonedOptions = clonedOptions.replace && typeof clonedOptions.replace !== "string" ? clonedOptions.replace : clonedOptions;
+      clonedOptions = clonedOptions.replace && !isString(clonedOptions.replace) ? clonedOptions.replace : clonedOptions;
       clonedOptions.applyPostProcessor = false;
       delete clonedOptions.defaultValue;
       let doReduce = false;
@@ -23332,9 +23307,9 @@ var Interpolator = class {
         doReduce = true;
       }
       value = fc(handleHasOptions.call(this, match[1].trim(), clonedOptions), clonedOptions);
-      if (value && match[0] === str && typeof value !== "string")
+      if (value && match[0] === str && !isString(value))
         return value;
-      if (typeof value !== "string")
+      if (!isString(value))
         value = makeString(value);
       if (!value) {
         this.logger.warn(`missed to resolve ${match[1]} for nesting ${str}`);
@@ -23352,7 +23327,7 @@ var Interpolator = class {
     return str;
   }
 };
-function parseFormatStr(formatStr) {
+var parseFormatStr = (formatStr) => {
   let formatName = formatStr.toLowerCase().trim();
   const formatOptions = {};
   if (formatStr.indexOf("(") > -1) {
@@ -23368,18 +23343,19 @@ function parseFormatStr(formatStr) {
     } else {
       const opts = optStr.split(";");
       opts.forEach((opt) => {
-        if (!opt)
-          return;
-        const [key, ...rest] = opt.split(":");
-        const val = rest.join(":").trim().replace(/^'+|'+$/g, "");
-        if (!formatOptions[key.trim()])
-          formatOptions[key.trim()] = val;
-        if (val === "false")
-          formatOptions[key.trim()] = false;
-        if (val === "true")
-          formatOptions[key.trim()] = true;
-        if (!isNaN(val))
-          formatOptions[key.trim()] = parseInt(val, 10);
+        if (opt) {
+          const [key, ...rest] = opt.split(":");
+          const val = rest.join(":").trim().replace(/^'+|'+$/g, "");
+          const trimmedKey = key.trim();
+          if (!formatOptions[trimmedKey])
+            formatOptions[trimmedKey] = val;
+          if (val === "false")
+            formatOptions[trimmedKey] = false;
+          if (val === "true")
+            formatOptions[trimmedKey] = true;
+          if (!isNaN(val))
+            formatOptions[trimmedKey] = parseInt(val, 10);
+        }
       });
     }
   }
@@ -23387,11 +23363,18 @@ function parseFormatStr(formatStr) {
     formatName,
     formatOptions
   };
-}
-function createCachedFormatter(fn) {
+};
+var createCachedFormatter = (fn) => {
   const cache = {};
-  return function invokeFormatter(val, lng, options) {
-    const key = lng + JSON.stringify(options);
+  return (val, lng, options) => {
+    let optForCache = options;
+    if (options && options.interpolationkey && options.formatParams && options.formatParams[options.interpolationkey] && options[options.interpolationkey]) {
+      optForCache = {
+        ...optForCache,
+        [options.interpolationkey]: void 0
+      };
+    }
+    const key = lng + JSON.stringify(optForCache);
     let formatter = cache[key];
     if (!formatter) {
       formatter = fn(getCleanedCode(lng), options);
@@ -23399,7 +23382,7 @@ function createCachedFormatter(fn) {
     }
     return formatter(val);
   };
-}
+};
 var Formatter = class {
   constructor() {
     let options = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
@@ -23444,8 +23427,7 @@ var Formatter = class {
     let options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {
       interpolation: {}
     };
-    const iOpts = options.interpolation;
-    this.formatSeparator = iOpts.formatSeparator ? iOpts.formatSeparator : iOpts.formatSeparator || ",";
+    this.formatSeparator = options.interpolation.formatSeparator || ",";
   }
   add(name, fc) {
     this.formats[name.toLowerCase().trim()] = fc;
@@ -23456,6 +23438,10 @@ var Formatter = class {
   format(value, format, lng) {
     let options = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : {};
     const formats = format.split(this.formatSeparator);
+    if (formats.length > 1 && formats[0].indexOf("(") > 1 && formats[0].indexOf(")") < 0 && formats.find((f) => f.indexOf(")") > -1)) {
+      const lastIndex = formats.findIndex((f) => f.indexOf(")") > -1);
+      formats[0] = [formats[0], ...formats.splice(1, lastIndex)].join(this.formatSeparator);
+    }
     const result = formats.reduce((mem, f) => {
       const {
         formatName,
@@ -23483,12 +23469,12 @@ var Formatter = class {
     return result;
   }
 };
-function removePending(q, name) {
+var removePending = (q, name) => {
   if (q.pending[name] !== void 0) {
     delete q.pending[name];
     q.pendingCount--;
   }
-}
+};
 var Connector = class extends EventEmitter {
   constructor(backend, store, services) {
     let options = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : {};
@@ -23562,10 +23548,14 @@ var Connector = class extends EventEmitter {
     const ns = s[1];
     if (err)
       this.emit("failedLoading", lng, ns, err);
-    if (data) {
-      this.store.addResourceBundle(lng, ns, data);
+    if (!err && data) {
+      this.store.addResourceBundle(lng, ns, data, void 0, void 0, {
+        skipCopy: true
+      });
     }
     this.state[name] = err ? -1 : 2;
+    if (err && data)
+      this.state[name] = 0;
     const loaded = {};
     this.queue.forEach((q) => {
       pushPath(q.loaded, [lng], ns);
@@ -23650,9 +23640,9 @@ var Connector = class extends EventEmitter {
       this.logger.warn("No backend was added via i18next.use. Will not load resources.");
       return callback && callback();
     }
-    if (typeof languages === "string")
+    if (isString(languages))
       languages = this.languageUtils.toResolveHierarchy(languages);
-    if (typeof namespaces === "string")
+    if (isString(namespaces))
       namespaces = [namespaces];
     const toLoad = this.queueLoad(languages, namespaces, options, callback);
     if (!toLoad.toLoad.length) {
@@ -23726,93 +23716,91 @@ var Connector = class extends EventEmitter {
     this.store.addResource(languages[0], namespace, key, fallbackValue);
   }
 };
-function get() {
-  return {
-    debug: false,
-    initImmediate: true,
-    ns: ["translation"],
-    defaultNS: ["translation"],
-    fallbackLng: ["dev"],
-    fallbackNS: false,
-    supportedLngs: false,
-    nonExplicitSupportedLngs: false,
-    load: "all",
-    preload: false,
-    simplifyPluralSuffix: true,
-    keySeparator: ".",
-    nsSeparator: ":",
-    pluralSeparator: "_",
-    contextSeparator: "_",
-    partialBundledLanguages: false,
-    saveMissing: false,
-    updateMissing: false,
-    saveMissingTo: "fallback",
-    saveMissingPlurals: true,
-    missingKeyHandler: false,
-    missingInterpolationHandler: false,
-    postProcess: false,
-    postProcessPassResolved: false,
-    returnNull: false,
-    returnEmptyString: true,
-    returnObjects: false,
-    joinArrays: false,
-    returnedObjectHandler: false,
-    parseMissingKeyHandler: false,
-    appendNamespaceToMissingKey: false,
-    appendNamespaceToCIMode: false,
-    overloadTranslationOptionHandler: function handle(args) {
-      let ret = {};
-      if (typeof args[1] === "object")
-        ret = args[1];
-      if (typeof args[1] === "string")
-        ret.defaultValue = args[1];
-      if (typeof args[2] === "string")
-        ret.tDescription = args[2];
-      if (typeof args[2] === "object" || typeof args[3] === "object") {
-        const options = args[3] || args[2];
-        Object.keys(options).forEach((key) => {
-          ret[key] = options[key];
-        });
-      }
-      return ret;
-    },
-    interpolation: {
-      escapeValue: true,
-      format: (value, format, lng, options) => value,
-      prefix: "{{",
-      suffix: "}}",
-      formatSeparator: ",",
-      unescapePrefix: "-",
-      nestingPrefix: "$t(",
-      nestingSuffix: ")",
-      nestingOptionsSeparator: ",",
-      maxReplaces: 1e3,
-      skipOnVariables: true
+var get = () => ({
+  debug: false,
+  initImmediate: true,
+  ns: ["translation"],
+  defaultNS: ["translation"],
+  fallbackLng: ["dev"],
+  fallbackNS: false,
+  supportedLngs: false,
+  nonExplicitSupportedLngs: false,
+  load: "all",
+  preload: false,
+  simplifyPluralSuffix: true,
+  keySeparator: ".",
+  nsSeparator: ":",
+  pluralSeparator: "_",
+  contextSeparator: "_",
+  partialBundledLanguages: false,
+  saveMissing: false,
+  updateMissing: false,
+  saveMissingTo: "fallback",
+  saveMissingPlurals: true,
+  missingKeyHandler: false,
+  missingInterpolationHandler: false,
+  postProcess: false,
+  postProcessPassResolved: false,
+  returnNull: false,
+  returnEmptyString: true,
+  returnObjects: false,
+  joinArrays: false,
+  returnedObjectHandler: false,
+  parseMissingKeyHandler: false,
+  appendNamespaceToMissingKey: false,
+  appendNamespaceToCIMode: false,
+  overloadTranslationOptionHandler: (args) => {
+    let ret = {};
+    if (typeof args[1] === "object")
+      ret = args[1];
+    if (isString(args[1]))
+      ret.defaultValue = args[1];
+    if (isString(args[2]))
+      ret.tDescription = args[2];
+    if (typeof args[2] === "object" || typeof args[3] === "object") {
+      const options = args[3] || args[2];
+      Object.keys(options).forEach((key) => {
+        ret[key] = options[key];
+      });
     }
-  };
-}
-function transformOptions(options) {
-  if (typeof options.ns === "string")
+    return ret;
+  },
+  interpolation: {
+    escapeValue: true,
+    format: (value) => value,
+    prefix: "{{",
+    suffix: "}}",
+    formatSeparator: ",",
+    unescapePrefix: "-",
+    nestingPrefix: "$t(",
+    nestingSuffix: ")",
+    nestingOptionsSeparator: ",",
+    maxReplaces: 1e3,
+    skipOnVariables: true
+  }
+});
+var transformOptions = (options) => {
+  if (isString(options.ns))
     options.ns = [options.ns];
-  if (typeof options.fallbackLng === "string")
+  if (isString(options.fallbackLng))
     options.fallbackLng = [options.fallbackLng];
-  if (typeof options.fallbackNS === "string")
+  if (isString(options.fallbackNS))
     options.fallbackNS = [options.fallbackNS];
   if (options.supportedLngs && options.supportedLngs.indexOf("cimode") < 0) {
     options.supportedLngs = options.supportedLngs.concat(["cimode"]);
   }
   return options;
-}
-function noop() {
-}
-function bindMemberFunctions(inst) {
+};
+var noop = () => {
+};
+var bindMemberFunctions = (inst) => {
   const mems = Object.getOwnPropertyNames(Object.getPrototypeOf(inst));
   mems.forEach((mem) => {
     if (typeof inst[mem] === "function") {
       inst[mem] = inst[mem].bind(inst);
     }
   });
-}
+};
 var I18n = class extends EventEmitter {
   constructor() {
     let options = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
@@ -23839,12 +23827,13 @@ var I18n = class extends EventEmitter {
     var _this = this;
     let options = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
     let callback = arguments.length > 1 ? arguments[1] : void 0;
+    this.isInitializing = true;
     if (typeof options === "function") {
       callback = options;
       options = {};
     }
     if (!options.defaultNS && options.defaultNS !== false && options.ns) {
-      if (typeof options.ns === "string") {
+      if (isString(options.ns)) {
         options.defaultNS = options.ns;
       } else if (options.ns.indexOf("translation") < 0) {
         options.defaultNS = options.ns[0];
@@ -23868,13 +23857,13 @@ var I18n = class extends EventEmitter {
     if (options.nsSeparator !== void 0) {
       this.options.userDefinedNsSeparator = options.nsSeparator;
     }
-    function createClassOnDemand(ClassOrObject) {
+    const createClassOnDemand = (ClassOrObject) => {
       if (!ClassOrObject)
         return null;
       if (typeof ClassOrObject === "function")
         return new ClassOrObject();
       return ClassOrObject;
-    }
+    };
     if (!this.options.isClone) {
       if (this.modules.logger) {
         baseLogger.init(createClassOnDemand(this.modules.logger), this.options);
@@ -23963,6 +23952,7 @@ var I18n = class extends EventEmitter {
     const deferred = defer();
     const load = () => {
       const finish = (err, t2) => {
+        this.isInitializing = false;
         if (this.isInitialized && !this.initializedStoreOnce)
           this.logger.warn("init: i18next is already initialized. You should call init just once!");
         this.isInitialized = true;
@@ -23986,18 +23976,22 @@ var I18n = class extends EventEmitter {
   loadResources(language) {
     let callback = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : noop;
     let usedCallback = callback;
-    const usedLng = typeof language === "string" ? language : this.language;
+    const usedLng = isString(language) ? language : this.language;
     if (typeof language === "function")
       usedCallback = language;
     if (!this.options.resources || this.options.partialBundledLanguages) {
-      if (usedLng && usedLng.toLowerCase() === "cimode")
+      if (usedLng && usedLng.toLowerCase() === "cimode" && (!this.options.preload || this.options.preload.length === 0))
         return usedCallback();
       const toLoad = [];
       const append = (lng) => {
         if (!lng)
           return;
+        if (lng === "cimode")
+          return;
         const lngs = this.services.languageUtils.toResolveHierarchy(lng);
         lngs.forEach((l) => {
+          if (l === "cimode")
+            return;
           if (toLoad.indexOf(l) < 0)
             toLoad.push(l);
         });
@@ -24022,6 +24016,14 @@ var I18n = class extends EventEmitter {
   }
   reloadResources(lngs, ns, callback) {
     const deferred = defer();
+    if (typeof lngs === "function") {
+      callback = lngs;
+      lngs = void 0;
+    }
+    if (typeof ns === "function") {
+      callback = ns;
+      ns = void 0;
+    }
     if (!lngs)
       lngs = this.languages;
     if (!ns)
@@ -24109,7 +24111,7 @@ var I18n = class extends EventEmitter {
     const setLng = (lngs) => {
       if (!lng && !lngs && this.services.languageDetector)
         lngs = [];
-      const l = typeof lngs === "string" ? lngs : this.services.languageUtils.getBestMatchFromCodes(lngs);
+      const l = isString(lngs) ? lngs : this.services.languageUtils.getBestMatchFromCodes(lngs);
       if (l) {
         if (!this.language) {
           setLngProps(l);
@@ -24153,7 +24155,8 @@ var I18n = class extends EventEmitter {
       options.lng = options.lng || fixedT.lng;
       options.lngs = options.lngs || fixedT.lngs;
       options.ns = options.ns || fixedT.ns;
-      options.keyPrefix = options.keyPrefix || keyPrefix || fixedT.keyPrefix;
+      if (options.keyPrefix !== "")
+        options.keyPrefix = options.keyPrefix || keyPrefix || fixedT.keyPrefix;
       const keySeparator = _this3.options.keySeparator || ".";
       let resultKey;
       if (options.keyPrefix && Array.isArray(key)) {
@@ -24163,7 +24166,7 @@ var I18n = class extends EventEmitter {
       }
       return _this3.t(resultKey, options);
     };
-    if (typeof lng === "string") {
+    if (isString(lng)) {
       fixedT.lng = lng;
     } else {
       fixedT.lngs = lng;
@@ -24198,7 +24201,7 @@ var I18n = class extends EventEmitter {
       return true;
     const loadNotPending = (l, n) => {
       const loadState = this.services.backendConnector.state[`${l}|${n}`];
-      return loadState === -1 || loadState === 2;
+      return loadState === -1 || loadState === 0 || loadState === 2;
     };
     if (options.precheck) {
       const preResult = options.precheck(this, loadNotPending);
@@ -24220,7 +24223,7 @@ var I18n = class extends EventEmitter {
         callback();
       return Promise.resolve();
     }
-    if (typeof ns === "string")
+    if (isString(ns))
       ns = [ns];
     ns.forEach((n) => {
       if (this.options.ns.indexOf(n) < 0)
@@ -24235,10 +24238,10 @@ var I18n = class extends EventEmitter {
   }
   loadLanguages(lngs, callback) {
     const deferred = defer();
-    if (typeof lngs === "string")
+    if (isString(lngs))
       lngs = [lngs];
     const preloaded = this.options.preload || [];
-    const newLngs = lngs.filter((lng) => preloaded.indexOf(lng) < 0);
+    const newLngs = lngs.filter((lng) => preloaded.indexOf(lng) < 0 && this.services.languageUtils.isSupportedCode(lng));
     if (!newLngs.length) {
       if (callback)
         callback();
@@ -24446,6 +24449,13 @@ var translation = {
         name: "Inline SMILES Prefix",
         description: "The prefix to inline SMILES."
       }
+    },
+    modals: {
+      "core-fallback": {
+        title: "Switch core failed",
+        confirm: "Confirm",
+        message: "Failed to switch to the target package, and will fallback to the default Smiles Drawer core."
+      }
     }
   }
 };
@@ -24562,6 +24572,13 @@ var translation2 = {
         description: "\u884C\u5185 SMILES \u7684\u524D\u7F00\u3002"
       }
     }
+  },
+  modals: {
+    "core-fallback": {
+      title: "\u5207\u6362\u6E32\u67D3\u5668\u5931\u8D25",
+      confirm: "\u786E\u8BA4",
+      message: "\u5207\u6362\u76EE\u6807\u6E32\u67D3\u5668\u5931\u8D25\uFF0C\u5C06\u56DE\u9000\u4E3A\u9ED8\u8BA4\u6E32\u67D3\u5668 Smiles Drawer\u3002"
+    }
   }
 };
 var zh_CN_default = {
@@ -24650,7 +24667,31 @@ var DEFAULT_RDKIT_OPTIONS = {
 
 // src/lib/core/rdkitCore.ts
 var import_obsidian2 = require("obsidian");
-var path = __toESM(require("path"));
+
+// src/global/app.ts
+var AppStore = class {
+  constructor() {
+    this._app = null;
+  }
+  init(app) {
+    this._app = app;
+  }
+  get app() {
+    if (!this._app) {
+      throw new Error("App store not initialized. Call AppStore.init() first.");
+    }
+    return this._app;
+  }
+  clear() {
+    this._app = null;
+  }
+};
+var appStore = new AppStore();
+var setApp = (app) => appStore.init(app);
+var getApp = () => appStore.app;
+var clearApp = () => appStore.clear();
+
+// src/lib/core/rdkitCore.ts
 var RDKitCore = class {
   /**
    * @private
@@ -24665,7 +24706,7 @@ var RDKitCore = class {
           return this.logError(source);
         svgstr = await this.drawReaction(rxn);
       } else {
-        const mol = this.core.get_mol(source);
+        const mol = this.core.get_mol(source, JSON.stringify({}));
         if (!mol)
           return this.logError(source);
         if (this.settings.commonOptions.compactDrawing)
@@ -24708,6 +24749,7 @@ var RDKitCore = class {
         JSON.stringify({
           ...DEFAULT_RDKIT_OPTIONS,
           ...this.settings.rdkitOptions,
+          legend: mol.has_prop("_Name") ? mol.get_prop("_Name") : "",
           atomColourPalette: palette,
           queryColour: palette["6"],
           highlightColour: palette["6"],
@@ -24727,31 +24769,44 @@ var RDKitCore = class {
     };
     this.logError = (source) => {
       const div = createDiv();
-      div.createDiv().setText(i18n.t("errors.source.title", { source }));
+      div.createDiv("error-source").setText(i18n.t("errors.source.title", { source }));
       div.createEl("br");
       div.createDiv().setText(i18n.t("errors.rdkit.title"));
+      div.style.wordBreak = `break-word`;
+      div.style.userSelect = `text`;
       return div;
     };
     this.settings = settings;
     this.core = core;
   }
   static async init(settings) {
-    if (!window.RDKit)
-      window.RDKit = await loadRDKit();
+    if (!window.RDKit) {
+      try {
+        window.RDKit = await loadRDKit();
+      } catch (e) {
+        try {
+          window.RDKit = await loadRDKitUnpkg();
+        } catch (e2) {
+          throw Error(
+            "Initializing rdkit failed: Can't fetch resources from unpkg."
+          );
+        }
+      }
+    }
     return new RDKitCore(settings, window.RDKit);
   }
 };
 var loadRDKit = async () => {
+  const app = getApp();
   const assetPath = (0, import_obsidian2.normalizePath)(
-    path.join(app.vault.configDir, "plugins", "chem", "rdkit")
+    [app.vault.configDir, "plugins", "chem", "rdkit"].join("/")
   );
   if (!await app.vault.adapter.exists(assetPath)) {
-    console.log(assetPath);
     await app.vault.adapter.mkdir(assetPath);
   }
-  const jsPath = path.join(assetPath, "RDKit_minimal.js");
+  const jsPath = [assetPath, "RDKit_minimal.js"].join("/");
   await checkOrDownload("RDKit_minimal.js");
-  const wasmPath = path.join(assetPath, "RDKit_minimal.wasm");
+  const wasmPath = [assetPath, "RDKit_minimal.wasm"].join("/");
   await checkOrDownload("RDKit_minimal.wasm");
   const rdkitBundler = document.body.createEl("script");
   rdkitBundler.type = "text/javascript";
@@ -24769,53 +24824,74 @@ var loadRDKit = async () => {
   URL.revokeObjectURL(url);
   return RDKit;
 };
+var loadRDKitUnpkg = async () => {
+  const rdkitBundler = document.body.createEl("script");
+  new import_obsidian2.Notice("Fetching RDKit.js from unpkg...");
+  rdkitBundler.innerHTML = await (0, import_obsidian2.requestUrl)(
+    "https://unpkg.com/@rdkit/rdkit/dist/RDKit_minimal.js"
+  ).text;
+  const RDKit = await window.initRDKitModule({
+    locateFile: () => "https://unpkg.com/@rdkit/rdkit/dist/RDKit_minimal.wasm"
+  });
+  new import_obsidian2.Notice("RDKit.js has been successfully loaded.");
+  return RDKit;
+};
 var fetchAsset = async (target, localPath) => {
   var _a, _b;
-  let res;
-  let data;
-  res = (0, import_obsidian2.requestUrl)(
+  const app = getApp();
+  const assetInfo = await (0, import_obsidian2.requestUrl)(
     `https://api.github.com/repos/acylation/obsidian-chem/releases/tags/${(_b = (_a = app.plugins.getPlugin("chem")) == null ? void 0 : _a.manifest.version) != null ? _b : "0.4.0"}`
-  );
-  data = await res.json;
-  const asset = data.assets.find((v) => v.name == target);
-  if (asset == void 0) {
-    throw "Could not find the online asset!";
-  }
-  res = (0, import_obsidian2.requestUrl)({
+  ).json;
+  const asset = assetInfo.assets.find((a) => a.name == target);
+  if (asset === void 0)
+    throw Error("Could not find the online asset!");
+  const data = await (0, import_obsidian2.requestUrl)({
     url: asset.url,
     headers: { Accept: "application/octet-stream" }
-  });
-  data = await res.arrayBuffer;
+  }).arrayBuffer;
   await app.vault.adapter.writeBinary(localPath, data);
 };
 var checkOrDownload = async (target) => {
+  const app = getApp();
   const assetPath = (0, import_obsidian2.normalizePath)(
-    path.join(app.vault.configDir, "plugins", "chem", "rdkit", target)
+    [app.vault.configDir, "plugins", "chem", "rdkit", target].join("/")
   );
   if (!await app.vault.adapter.exists(assetPath)) {
     new import_obsidian2.Notice(`Chem: Downloading ${target}!`, 5e3);
     try {
       await fetchAsset(target, assetPath);
-      new import_obsidian2.Notice(
-        `Chem: Resource ${target} successfully downloaded!`,
-        5e3
-      );
+      new import_obsidian2.Notice(`Chem: Resource ${target} successfully downloaded! \u2714\uFE0F`, 5e3);
     } catch (error) {
-      new import_obsidian2.Notice(`Chem: Failed to fetch ${target}: ` + error);
+      new import_obsidian2.Notice(`Chem: Failed to fetch ${target}: ${error} \u274C`);
+      throw Error(`Failed to fetch resource ${target} from GitHub release.`);
     }
   }
 };
 
 // src/global/chemCore.ts
 var gRenderCore;
-var setCore = async (settings) => {
+var setCore = async (settings, onFallback) => {
   if (!gRenderCore || settings.core !== gRenderCore.id) {
-    if (settings.core == "smiles-drawer")
+    if (settings.core === "smiles-drawer") {
       gRenderCore = new SmilesDrawerCore(settings);
-    if (settings.core == "rdkit") {
-      gRenderCore = await RDKitCore.init(settings);
+      updateCoreSettings(settings);
+    } else if (settings.core === "rdkit") {
+      try {
+        gRenderCore = await RDKitCore.init(settings);
+        updateCoreSettings(settings);
+      } catch (error) {
+        onFallback(error);
+      }
+    } else {
+      onFallback(`invalid chem core id. ${settings.core}`);
     }
   }
+};
+var setFallbackCore = async (settings) => {
+  gRenderCore = new SmilesDrawerCore(settings);
+  updateCoreSettings(settings);
+};
+var updateCoreSettings = (settings) => {
   gRenderCore.settings = settings;
 };
 var clearCore = () => {
@@ -24860,6 +24936,7 @@ var import_obsidian_dataview = __toESM(require_lib());
 var import_obsidian_dataview2 = __toESM(require_lib());
 var gDataview;
 var getDataview = () => {
+  const app = getApp();
   if ((0, import_obsidian_dataview.isPluginEnabled)(app)) {
     gDataview = app.plugins.getPlugin("dataview");
   } else {
@@ -24869,6 +24946,9 @@ var getDataview = () => {
 var clearDataview = () => {
   gDataview = null;
 };
+
+// src/settings/SettingTab.ts
+var import_obsidian4 = require("obsidian");
 
 // src/settings/LivePreview.ts
 var LivePreview = class {
@@ -24916,19 +24996,54 @@ var LivePreview = class {
   }
 };
 
-// src/settings/SettingTab.ts
+// src/lib/core/coreFallbackModal.ts
 var import_obsidian3 = require("obsidian");
-var ChemSettingTab = class extends import_obsidian3.PluginSettingTab {
-  constructor({ app: app2, plugin }) {
-    super(app2, plugin);
-    this.updateCore = async () => await setCore(this.plugin.settings);
+var CoreFallbackModal = class extends import_obsidian3.Modal {
+  constructor(app, text, onConfrim) {
+    super(app);
+    this.msg = text;
+    this.onConfirm = onConfrim;
+  }
+  onOpen() {
+    const { contentEl } = this;
+    contentEl.createEl("h3", {
+      text: i18n.t("modals.core-fallback.title")
+    });
+    contentEl.createEl("div", {
+      text: i18n.t("modals.core-fallback.message")
+    });
+    contentEl.createEl("br");
+    contentEl.createEl("div", {
+      text: this.msg
+    });
+    const div = contentEl.createDiv();
+    div.style.display = "flex";
+    div.style.flex = "1 1 auto";
+    div.style.justifyContent = "flex-end";
+    div.style.padding = "3px";
+    new import_obsidian3.ButtonComponent(div).setCta().setButtonText(i18n.t("modals.core-fallback.confirm")).onClick(() => {
+      this.close();
+    });
+  }
+  onClose() {
+    this.onConfirm();
+    const { contentEl } = this;
+    contentEl.empty();
+  }
+};
+
+// src/settings/SettingTab.ts
+var ChemSettingTab = class extends import_obsidian4.PluginSettingTab {
+  constructor({ app, plugin }) {
+    super(app, plugin);
+    this.updateCore = () => updateCoreSettings(this.plugin.settings);
     this.plugin = plugin;
   }
   display() {
     var _a, _b;
     const { containerEl } = this;
     containerEl.empty();
-    const scaleSetting = new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.scale.name")).setDesc(i18n.t("settings.scale.description")).addExtraButton((button) => {
+    const scaleSetting = new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.scale.name")).setDesc(i18n.t("settings.scale.description")).addExtraButton((button) => {
       button.setIcon("rotate-ccw").setTooltip(i18n.t("settings.scale.tooltip")).onClick(async () => {
         this.plugin.settings.smilesDrawerOptions.moleculeOptions.scale = 1;
         this.plugin.settings.commonOptions.scale = 1;
@@ -24939,7 +25054,7 @@ var ChemSettingTab = class extends import_obsidian3.PluginSettingTab {
         unifyBondLength();
       });
     });
-    const scaleSlider = new import_obsidian3.SliderComponent(scaleSetting.controlEl).setValue((_a = this.plugin.settings.commonOptions.scale) != null ? _a : 1).setLimits(0, 2, 0.01).setDynamicTooltip().onChange(async (value) => {
+    const scaleSlider = new import_obsidian4.SliderComponent(scaleSetting.controlEl).setLimits(0, 2, 0.01).setValue((_a = this.plugin.settings.commonOptions.scale) != null ? _a : 1).setDynamicTooltip().onChange(async (value) => {
       this.plugin.settings.smilesDrawerOptions.moleculeOptions.scale = value;
       this.plugin.settings.commonOptions.scale = value;
       await this.plugin.saveSettings();
@@ -24947,23 +25062,23 @@ var ChemSettingTab = class extends import_obsidian3.PluginSettingTab {
       onSettingsChange();
       value === 0 ? unifyImageWidth() : unifyBondLength();
     });
-    const widthSettings = new import_obsidian3.Setting(containerEl);
-    new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.theme.light.name")).setDesc(i18n.t("settings.theme.light.description")).addDropdown(
+    const widthSettings = new import_obsidian4.Setting(containerEl);
+    new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.theme.light.name")).setDesc(i18n.t("settings.theme.light.description")).addDropdown(
       (dropdown) => dropdown.addOptions(themeList).setValue(this.plugin.settings.lightTheme).onChange(async (value) => {
         this.plugin.settings.lightTheme = value;
         await this.plugin.saveSettings();
         onSettingsChange();
       })
     );
-    new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.theme.dark.name")).setDesc(i18n.t("settings.theme.dark.description")).addDropdown(
+    new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.theme.dark.name")).setDesc(i18n.t("settings.theme.dark.description")).addDropdown(
       (dropdown) => dropdown.addOptions(themeList).setValue(this.plugin.settings.darkTheme).onChange(async (value) => {
         this.plugin.settings.darkTheme = value;
         await this.plugin.saveSettings();
         onSettingsChange();
       })
     );
-    new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.preview.title")).setHeading();
-    new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.preview.sample.name")).setDesc(i18n.t("settings.preview.sample.description")).addText(
+    new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.preview.title")).setHeading();
+    new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.preview.sample.name")).setDesc(i18n.t("settings.preview.sample.description")).addText(
       (text) => text.setPlaceholder(DEFAULT_SETTINGS.sample1).setValue(this.plugin.settings.sample1).onChange(async (value) => {
         if (value == "") {
           value = DEFAULT_SETTINGS.sample1;
@@ -24983,8 +25098,8 @@ var ChemSettingTab = class extends import_obsidian3.PluginSettingTab {
       })
     );
     const preview = new LivePreview(containerEl, this.plugin.settings);
-    new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.advanced.title")).setHeading();
-    new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.advanced.core.name")).setDesc(i18n.t("settings.advanced.core.description")).setDisabled(import_obsidian3.Platform.isIosApp).addDropdown(
+    new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.advanced.title")).setHeading();
+    new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.advanced.core.name")).setDesc(i18n.t("settings.advanced.core.description")).addDropdown(
       (dropdown) => {
         var _a2;
         return dropdown.addOptions({
@@ -24993,12 +25108,20 @@ var ChemSettingTab = class extends import_obsidian3.PluginSettingTab {
         }).setValue((_a2 = this.plugin.settings.core) != null ? _a2 : false).onChange(async (value) => {
           this.plugin.settings.core = value;
           await this.plugin.saveSettings();
-          await this.updateCore();
+          await setCore(this.plugin.settings, async (error) => {
+            new CoreFallbackModal(this.app, error, async () => {
+              dropdown.setValue("smiles-drawer");
+              this.plugin.settings.core = "smiles-drawer";
+              await this.plugin.saveSettings();
+              setFallbackCore(this.plugin.settings);
+              onSettingsChange();
+            }).open();
+          });
           onSettingsChange();
         });
       }
     );
-    new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.advanced.compact-drawing.name")).setDesc(i18n.t("settings.advanced.compact-drawing.description")).addToggle(
+    new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.advanced.compact-drawing.name")).setDesc(i18n.t("settings.advanced.compact-drawing.description")).addToggle(
       (toggle) => {
         var _a2;
         return toggle.setValue(
@@ -25012,7 +25135,7 @@ var ChemSettingTab = class extends import_obsidian3.PluginSettingTab {
         });
       }
     );
-    new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.advanced.terminal-carbons.name")).setDesc(i18n.t("settings.advanced.terminal-carbons.description")).addToggle(
+    new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.advanced.terminal-carbons.name")).setDesc(i18n.t("settings.advanced.terminal-carbons.description")).addToggle(
       (toggle) => {
         var _a2;
         return toggle.setValue(
@@ -25027,7 +25150,7 @@ var ChemSettingTab = class extends import_obsidian3.PluginSettingTab {
         });
       }
     );
-    new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.advanced.explicit-hydrogen.name")).setDesc(i18n.t("settings.advanced.explicit-hydrogen.description")).addToggle(
+    new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.advanced.explicit-hydrogen.name")).setDesc(i18n.t("settings.advanced.explicit-hydrogen.description")).addToggle(
       (toggle) => {
         var _a2;
         return toggle.setValue(
@@ -25041,22 +25164,22 @@ var ChemSettingTab = class extends import_obsidian3.PluginSettingTab {
         });
       }
     );
-    new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.copy.title")).setHeading();
-    new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.copy.scale.name")).setDesc(i18n.t("settings.copy.scale.description")).addText(
+    new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.copy.title")).setHeading();
+    new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.copy.scale.name")).setDesc(i18n.t("settings.copy.scale.description")).addText(
       (text) => text.setValue(this.plugin.settings.copy.scale.toString()).onChange(async (value) => {
         this.plugin.settings.copy.scale = parseFloat(value);
         await this.plugin.saveSettings();
         onSettingsChange();
       })
     );
-    new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.copy.transparent.name")).setDesc(i18n.t("settings.copy.transparent.description")).addToggle(
+    new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.copy.transparent.name")).setDesc(i18n.t("settings.copy.transparent.description")).addToggle(
       (toggle) => toggle.setValue(this.plugin.settings.copy.transparent).onChange(async (value) => {
         this.plugin.settings.copy.transparent = value;
         await this.plugin.saveSettings();
         onSettingsChange();
       })
     );
-    new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.copy.theme.name")).setDesc(i18n.t("settings.copy.theme.description")).addDropdown(
+    new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.copy.theme.name")).setDesc(i18n.t("settings.copy.theme.description")).addDropdown(
       (dropdown) => dropdown.addOptions({
         default: i18n.t("settings.copy.theme.default"),
         ...themeList
@@ -25066,8 +25189,8 @@ var ChemSettingTab = class extends import_obsidian3.PluginSettingTab {
         onSettingsChange();
       })
     );
-    new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.dataview.title")).setHeading();
-    new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.dataview.enable.name")).setDesc(i18n.t("settings.dataview.enable.description")).addToggle((toggle) => {
+    new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.dataview.title")).setHeading();
+    new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.dataview.enable.name")).setDesc(i18n.t("settings.dataview.enable.description")).addToggle((toggle) => {
       toggle.setValue(this.plugin.settings.dataview).onChange(async (value) => {
         this.plugin.settings.dataview = value;
         if (value) {
@@ -25079,22 +25202,20 @@ var ChemSettingTab = class extends import_obsidian3.PluginSettingTab {
         onSettingsChange();
       });
     });
-    new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.inline.title")).setHeading();
-    new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.inline.enable.name")).setDesc(i18n.t("settings.inline.enable.description")).addToggle((toggle) => {
+    new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.inline.title")).setHeading();
+    new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.inline.enable.name")).setDesc(i18n.t("settings.inline.enable.description")).addToggle((toggle) => {
       toggle.setValue(this.plugin.settings.inlineSmiles).onChange(async (value) => {
         this.plugin.settings.inlineSmiles = value;
         await this.plugin.saveSettings();
         onSettingsChange();
       });
     });
-    new import_obsidian3.Setting(containerEl).setName(i18n.t("settings.inline.prefix.name")).setDesc(i18n.t("settings.inline.prefix.description")).addText((text) => {
-      text.setValue(this.plugin.settings.inlineSmilesPrefix).onChange(
-        async (value) => {
-          this.plugin.settings.inlineSmilesPrefix = value;
-          await this.plugin.saveSettings();
-          onSettingsChange();
-        }
-      );
+    new import_obsidian4.Setting(containerEl).setName(i18n.t("settings.inline.prefix.name")).setDesc(i18n.t("settings.inline.prefix.description")).addText((text) => {
+      text.setValue(this.plugin.settings.inlineSmilesPrefix).onChange(async (value) => {
+        this.plugin.settings.inlineSmilesPrefix = value;
+        await this.plugin.saveSettings();
+        onSettingsChange();
+      });
     });
     const onSettingsChange = () => {
       preview.updateSettings(this.plugin.settings);
@@ -25148,8 +25269,8 @@ var ChemSettingTab = class extends import_obsidian3.PluginSettingTab {
 };
 
 // src/SmilesBlock.ts
-var import_obsidian4 = require("obsidian");
-var SmilesBlock = class extends import_obsidian4.MarkdownRenderChild {
+var import_obsidian5 = require("obsidian");
+var SmilesBlock = class extends import_obsidian5.MarkdownRenderChild {
   constructor(el, markdownSource, context, settings) {
     super(el);
     this.el = el;
@@ -25205,7 +25326,7 @@ var SmilesBlock = class extends import_obsidian4.MarkdownRenderChild {
       const closestSVG = targetEl.tagName === "svg" ? targetEl : targetEl.closest("svg");
       if (!closestSVG)
         return;
-      const menu = new import_obsidian4.Menu();
+      const menu = new import_obsidian5.Menu();
       menu.addItem((item) => {
         item.setTitle(i18n.t("menus.copy.title")).setIcon("copy").onClick(() => {
           var _a, _b;
@@ -25225,7 +25346,7 @@ var SmilesBlock = class extends import_obsidian4.MarkdownRenderChild {
     this.el.empty();
     const oRows = this.markdownSource.split("\n").filter((row) => row.length > 0);
     let rows = oRows;
-    if (this.settings.dataview && (0, import_obsidian_dataview2.isPluginEnabled)(app)) {
+    if (this.settings.dataview && (0, import_obsidian_dataview2.isPluginEnabled)(getApp())) {
       if (!gDataview)
         getDataview();
       rows = await Promise.all(
@@ -25283,7 +25404,7 @@ var SmilesBlock = class extends import_obsidian4.MarkdownRenderChild {
       canvas.height = f * h;
       const ctx = canvas.getContext("2d");
       if (!ctx) {
-        new import_obsidian4.Notice(i18n.t("menus.copy.error"));
+        new import_obsidian5.Notice(i18n.t("menus.copy.error"));
         URL.revokeObjectURL(svgUrl);
         return;
       }
@@ -25298,17 +25419,17 @@ var SmilesBlock = class extends import_obsidian4.MarkdownRenderChild {
       try {
         canvas.toBlob(async (blob) => {
           await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]).then(
-            () => new import_obsidian4.Notice(i18n.t("menus.copy.success")),
-            () => new import_obsidian4.Notice(i18n.t("menus.copy.error"))
+            () => new import_obsidian5.Notice(i18n.t("menus.copy.success")),
+            () => new import_obsidian5.Notice(i18n.t("menus.copy.error"))
           );
         });
       } catch (e) {
-        new import_obsidian4.Notice(i18n.t("menus.copy.error"));
+        new import_obsidian5.Notice(i18n.t("menus.copy.error"));
       }
       URL.revokeObjectURL(svgUrl);
     };
     image.onerror = () => {
-      new import_obsidian4.Notice(i18n.t("menus.copy.error"));
+      new import_obsidian5.Notice(i18n.t("menus.copy.error"));
       URL.revokeObjectURL(svgUrl);
     };
   }
@@ -25320,7 +25441,7 @@ var SmilesBlock = class extends import_obsidian4.MarkdownRenderChild {
 // src/SmilesInline.ts
 var import_view = require("@codemirror/view");
 var import_language = require("@codemirror/language");
-var import_obsidian5 = require("obsidian");
+var import_obsidian6 = require("obsidian");
 function selectionAndRangeOverlap(selection, rangeFrom, rangeTo) {
   for (const range of selection.ranges) {
     if (range.from <= rangeTo && range.to >= rangeFrom) {
@@ -25355,7 +25476,7 @@ var InlineWidget = class extends import_view.WidgetType {
       });
       if (event.shiftKey) {
         if (currentPos) {
-          const { editor } = this.view.state.field(import_obsidian5.editorInfoField);
+          const { editor } = this.view.state.field(import_obsidian6.editorInfoField);
           if (editor) {
             editor.setCursor(editor.offsetToPos(currentPos));
           }
@@ -25379,13 +25500,13 @@ function inlinePlugin(settings) {
     class {
       constructor(view) {
         var _a;
-        this.component = new import_obsidian5.Component();
+        this.component = new import_obsidian6.Component();
         this.component.load();
         this.decorations = (_a = this.inlineRender(view)) != null ? _a : import_view.Decoration.none;
       }
       update(update) {
         var _a;
-        if (!update.state.field(import_obsidian5.editorLivePreviewField)) {
+        if (!update.state.field(import_obsidian6.editorLivePreviewField)) {
           this.decorations = import_view.Decoration.none;
           return;
         }
@@ -25404,10 +25525,7 @@ function inlinePlugin(settings) {
             from,
             to,
             enter: ({ node }) => {
-              const { render, isQuery } = this.renderNode(
-                view,
-                node
-              );
+              const { render, isQuery } = this.renderNode(view, node);
               if (!render && isQuery) {
                 this.removeDeco(node);
                 return;
@@ -25442,7 +25560,7 @@ function inlinePlugin(settings) {
           exists2 = true;
         });
         if (!exists2) {
-          const currentFile = view.state.field(import_obsidian5.editorInfoField).file;
+          const currentFile = view.state.field(import_obsidian6.editorInfoField).file;
           if (!currentFile)
             return;
           const newDeco = (_a = this.renderWidget(node, view)) == null ? void 0 : _a.value;
@@ -25482,7 +25600,7 @@ function inlinePlugin(settings) {
           return false;
       }
       inlineRender(view) {
-        const currentFile = view.state.field(import_obsidian5.editorInfoField).file;
+        const currentFile = view.state.field(import_obsidian6.editorInfoField).file;
         if (!currentFile)
           return;
         const widgets = [];
@@ -25563,7 +25681,7 @@ var detachObserver = () => {
 };
 
 // src/main.ts
-var ChemPlugin = class extends import_obsidian6.Plugin {
+var ChemPlugin = class extends import_obsidian7.Plugin {
   constructor() {
     super(...arguments);
     this.smilesProcessor = (source, el, ctx) => {
@@ -25578,18 +25696,23 @@ var ChemPlugin = class extends import_obsidian6.Plugin {
           const source = text.substring(this.settings.inlineSmilesPrefix.length).trim();
           const container2 = el.createDiv();
           code.replaceWith(container2);
-          ctx.addChild(
-            new SmilesBlock(container2, source, ctx, this.settings)
-          );
+          ctx.addChild(new SmilesBlock(container2, source, ctx, this.settings));
         }
       });
     };
   }
   async onload() {
+    setApp(this.app);
     await this.loadSettings();
     setBlocks();
     setObserver();
-    await setCore(this.settings);
+    setCore(this.settings, (error) => {
+      new CoreFallbackModal(this.app, error, async () => {
+        this.settings.core = "smiles-drawer";
+        await this.saveSettings();
+        await setFallbackCore(this.settings);
+      }).open();
+    });
     this.addSettingTab(new ChemSettingTab({ app: this.app, plugin: this }));
     this.registerMarkdownCodeBlockProcessor("smiles", this.smilesProcessor);
     this.registerMarkdownPostProcessor(this.inlineSmilesProcessor);
@@ -25603,6 +25726,7 @@ var ChemPlugin = class extends import_obsidian6.Plugin {
     clearBlocks();
     clearCore();
     clearDataview();
+    clearApp();
   }
   async loadSettings() {
     this.settings = migrateSettings(await this.loadData());
@@ -25613,11 +25737,11 @@ var ChemPlugin = class extends import_obsidian6.Plugin {
 };
 /*! Bundled license information:
 
-chroma-js/chroma.js:
+chroma-js/dist/chroma.cjs:
   (**
    * chroma.js - JavaScript library for color conversions
    *
-   * Copyright (c) 2011-2019, Gregor Aisch
+   * Copyright (c) 2011-2024, Gregor Aisch
    * All rights reserved.
    *
    * Redistribution and use in source and binary forms, with or without

@@ -37,14 +37,17 @@ export function renderCircularProgress(
 
     const number = percent.createDiv("number");
     const h2 = number.createEl("h2");
-    h2.innerHTML = `0<span>%</span>`;
+    // Create progress display securely
+    h2.textContent = '0';
+    const percentSpan = h2.createSpan({ text: '%' });
     const p = number.createEl("p");
     p.innerText = opts.taskLabel ?? "tasks";
 
     // 2. Animate to actual value after a short delay
     setTimeout(() => {
         percent.style.setProperty('--num', progress.toString());
-        h2.innerHTML = `${progress}<span>%</span>`;
+        h2.textContent = progress.toString();
+        h2.appendChild(percentSpan); // Re-add the % span
     }, 100); // 100ms delay for animation
 
     return { percent, h2 };
@@ -59,7 +62,9 @@ export function updateCircularProgressValue(
     if (!percentEl || !h2El) return;
     const progress = opts.value ?? getTaskProgress(component);
     percentEl.style.setProperty('--num', progress.toString());
-    h2El.innerHTML = `${progress}<span>%</span>`;
+    h2El.textContent = progress.toString();
+    const percentSpan = h2El.createSpan({ text: '%' });
+    h2El.appendChild(percentSpan);
 }
 
 function getTaskProgress(

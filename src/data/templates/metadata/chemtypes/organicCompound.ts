@@ -5,7 +5,7 @@ export const organicCompoundSubclassMetadataTemplate = {
             "input": {
                 "query": true,
                 "inputType": "number",
-                "default": "",
+                "default": 0,
                 "units": ["°C", "K"],
                 "defaultUnit": "°C",
             }

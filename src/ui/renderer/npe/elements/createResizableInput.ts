@@ -1,5 +1,5 @@
 import { updateProperties } from "../utils/updateProperties";
-import type { NestedPropertiesEditorView } from "../../../views/NestedPropertiesEditor";
+import { NestedPropertiesEditorView } from "../../../views/NestedPropertiesEditor";
 import type { NestedPropertiesEditorCodeBlockView } from "../../../views/NestedPropertiesEditor";
 import type { FrontmatterPrimitive } from "../../../../types/core";
 
@@ -50,9 +50,9 @@ export function createResizableInput(
 
     input.oninput = () => {
         callback(input);
-        // Use internal update to prevent full re-render for individual value changes
-        if ('updatePropertiesInternal' in view && typeof view.updatePropertiesInternal === 'function') {
-            view.updatePropertiesInternal(fullKey, inputType === "checkbox" ? input.checked : input.value, dataType);
+        // Use standard updateProperties function
+        if (view instanceof NestedPropertiesEditorView && view.currentFile) {
+            updateProperties(view.app, view.currentFile, fullKey, inputType === "checkbox" ? input.checked : input.value, dataType);
         } else {
             updateProperties(app, file, fullKey, inputType === "checkbox" ? input.checked : input.value, dataType);
         }

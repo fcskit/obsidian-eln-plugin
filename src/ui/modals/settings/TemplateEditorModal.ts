@@ -1,5 +1,14 @@
 import { App, Modal, Setting } from "obsidian";
-import { PathTemplate, MetaDataTemplate, MetaDataTemplateField } from "../../../types/templates";
+import { 
+    PathTemplate, 
+    PathSegment,
+    LiteralSegment,
+    FieldSegment,
+    FunctionSegment,
+    CounterSegment,
+    MetaDataTemplate, 
+    MetaDataTemplateField 
+} from "../../../types/templates";
 
 export class PathTemplateEditorModal extends Modal {
     private template: PathTemplate;
@@ -36,9 +45,9 @@ export class PathTemplateEditorModal extends Modal {
                     .setButtonText("Add Element")
                     .setCta()
                     .onClick(() => {
-                        this.template.push({
-                            type: "string",
-                            field: "",
+                        this.template.segments.push({
+                            kind: "literal",
+                            value: "",
                             separator: ""
                         });
                         this.renderTemplateElements();
@@ -75,7 +84,7 @@ export class PathTemplateEditorModal extends Modal {
 
         const container = this.contentEl.createEl("div", { cls: "template-elements" });
 
-        this.template.forEach((element, index) => {
+        this.template.segments.forEach((element: PathSegment, index: number) => {
             const elementContainer = container.createEl("div", { cls: "template-element" });
             
             elementContainer.createEl("h4", { text: `Element ${index + 1}` });
@@ -85,27 +94,51 @@ export class PathTemplateEditorModal extends Modal {
                 .setName("Type")
                 .addDropdown((dropdown) => {
                     dropdown
-                        .addOption("string", "Static String")
-                        .addOption("dateField", "Date Field")
-                        .addOption("userInput", "User Input")
-                        .addOption("index", "Auto Index")
-                        .setValue(element.type)
+                        .addOption("literal", "Static String")
+                        .addOption("field", "Field")
+                        .addOption("function", "Function")
+                        .addOption("counter", "Auto Counter")
+                        .setValue(element.kind)
                         .onChange((value) => {
-                            element.type = value;
+                            element.kind = value as PathSegment["kind"];
                         });
                 });
 
-            // Field input
-            new Setting(elementContainer)
-                .setName("Field")
-                .setDesc("The field value or path (e.g., 'currentDate', 'this.userInput.author')")
-                .addText((text) =>
-                    text
-                        .setValue(element.field)
-                        .onChange((value) => {
-                            element.field = value;
-                        })
-                );
+            // Field/value input (conditional based on type)
+            if (element.kind === "literal") {
+                new Setting(elementContainer)
+                    .setName("Value")
+                    .setDesc("The static string value")
+                    .addText((text) =>
+                        text
+                            .setValue((element as LiteralSegment).value || "")
+                            .onChange((value) => {
+                                (element as LiteralSegment).value = value;
+                            })
+                    );
+            } else if (element.kind === "field") {
+                new Setting(elementContainer)
+                    .setName("Path")
+                    .setDesc("The field path (e.g., 'project.name', 'sample.type')")
+                    .addText((text) =>
+                        text
+                            .setValue((element as FieldSegment).path || "")
+                            .onChange((value) => {
+                                (element as FieldSegment).path = value;
+                            })
+                    );
+            } else if (element.kind === "function") {
+                new Setting(elementContainer)
+                    .setName("Expression")
+                    .setDesc("The function expression")
+                    .addTextArea((text) =>
+                        text
+                            .setValue((element as FunctionSegment).expression || "")
+                            .onChange((value) => {
+                                (element as FunctionSegment).expression = value;
+                            })
+                    );
+            }
 
             // Separator input
             new Setting(elementContainer)
@@ -126,7 +159,7 @@ export class PathTemplateEditorModal extends Modal {
                         .setButtonText("Delete Element")
                         .setWarning()
                         .onClick(() => {
-                            this.template.splice(index, 1);
+                            this.template.segments.splice(index, 1);
                             this.renderTemplateElements();
                         })
                 );

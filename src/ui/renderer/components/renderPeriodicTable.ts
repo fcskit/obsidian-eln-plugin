@@ -20,16 +20,47 @@ export function renderPeriodicTable(view: PeriodicTableView, container: HTMLElem
         view.registerDomEvent(contentDiv, "mouseenter", (e) => {
             popup = document.createElement("div");
             popup.className = "element-popup";
-            popup.innerHTML = `
-                <strong>${el.name} (${el.atomicNumber})</strong><br>
-                Symbol: ${symbol}<br>
-                Group: ${el.groupName}<br>
-                Period: ${el.period}<br>
-                Atomic Mass: ${el.atomicMass}<br>
-                Electronegativity: ${el.electronegativity ?? "n/a"}<br>
-                Stability: ${el.stability}<br>
-                Isotopes: ${el.isotopes?.join(", ") ?? "n/a"}
-            `;
+            
+            // Create popup content securely using DOM API
+            const nameHeader = document.createElement("strong");
+            nameHeader.textContent = `${el.name} (${el.atomicNumber})`;
+            popup.appendChild(nameHeader);
+            popup.appendChild(document.createElement("br"));
+            
+            const symbolSpan = document.createElement("span");
+            symbolSpan.textContent = `Symbol: ${symbol}`;
+            popup.appendChild(symbolSpan);
+            popup.appendChild(document.createElement("br"));
+            
+            const groupSpan = document.createElement("span");
+            groupSpan.textContent = `Group: ${el.groupName}`;
+            popup.appendChild(groupSpan);
+            popup.appendChild(document.createElement("br"));
+            
+            const periodSpan = document.createElement("span");
+            periodSpan.textContent = `Period: ${el.period}`;
+            popup.appendChild(periodSpan);
+            popup.appendChild(document.createElement("br"));
+            
+            const massSpan = document.createElement("span");
+            massSpan.textContent = `Atomic Mass: ${el.atomicMass}`;
+            popup.appendChild(massSpan);
+            popup.appendChild(document.createElement("br"));
+            
+            const electronegativitySpan = document.createElement("span");
+            electronegativitySpan.textContent = `Electronegativity: ${el.electronegativity ?? "n/a"}`;
+            popup.appendChild(electronegativitySpan);
+            popup.appendChild(document.createElement("br"));
+            
+            const stabilitySpan = document.createElement("span");
+            stabilitySpan.textContent = `Stability: ${el.stability}`;
+            popup.appendChild(stabilitySpan);
+            popup.appendChild(document.createElement("br"));
+            
+            const isotopesSpan = document.createElement("span");
+            isotopesSpan.textContent = `Isotopes: ${el.isotopes?.join(", ") ?? "n/a"}`;
+            popup.appendChild(isotopesSpan);
+            
             document.body.appendChild(popup);
             const rect = contentDiv.getBoundingClientRect();
             popup.style.position = "fixed";

@@ -16,23 +16,16 @@ export function renderArray(
     update = false
 ): void {
     const fullKey = parentKey;
-    const arrayType = array.some(item => typeof item === 'object' && item !== null && !Array.isArray(item)) ? 'object' : 'primitive';
+    const arrayType = array.some(item => typeof item === 'object' && item !== null) ? 'object' : 'primitive';
 
     if (arrayType === 'primitive') {
-        // Filter to primitive types only
-        const primitiveArray = array.filter((item): item is string | number | boolean | null => 
-            typeof item === 'string' || typeof item === 'number' || typeof item === 'boolean' || item === null
-        );
-        renderPrimitiveArray(view, key, primitiveArray, container, level, fullKey, filterKeys, update);
+        renderPrimitiveArray(view, key, array, container, level, fullKey, filterKeys, update);
     } else {
-        // Filter to object types only
-        const objectArray = array.filter((item): item is FrontmatterObject => 
-            typeof item === 'object' && item !== null && !Array.isArray(item)
-        );
+        // Object array
         const arrayContainer = update ? container : container.createDiv({
             cls: 'npe-array-container npe-object-array',
             attr: { 'data-key': fullKey, 'data-level': level }
         });
-        renderObjectArray(view, key, objectArray as FrontmatterObjectArray, arrayContainer, level, fullKey, filterKeys);
+        renderObjectArray(view, key, array, arrayContainer, level, fullKey, filterKeys);
     }
 }

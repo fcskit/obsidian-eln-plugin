@@ -1,5 +1,5 @@
 import { setIcon } from "obsidian";
-import type { NestedPropertiesEditorView } from "../../../views/NestedPropertiesEditor";
+import { NestedPropertiesEditorView } from "../../../views/NestedPropertiesEditor";
 import type { NestedPropertiesEditorCodeBlockView } from "../../../views/NestedPropertiesEditor";
 import type { FrontmatterObject } from "../../../../types/core";
 import { getPropertyIcon } from "../helpers/getPropertyIcon";
@@ -62,7 +62,13 @@ export function renderObjectContainer(
             // Therefore we need to update the fullKey from the data-key attribute of the container
             const oldFullKey = container.getAttribute("data-key") || fullKey;
             fullKey = oldFullKey.split('.').slice(0, -1).concat(newKey).join('.');
-            await changeKeyName(app, view.currentFile!, oldFullKey, newKey);
+            // Update the key in the frontmatter using standard changeKeyName function
+            if (view instanceof NestedPropertiesEditorView && view.currentFile) {
+                await changeKeyName({ app: view.app, file: view.currentFile, key: oldFullKey, newKeyName: newKey, view });
+            } else if (view.currentFile) {
+                // Fallback for code block view
+                await changeKeyName({ app, file: view.currentFile, key: oldFullKey, newKeyName: newKey });
+            }
             // Update the key and fullKey variables and the data-key attribute
             key = newKey;
             container.setAttribute("data-key", fullKey);
@@ -87,6 +93,10 @@ export function renderObjectContainer(
         value[newKey] = newValue;
         propertiesContainer.empty();
         renderObject(view, value, propertiesContainer, filterKeys, level + 1, fullKey);
+        // Set internal change flag BEFORE calling updateProperties
+        if (view instanceof NestedPropertiesEditorView) {
+            view.setInternalChangeFlag();
+        }
         updateProperties(view.app, view.currentFile!, fullKey, value, "object");
     });
 
@@ -102,6 +112,10 @@ export function renderObjectContainer(
     // --- Remove Button ---
     const removeButton = keyContainer.createDiv({ cls: "npe-button npe-button--remove", text: "×" });
     view.registerDomEvent(removeButton, "click", () => {
+        // Set internal change flag BEFORE calling updateProperties
+        if (view instanceof NestedPropertiesEditorView) {
+            view.setInternalChangeFlag();
+        }
         updateProperties(view.app, view.currentFile!, fullKey, undefined, "undefined");
         container.remove();
     });

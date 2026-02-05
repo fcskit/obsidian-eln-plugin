@@ -1,0 +1,314 @@
+{
+  "ELN version": {
+    "query": false,
+    "inputType": "text",
+    "default": {
+      "type": "function",
+      "value": "this.manifest.version"
+    }
+  },
+  "date created": {
+    "query": false,
+    "inputType": "date",
+    "default": {
+      "type": "function",
+      "value": "new Date().toISOString().split('T')[0]"
+    }
+  },
+  "author": {
+    "query": true,
+    "inputType": "dropdown",
+    "options": {
+      "type": "function",
+      "value": "this.settings.authors.map(author => author.name)"
+    }
+  },
+  "analysis": {
+    "technique": {
+      "query": true,
+      "inputType": "dropdown",
+      "options": [
+        "NMR - 1H",
+        "NMR - 13C",
+        "NMR - 2D",
+        "IR Spectroscopy",
+        "UV-Vis Spectroscopy",
+        "Mass Spectrometry",
+        "GC-MS",
+        "LC-MS",
+        "HPLC",
+        "GC",
+        "Elemental Analysis",
+        "Melting Point",
+        "X-ray Crystallography",
+        "TGA",
+        "DSC",
+        "Raman Spectroscopy",
+        "XPS",
+        "SEM",
+        "TEM",
+        "AFM"
+      ],
+      "default": "NMR - 1H"
+    },
+    "purpose": {
+      "query": true,
+      "inputType": "dropdown",
+      "options": [
+        "structure confirmation",
+        "purity assessment",
+        "quantitative analysis",
+        "identification",
+        "characterization",
+        "reaction monitoring",
+        "quality control"
+      ],
+      "default": "structure confirmation"
+    },
+    "sample": {
+      "name": {
+        "query": true,
+        "inputType": "queryDropdown",
+        "search": [
+          {
+            "tag": "sample"
+          },
+          {
+            "tag": "chemical"
+          }
+        ],
+        "return": ["file.name", "sample.batch", "chemical.formula"]
+      },
+      "preparation": {
+        "inputType": "text",
+        "default": ""
+      },
+      "amount": {
+        "inputType": "number",
+        "default": 0,
+        "units": ["mg", "g", "mL", "L", "mol", "mmol"],
+        "defaultUnit": "mg"
+      },
+      "solvent": {
+        "inputType": "dropdown",
+        "options": [
+          "CDCl3",
+          "DMSO-d6",
+          "D2O",
+          "CD3OD",
+          "acetone-d6",
+          "benzene-d6",
+          "pyridine-d5",
+          "THF-d8",
+          "toluene-d8",
+          "none"
+        ],
+        "default": "CDCl3"
+      },
+      "concentration": {
+        "inputType": "number",
+        "default": null,
+        "units": ["mg/mL", "g/L", "mM", "M"],
+        "defaultUnit": "mg/mL"
+      }
+    },
+    "instrument": {
+      "name": {
+        "query": true,
+        "inputType": "queryDropdown",
+        "search": [
+          {
+            "tag": "instrument",
+            "where": [
+              {
+                "field": "instrument.status",
+                "operator": "is",
+                "value": "active"
+              }
+            ]
+          }
+        ],
+        "return": ["file.name", "instrument.model", "instrument.manufacturer"]
+      },
+      "operator": {
+        "inputType": "dropdown",
+        "options": {
+          "type": "function",
+          "value": "this.settings.authors.map(author => author.name)"
+        }
+      },
+      "settings": {
+        "inputType": "dynamic",
+        "default": {}
+      }
+    },
+    "conditions": {
+      "temperature": {
+        "inputType": "number",
+        "default": 25,
+        "units": ["°C", "K"],
+        "defaultUnit": "°C"
+      },
+      "acquisition_time": {
+        "inputType": "text",
+        "default": ""
+      },
+      "number_of_scans": {
+        "inputType": "number",
+        "default": null
+      },
+      "frequency": {
+        "inputType": "number",
+        "default": null,
+        "units": ["MHz", "GHz", "Hz"],
+        "defaultUnit": "MHz"
+      },
+      "other_parameters": {
+        "inputType": "dynamic",
+        "default": {}
+      }
+    },
+    "results": {
+      "summary": {
+        "inputType": "text",
+        "default": ""
+      },
+      "interpretation": {
+        "inputType": "text",
+        "default": ""
+      },
+      "peak_assignments": {
+        "inputType": "objectList",
+        "object": [
+          {
+            "key": "chemical_shift",
+            "inputType": "text",
+            "default": ""
+          },
+          {
+            "key": "multiplicity",
+            "inputType": "dropdown",
+            "options": ["s", "d", "t", "q", "m", "br", "dd", "dt", "td"],
+            "default": "s"
+          },
+          {
+            "key": "coupling_constant",
+            "inputType": "text",
+            "default": ""
+          },
+          {
+            "key": "integration",
+            "inputType": "text",
+            "default": ""
+          },
+          {
+            "key": "assignment",
+            "inputType": "text",
+            "default": ""
+          }
+        ]
+      },
+      "quantitative_data": {
+        "value": {
+          "inputType": "number",
+          "default": null
+        },
+        "unit": {
+          "inputType": "text",
+          "default": ""
+        },
+        "uncertainty": {
+          "inputType": "number",
+          "default": null
+        },
+        "method": {
+          "inputType": "text",
+          "default": ""
+        }
+      }
+    },
+    "quality": {
+      "signal_to_noise": {
+        "inputType": "number",
+        "default": null
+      },
+      "baseline_quality": {
+        "inputType": "dropdown",
+        "options": ["excellent", "good", "fair", "poor"],
+        "default": "good"
+      },
+      "artifacts": {
+        "inputType": "multiselect",
+        "options": ["water peak", "solvent peak", "spinning sidebands", "13C satellites", "impurities"],
+        "default": []
+      },
+      "comments": {
+        "inputType": "text",
+        "default": ""
+      }
+    },
+    "data_files": {
+      "raw_data_path": {
+        "inputType": "text",
+        "default": ""
+      },
+      "processed_data_path": {
+        "inputType": "text",
+        "default": ""
+      },
+      "backup_location": {
+        "inputType": "text",
+        "default": ""
+      }
+    }
+  },
+  "project": {
+    "query": true,
+    "inputType": "queryDropdown",
+    "search": [
+      {
+        "tag": "project"
+      }
+    ],
+    "return": ["file.name"]
+  },
+  "related_processes": {
+    "query": true,
+    "inputType": "queryDropdown",
+    "search": [
+      {
+        "tag": "process",
+        "where": [
+          {
+            "field": "project.name",
+            "operator": "is",
+            "value": "this.project.name"
+          }
+        ]
+      }
+    ],
+    "return": ["file.name", "process.type"]
+  },
+  "follow_up_actions": {
+    "inputType": "multiselect",
+    "options": [
+      "repeat analysis",
+      "additional techniques needed",
+      "sample purification required",
+      "structural revision needed",
+      "quantitative analysis needed",
+      "literature comparison"
+    ],
+    "default": []
+  },
+  "tags": {
+    "query": false,
+    "inputType": "list",
+    "default": ["analysis"]
+  },
+  "cssclasses": {
+    "query": false,
+    "inputType": "list",
+    "default": ["note", "analysis"]
+  }
+}

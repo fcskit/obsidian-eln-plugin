@@ -6,10 +6,9 @@ export const acidSubclassMetadataTemplate = {
             "input": {
                 "query": true,
                 "inputType": "number",
-                "default": "",
-                "units": "mol/L",
-                "defaultUnit": "mol/L",
-                "callback": { type: "function", value: "(value) => value.trim()" }
+                "default": 0,
+                "units": ["mol/L", "g/L", "mg/mL"],
+                "defaultUnit": "mol/L"
             }
         },
         {
@@ -18,10 +17,7 @@ export const acidSubclassMetadataTemplate = {
             "input": {
                 "query": true,
                 "inputType": "number",
-                "default": "",
-                "units": "",
-                "defaultUnit": "",
-                "callback": { type: "function", value: "(value) => value.trim()" }
+                "default": 0,
             }
         }
     ],
@@ -35,8 +31,7 @@ export const acidSubclassMetadataTemplate = {
             "input": {
                 "query": true,
                 "inputType": "number",
-                "default": "",
-                "callback": { type: "function", value: "(value) => value.trim()" }
+                "default": 0
             }
         }
     ]

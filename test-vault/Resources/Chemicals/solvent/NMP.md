@@ -11,6 +11,7 @@ chemical:
   type: solvent
   field of use:
     - electrode
+    - synthesis
   name: NMP
   IUPAC name: 1-methylpyrrolidin-2-one
   CAS: 872-50-4

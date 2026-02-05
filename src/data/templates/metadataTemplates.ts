@@ -4,16 +4,23 @@ import contactMetadataTemplate from "./metadata/contact";
 import dailyNoteMetadataTemplate from "./metadata/dailynote";
 import defaultMetadataTemplate from "./metadata/default";
 import deviceMetadataTemplate from "./metadata/device";
+import echemCellMetadataTemplate from "./metadata/echemcell";
+import electrodeMetadataTemplate from "./metadata/electrode";
 import instrumentMetadataTemplate from "./metadata/instrument";
+import labMetadataTemplate from "./metadata/lab";
 import meetingMetadataTemplate from "./metadata/meeting";
 import processMetadataTemplate from "./metadata/process";
 import projectMetadataTemplate from "./metadata/project";
 import sampleMetadataTemplate from "./metadata/sample";
 import sampleListMetadataTemplate from "./metadata/samplelist";
+import { testNoteTemplate } from "./metadata/test";
 
 import { chemTypesMetadataTemplates } from "./metadata/chemtypes/chemtypes";
 import { projectTypesMetadataTemplates } from "./metadata/projecttypes/projecttypes";
 import { sampleTypesMetadataTemplates } from "./metadata/sampletypes/sampletypes";
+
+import { echemCellSubclassMetadataTemplates } from "./metadata/subclasses/echemcell";
+import { electrodeSubclassMetadataTemplates } from "./metadata/subclasses/electrode";
 
 // Type/Interface definitions for  subclass metadata templates
 export interface SubclassAddField {
@@ -55,16 +62,22 @@ export const metadataTemplates = {
     dailyNote: dailyNoteMetadataTemplate,
     default: defaultMetadataTemplate,
     device: deviceMetadataTemplate,
+    echemCell: echemCellMetadataTemplate,
+    electrode: electrodeMetadataTemplate,
     instrument: instrumentMetadataTemplate,
+    lab: labMetadataTemplate,
     meeting: meetingMetadataTemplate,
     process: processMetadataTemplate,
     project: projectMetadataTemplate,
     sample: sampleMetadataTemplate,
     sampleList: sampleListMetadataTemplate,
+    test: testNoteTemplate,
 };
 
 export const subClassMetadataTemplates = {
     chemical: chemTypesMetadataTemplates,
+    echemCell: echemCellSubclassMetadataTemplates,
+    electrode: electrodeSubclassMetadataTemplates,
     project: projectTypesMetadataTemplates,
     sample: sampleTypesMetadataTemplates,
 };
@@ -95,14 +108,3 @@ export const subClassMetadataTemplates = {
 //             templatePath = noteSettings.customMetadataTemplatePath;
 //         }
 
-//         const file = app.vault.getAbstractFileByPath(templatePath);
-//         if (file && file instanceof TFile) {
-//             const content = await app.vault.read(file);
-//             metadataTemplates[key] = JSON.parse(content);
-//         } else {
-//             console.warn(`Metadata template not found: ${templatePath}`);
-//         }
-//     }
-
-//     return metadataTemplates;
-// }

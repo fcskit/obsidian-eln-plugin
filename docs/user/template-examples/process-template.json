@@ -1,0 +1,289 @@
+{
+  "ELN version": {
+    "query": false,
+    "inputType": "text",
+    "default": {
+      "type": "function",
+      "value": "this.manifest.version"
+    }
+  },
+  "date created": {
+    "query": false,
+    "inputType": "date",
+    "default": {
+      "type": "function",
+      "value": "new Date().toISOString().split('T')[0]"
+    }
+  },
+  "author": {
+    "query": true,
+    "inputType": "dropdown",
+    "options": {
+      "type": "function",
+      "value": "this.settings.authors.map(author => author.name)"
+    }
+  },
+  "process": {
+    "name": {
+      "query": true,
+      "inputType": "text",
+      "default": ""
+    },
+    "type": {
+      "query": true,
+      "inputType": "dropdown",
+      "options": ["synthesis", "purification", "crystallization", "distillation", "extraction", "analysis", "characterization"],
+      "default": "synthesis"
+    },
+    "objective": {
+      "query": true,
+      "inputType": "text",
+      "default": ""
+    },
+    "description": {
+      "query": true,
+      "inputType": "text",
+      "default": ""
+    },
+    "educts": {
+      "query": true,
+      "inputType": "objectList",
+      "object": [
+        {
+          "key": "name",
+          "inputType": "queryDropdown",
+          "search": [
+            {
+              "tag": "chemical",
+              "where": [
+                {
+                  "field": "chemical.physical_state",
+                  "operator": "exists"
+                }
+              ]
+            }
+          ],
+          "return": ["file.name", "chemical.molar_mass", "chemical.formula"]
+        },
+        {
+          "key": "amount",
+          "inputType": "number",
+          "default": 0,
+          "units": ["mg", "g", "kg", "mL", "L", "mol", "mmol"],
+          "defaultUnit": "g"
+        },
+        {
+          "key": "equivalents",
+          "inputType": "number",
+          "default": 1.0
+        },
+        {
+          "key": "purity",
+          "inputType": "text",
+          "default": "100%"
+        },
+        {
+          "key": "role",
+          "inputType": "dropdown",
+          "options": ["reagent", "catalyst", "solvent", "base", "acid", "oxidant", "reductant"],
+          "default": "reagent"
+        }
+      ]
+    },
+    "products": {
+      "query": true,
+      "inputType": "objectList",
+      "object": [
+        {
+          "key": "name",
+          "inputType": "text",
+          "default": ""
+        },
+        {
+          "key": "theoretical_yield",
+          "inputType": "number",
+          "default": 0,
+          "units": ["mg", "g", "kg", "mol", "mmol"],
+          "defaultUnit": "g"
+        },
+        {
+          "key": "actual_yield",
+          "inputType": "number",
+          "default": 0,
+          "units": ["mg", "g", "kg", "mol", "mmol"],
+          "defaultUnit": "g"
+        },
+        {
+          "key": "yield_percentage",
+          "inputType": "number",
+          "default": 0,
+          "units": ["%"],
+          "defaultUnit": "%"
+        },
+        {
+          "key": "purity",
+          "inputType": "text",
+          "default": ""
+        },
+        {
+          "key": "appearance",
+          "inputType": "text",
+          "default": ""
+        }
+      ]
+    },
+    "conditions": {
+      "temperature": {
+        "value": {
+          "inputType": "number",
+          "default": 25,
+          "units": ["°C", "K"],
+          "defaultUnit": "°C"
+        },
+        "profile": {
+          "inputType": "text",
+          "default": "constant"
+        }
+      },
+      "pressure": {
+        "inputType": "number",
+        "default": 1,
+        "units": ["atm", "bar", "Pa", "mmHg"],
+        "defaultUnit": "atm"
+      },
+      "atmosphere": {
+        "inputType": "dropdown",
+        "options": ["air", "nitrogen", "argon", "helium", "vacuum", "CO2"],
+        "default": "air"
+      },
+      "stirring": {
+        "rate": {
+          "inputType": "number",
+          "default": 0,
+          "units": ["rpm"],
+          "defaultUnit": "rpm"
+        },
+        "type": {
+          "inputType": "dropdown",
+          "options": ["magnetic", "mechanical", "none"],
+          "default": "magnetic"
+        }
+      },
+      "duration": {
+        "inputType": "text",
+        "default": ""
+      }
+    },
+    "procedure": {
+      "setup": {
+        "inputType": "text",
+        "default": ""
+      },
+      "steps": {
+        "inputType": "list",
+        "default": []
+      },
+      "workup": {
+        "inputType": "text",
+        "default": ""
+      },
+      "purification": {
+        "inputType": "text",
+        "default": ""
+      }
+    },
+    "equipment": {
+      "reaction_vessel": {
+        "inputType": "text",
+        "default": ""
+      },
+      "heating_method": {
+        "inputType": "dropdown",
+        "options": ["heating mantle", "oil bath", "sand bath", "heating block", "microwave", "none"],
+        "default": "none"
+      },
+      "instruments": {
+        "inputType": "queryDropdown",
+        "search": [
+          {
+            "tag": "instrument",
+            "where": [
+              {
+                "field": "instrument.status",
+                "operator": "is",
+                "value": "active"
+              }
+            ]
+          }
+        ],
+        "return": ["file.name", "instrument.type", "instrument.model"]
+      }
+    },
+    "safety": {
+      "hazards": {
+        "inputType": "multiselect",
+        "options": ["flammable", "toxic", "corrosive", "oxidizing", "explosive", "carcinogenic", "mutagenic", "teratogenic"],
+        "default": []
+      },
+      "ppe_required": {
+        "inputType": "multiselect",
+        "options": ["safety glasses", "gloves", "lab coat", "fume hood", "face shield", "respirator"],
+        "default": ["safety glasses", "gloves", "lab coat"]
+      },
+      "special_precautions": {
+        "inputType": "text",
+        "default": ""
+      }
+    },
+    "observations": {
+      "visual": {
+        "inputType": "text",
+        "default": ""
+      },
+      "odor": {
+        "inputType": "text",
+        "default": ""
+      },
+      "unexpected_events": {
+        "inputType": "text",
+        "default": ""
+      }
+    },
+    "analytical_data": {
+      "inputType": "queryDropdown",
+      "search": [
+        {
+          "tag": "analysis",
+          "where": [
+            {
+              "field": "analysis.sample",
+              "operator": "is",
+              "value": "this.process.name"
+            }
+          ]
+        }
+      ],
+      "return": ["file.name", "analysis.technique", "analysis.result"]
+    }
+  },
+  "project": {
+    "query": true,
+    "inputType": "queryDropdown",
+    "search": [
+      {
+        "tag": "project"
+      }
+    ],
+    "return": ["file.name"]
+  },
+  "tags": {
+    "query": false,
+    "inputType": "list",
+    "default": ["process"]
+  },
+  "cssclasses": {
+    "query": false,
+    "inputType": "list",
+    "default": ["note", "process"]
+  }
+}

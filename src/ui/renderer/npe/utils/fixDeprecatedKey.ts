@@ -1,6 +1,9 @@
 import { App, TFile } from "obsidian";
 import { updateProperties } from "./updateProperties";
 import { changeKeyName } from "./changeKeyName";
+import { createLogger } from "../../../../utils/Logger";
+
+const logger = createLogger('npe');
 
 export const deprecatedToPlural: Record<string, string> = {
     tag: "tags",
@@ -12,7 +15,7 @@ export const deprecatedToPlural: Record<string, string> = {
 /**
  * Helper function to convert a value to an array, handling comma-separated strings
  */
-function convertToArray(value: any): string[] {
+function convertToArray(value: unknown): string[] {
     if (Array.isArray(value)) {
         return value.map(v => typeof v === "string" ? v.trim() : v);
     } else if (typeof value === "string") {
@@ -35,7 +38,7 @@ export async function fixAllDeprecatedKeysInVault(app: App) {
     const files = app.vault.getMarkdownFiles();
     for (const file of files) {
         for (const [deprecatedKey, pluralKey] of Object.entries(deprecatedToPlural)) {
-            console.debug(`Fixing deprecated key in file ${file.path}: ${deprecatedKey} -> ${pluralKey}`);
+            logger.debug(`Fixing deprecated key in file ${file.path}: ${deprecatedKey} -> ${pluralKey}`);
             await fixDeprecatedKey(app, file, deprecatedKey, pluralKey);
         }
     }
@@ -78,7 +81,12 @@ export async function fixDeprecatedKey(
     } else if (hasSingular && !hasPlural) {
         // Rename singular to plural
         const cleaned = cleanTags(singularValue, deprecatedKey === "tag");
-        await changeKeyName(app, file, deprecatedKey, pluralKey);
+        await changeKeyName({
+            app,
+            file,
+            key: deprecatedKey,
+            newKeyName: pluralKey
+        });
         await updateProperties(app, file, pluralKey, cleaned, "array");
     } else if (hasPlural && !hasSingular) {
         // Just clean the plural values

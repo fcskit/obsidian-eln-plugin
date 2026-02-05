@@ -4,7 +4,11 @@ const meetingMetadataTemplate : MetaDataTemplate = {
   "ELN version": {
     "query": false,
     "inputType": "text",
-    "default": { type: "function", value: "this.manifest.version" },
+    "default": {
+      type: "function",
+      context: ["plugin"],
+      expression: "plugin.manifest.version"
+    },
   },
   "cssclasses": {
     "query": false,
@@ -14,13 +18,20 @@ const meetingMetadataTemplate : MetaDataTemplate = {
   "date created": {
     "query": false,
     "inputType": "date",
-    "default": { type: "function", value: "new Date().toISOString().split('T')[0]" },
-    "callback": { type: "function", value: "(value) => value" }
+    "default": {
+      type: "function",
+      context: ["date"],
+      expression: "date.today"
+    },
   },
   "author": {
     "query": true,
     "inputType": "dropdown",
-    "options": { type: "function", value: "this.settings.authors.map((item) => item.name)" },
+    "options": {
+      type: "function",
+      context: ["settings"],
+      expression: "settings.authors?.map((item) => item.name) || []"
+    },
   },
   "note type": {
     "query": false,
@@ -30,7 +41,13 @@ const meetingMetadataTemplate : MetaDataTemplate = {
   "tags": {
     "query": false,
     "inputType": "list",
-    "default": ["meeting"],
+    "default": { 
+      type: "function",
+      context: ["userInput"],
+      reactiveDeps: ["meeting.type"],
+      expression: "[`meeting/${userInput.meeting.type.replace(/\\s/g, '_')}`]",
+      fallback: ["meeting/unknown"]
+    },
   },
   "meeting": {
     "title": {
@@ -47,13 +64,20 @@ const meetingMetadataTemplate : MetaDataTemplate = {
     "date": {
       "query": true,
       "inputType": "date",
-      "default": { type: "function", value: "new Date().toISOString().split('T')[0]" },
-      "callback": { type: "function", value: "(value) => value" }
+      "default": {
+        type: "function",
+        context: ["date"],
+        expression: "date.today"
+      },
     },
     "time": {
       "query": true,
       "inputType": "text",
-      "default": "(new Date()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })",
+      "default": {
+        type: "function",
+        context: [],
+        function: "() => { const now = new Date(); const minutes = now.getMinutes(); const roundedMinutes = Math.ceil(minutes / 15) * 15; const roundedTime = new Date(now); roundedTime.setMinutes(roundedMinutes, 0, 0); return roundedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }"
+      },
     },
     "location": {
       "query": true,
@@ -62,38 +86,44 @@ const meetingMetadataTemplate : MetaDataTemplate = {
     },
     "participants": {
       "query": true,
-      "inputType": "multiselect",
-      "options": "this.settings.authors.map((author) => author.name)",
-      "callback": { type: "function", value: "(value) => value" }
+      "inputType": "list",
+      "listType": "text",
+      "placeholder": "Enter participant names...",
+      "default": [],
     },
     "topics": {
       "query": true,
       "inputType": "list",
-      "default": [
-        {
-          "time": "(new Date()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })",
-          "title": "1st Topic",
-          "contributor": ""
+      "listType": "object",
+      "initialItems": 1,
+      "objectTemplate": {
+        "time": {
+          "query": true,
+          "inputType": "text",
+          "default": {
+            type: "function",
+            context: [],
+            function: "() => { const now = new Date(); const minutes = now.getMinutes(); const roundedMinutes = Math.ceil(minutes / 15) * 15; const roundedTime = new Date(now); roundedTime.setMinutes(roundedMinutes, 0, 0); return roundedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }"
+          }
         },
-        {
-          "time": "(new Date(new Date().getTime() + 15 * 60000)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })",
-          "title": "2nd Topic",
-          "contributor": ""
+        "title": {
+          "query": true,
+          "inputType": "text",
+          "default": "1st Topic"
         },
-        {
-          "time": "(new Date(new Date().getTime() + 30 * 60000)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })",
-          "title": "3rd Topic",
-          "contributor": ""
+        "contributor": {
+          "query": true,
+          "inputType": "text",
+          "default": ""
         }
-      ],
-      "callback": { type: "function", value: "(value) => value" }
+      },
     }
   },
   "project": {
     "name": {
       "query": true,
-      "inputType": "text",
-      "default": "",
+      "inputType": "queryDropdown",
+      "search": "project",
     }
   }
 };

@@ -8,119 +8,69 @@
         "type": "tabs",
         "children": [
           {
-            "id": "9111a77b189d8885",
+            "id": "fc7b8081d4fee404",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Home.md",
-                "mode": "preview",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Home"
-            }
-          },
-          {
-            "id": "ee95baef599068b0",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Experiments/Analyses/Dummy Sample/Dummy Analysis/Dummy Analysis.md",
+                "file": "Projects/Demo Project/Samples - Demo Project.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Dummy Analysis"
+              "title": "Samples - Demo Project"
             }
-          },
+          }
+        ]
+      },
+      {
+        "id": "6aca06b42fb2745d",
+        "type": "tabs",
+        "children": [
           {
-            "id": "93cf80928d70e6f7",
+            "id": "2eea71b2a8f0e5fa",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Resources/Chemicals/solvent/NMP.md",
+                "file": "Experiments/Samples/Demo Project/compound/NN-DP-CPD-001.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "NMP"
+              "title": "NN-DP-CPD-001"
             }
           },
           {
-            "id": "5dae1405088dd872",
+            "id": "edc108584c25be68",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Experiments/Analyses/Dummy Sample/Dummy Analysis/Dummy Analysis.md",
-                "mode": "preview",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Dummy Analysis"
-            }
-          },
-          {
-            "id": "8dd995cbfb71913d",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Meetings/2025/05 Mai/Demo Meeting.md",
+                "file": "Projects/research/Demo Project/Analyses - Demo Project.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Demo Meeting"
+              "title": "Analyses - Demo Project"
             }
           },
           {
-            "id": "fb6f7ac40e5798b2",
+            "id": "d5c45fc103070d36",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "List of List Test.md",
-                "mode": "source",
-                "source": true
-              },
-              "icon": "lucide-file",
-              "title": "List of List Test"
-            }
-          },
-          {
-            "id": "b92f4793e1e3551c",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Fix deprecated properties Test.md",
+                "file": "Resources/Labs/421/150 - Glovebox Lab.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Fix deprecated properties Test"
-            }
-          },
-          {
-            "id": "b0e5f5d4e72913e8",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Periodic Table of Elements.md",
-                "mode": "preview",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Periodic Table of Elements"
+              "title": "150 - Glovebox Lab"
             }
           }
         ],
-        "currentTab": 6
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -177,7 +127,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 346.5
+    "width": 401.5
   },
   "right": {
     "id": "b3994d4bc654696d",
@@ -265,27 +215,7 @@
             }
           },
           {
-            "id": "05a7f29b530d45c5",
-            "type": "leaf",
-            "state": {
-              "type": "NPE_VIEW",
-              "state": {},
-              "icon": "npe-icon",
-              "title": "Nested Properties Editor View"
-            }
-          },
-          {
-            "id": "415ae8fde238dbde",
-            "type": "leaf",
-            "state": {
-              "type": "NPE_VIEW",
-              "state": {},
-              "icon": "lucide-ghost",
-              "title": "NPE_VIEW"
-            }
-          },
-          {
-            "id": "7ff0420b5d970850",
+            "id": "0fea40a2187580dd",
             "type": "leaf",
             "state": {
               "type": "NPE_VIEW",
@@ -299,12 +229,13 @@
       }
     ],
     "direction": "horizontal",
-    "width": 435.5
+    "width": 450.5
   },
   "left-ribbon": {
     "hiddenItems": {
+      "bases:Neue Base erstellen": false,
+      "graph:Graph-Ansicht öffnen": false,
       "switcher:Schnellauswahl öffnen": false,
-      "graph:Graphen-Ansicht öffnen": false,
       "canvas:Neuen Canvas erstellen": false,
       "daily-notes:Heutige Notiz öffnen": false,
       "templates:Vorlage einfügen": false,
@@ -314,45 +245,46 @@
       "pexels-banner:🚩 Pixel Banner Menu": false
     }
   },
-  "active": "b92f4793e1e3551c",
+  "active": "d5c45fc103070d36",
   "lastOpenFiles": [
-    "Experiments/Samples/electrode/MM-DP-el001.md",
-    "Periodic Table of Elements.md",
-    "Experiments/Analyses/Dummy Sample/Dummy Analysis/Dummy Analysis.md",
-    "Meetings/2025/05 Mai/Demo Meeting.md",
-    "Daily Notes/2025/05 Mai/16.5.2025 - Freitag, 16. Mai.md",
+    "Resources/Devices/Saturious - Test Balance/Saturious - Test Balance.md",
+    "Resources/Devices/MTI - Coin Cell Crimper/MTI - Coin Cell Crimper.md",
+    "Resources/Labs/421/150 - Glovebox Lab.md",
+    "Projects/research/Demo Project/Analyses - Demo Project.md",
+    "Projects/Demo Project/Samples - Demo Project.md",
+    "Experiments/Samples/Demo Project/compound/NN-DP-CPD-001.md",
+    "Experiments/Analyses/Demo Project/NN-DP-CPD-001/SE Inlense_01/NN-DP-CPD-001 - SE Inlense_01.md",
+    "Projects/research/Demo Project/Samples - Demo Project.md",
+    "Experiments/Samples/Demo Project/electrode/AA-DP-ELE-002.md",
+    "Experiments/Samples/Demo Project/electrode/AA-DP-ELE-001.md",
+    "Experiments/Samples/Demo Project/electrochemical cell/AA-DP-CELL-001.md",
+    "Resources/Devices/MBraun - Glovebox Cell Assembly/MBraun - Glovebox Cell Assembly.md",
+    "Experiments/Analyses/Demo Project/NN-DP-CPD-001/SE Inlense_01/plots",
+    "Experiments/Analyses/Demo Project/NN-DP-CPD-001/SE Inlense_01/data",
+    "Experiments/Analyses/Demo Project/NN-DP-CPD-001/SE Inlense_01",
+    "Experiments/Analyses/Demo Project/NN-DP-CPD-001",
+    "Resources/Devices/Nabertherm - Furnace 1/Nabertherm - Furnace 1.md",
+    "Resources/Devices/Unicorn Devices - Test Coater/Unicorn Devices - Test Coater.md",
+    "Resources/Instruments/STOE - Stadi P - Molly/STOE - Stadi P - Molly.md",
+    "Resources/Instruments/Zeiss - Merlin/Zeiss - Merlin.md",
+    "Resources/Devices/XYZ - Test device/XYZ - Test device.md",
+    "Resources/Devices/XYZ - Test device/Documents",
+    "Resources/Devices/XYZ - Test device",
+    "Resources/Instruments/xyz - Test instrument/xyz - Test instrument.md",
+    "Resources/Instruments/xyz - Test instrument/Documents",
+    "Resources/Instruments/xyz - Test instrument",
+    "Resources/Devices/New Note.md",
+    "Resources/Devices/Documents",
+    "Resources/Chemicals/acid/Demo Acid for testing.md",
+    "Contacts/Some Institution/Sam Somebody.md",
+    "Experiments/Analyses/Demo Project",
+    "Experiments/Samples/Demo Project/compound/AA-DP-CPD-001.md",
+    "Experiments/Samples/Demo Project/electrode/AA-DP-ELE-003.md",
+    "Experiments/Samples/Demo Project/compound/AA-DP-CPD-010.md",
+    "Experiments/Samples/Demo Project/electrode/AA-DP-ELE-005.md",
+    "Experiments/Samples/Demo Project/electrode/AA-DP-ELE-004.md",
     "assets/images/Devices/dummy-image-device.png",
-    "Projects/development/Test Project.md",
-    "Projects/development/Test Project - Base.base",
-    "Projects/Example Project.md",
-    "Experiments/Samples/electrode",
-    "Experiments/Samples",
-    "Projects/Demo Project.md",
-    "Resources/Chemicals/solvent/NMP.md",
-    "Resources/Chemicals/current collector/Copper foil.md",
-    "Resources/Chemicals/active material/NMC 622 Test.md",
-    "Resources/Chemicals/binder/CMC-SBR.md",
-    "Resources/Chemicals/binder/PVDF.md",
-    "Resources/Chemicals/binder",
-    "Resources/Chemicals/active material/New Chemical Note.md",
-    "Resources/Chemicals/active material",
-    "Resources/Chemicals/current collector/New Chemical Note.md",
-    "Daily Notes/2025/07 Juli/1.7.2025 - Dienstag, 1. Juli.md",
-    "Daily Notes/2025/07 Juli",
-    "Unbenannt.md",
-    "Untitled.md",
-    "Untitled 1.md",
-    "Daily Notes/2025/06 Juni/7.6.2025 - Samstag, 7. Juni.md",
-    "Unbenannt.base",
-    "Home.md",
-    "Projects/development",
-    "Daily Notes/2025/06 Juni/24.6.2025 - Dienstag, 24. Juni.md",
-    "Projects",
-    "Fix deprecated properties Test.md",
-    "List of List Test.md",
     "assets/images/Motivation/attitude_is_a_little_thing.png",
-    "Test.md",
-    "Resources/Chemicals/current collector",
     "Experiments/Analyses/Dummy Sample/Dummy Analysis/plots/MM-DP-el001 - GCPL_01_v_vs_cap.png",
     "Experiments/Analyses/Dummy Sample/Dummy Analysis/plots/MM-DP-el001 - GCPL_01_dq_dv_vs_v.png",
     "Experiments/Analyses/Dummy Sample/Dummy Analysis/plots/MM-DP-el001 - GCPL_01_cap_vs_cyc.png",

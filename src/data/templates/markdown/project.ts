@@ -1,7 +1,7 @@
 const projectMarkdownTemplate = `
 # Experiments
 
-- ### [[Samples - \${project_name}|Samples]]
+- ### [[Samples - {{project.name}}|Samples]]
   \`\`\`dataview
   LIST
   FROM #sample AND!"assets"

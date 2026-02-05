@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readFileSync } from "fs";
+import { readFileSync, existsSync } from "fs";
 import { execSync } from "child_process";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
@@ -8,13 +8,36 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Read package.json to get version info
-const packageJson = JSON.parse(readFileSync(join(__dirname, "package.json"), "utf8"));
-const version = packageJson.version;
-const tagName = `v${version}`;
-const zipFile = `obsidian-eln-${version}.zip`;
+// Read release config if it exists, otherwise fall back to package.json
+let releaseConfig;
+let version, tagName, zipFile, isPrerelease, releaseName, releaseNotes;
+
+const configPath = join(__dirname, "release.config.json");
+if (existsSync(configPath)) {
+    console.log("📋 Using release.config.json for release settings...");
+    releaseConfig = JSON.parse(readFileSync(configPath, "utf8"));
+    version = releaseConfig.version;
+    tagName = releaseConfig.tag || `v${version}`;
+    zipFile = `obsidian-eln-${version}.zip`;
+    isPrerelease = releaseConfig.prerelease || false;
+    releaseName = releaseConfig.name || tagName;
+    releaseNotes = releaseConfig.releaseNotes || `Release ${tagName}`;
+} else {
+    console.log("📋 Using package.json for release settings...");
+    const packageJson = JSON.parse(readFileSync(join(__dirname, "package.json"), "utf8"));
+    version = packageJson.version;
+    tagName = `v${version}`;
+    zipFile = `obsidian-eln-${version}.zip`;
+    isPrerelease = version.includes('beta') || version.includes('alpha');
+    releaseName = tagName;
+    releaseNotes = `Release ${tagName}\n\n## Installation\nDownload the \`${zipFile}\` file and extract it to your vault's \`.obsidian/plugins/obsidian-eln/\` directory.`;
+}
 
 console.log(`🚀 Publishing GitHub release for ${tagName}...`);
+console.log(`   Version: ${version}`);
+console.log(`   Prerelease: ${isPrerelease ? 'Yes' : 'No'}`);
+console.log(`   Release name: ${releaseName}`);
+console.log();
 
 // Step 1: Sync files from test-vault if they're newer
 console.log("🔄 Syncing files from test-vault...");
@@ -54,6 +77,22 @@ try {
         process.exit(1);
     }
 
+    // Check for assets file
+    const assetsZip = 'obsidian-eln-assets.zip';
+    const assetsPath = join(__dirname, 'release', assetsZip);
+    const hasAssets = existsSync(assetsPath);
+    if (!hasAssets) {
+        console.log(`ℹ️  Assets zip not found. Run 'npm run package-assets' to include assets.`);
+    }
+
+    // Check for test vault file
+    const testVaultZip = 'obsidian-eln-test-vault.zip';
+    const testVaultPath = join(__dirname, 'release', testVaultZip);
+    const hasTestVault = existsSync(testVaultPath);
+    if (!hasTestVault) {
+        console.log(`ℹ️  Test vault zip not found. Run 'npm run package-test-vault' to include test vault.`);
+    }
+
     // Check if GitHub CLI is available
     try {
         execSync('gh --version', { stdio: 'pipe' });
@@ -69,30 +108,33 @@ try {
     // Create GitHub release
     console.log(`📦 Creating GitHub release...`);
     
-    const releaseNotes = `Release ${tagName}
-
-## Installation
-Download the \`${zipFile}\` file and extract it to your vault's \`.obsidian/plugins/obsidian-eln/\` directory.
-
-## Changes
-- Plugin refactoring and improvements
-- Enhanced renderer structure  
-- Bug fixes and performance improvements
-
-_For detailed changes, see the commit history._`;
-
+    // Prepare files to upload
+    const filesToUpload = [zipFile];
+    if (hasAssets) {
+        filesToUpload.push(`release/${assetsZip}`);
+    }
+    if (hasTestVault) {
+        filesToUpload.push(`release/${testVaultZip}`);
+    }
+    const filesArg = filesToUpload.map(f => `"${f}"`).join(' ');
+    
+    console.log(`📤 Files to upload: ${filesToUpload.join(', ')}`);
+    console.log();
+    
     // Check if release already exists
     try {
         execSync(`gh release view ${tagName}`, { stdio: 'pipe' });
         console.log(`ℹ️  Release ${tagName} already exists. Updating with new assets...`);
-        execSync(`gh release upload ${tagName} "${zipFile}" --clobber`);
+        execSync(`gh release upload ${tagName} ${filesArg} --clobber`, { stdio: 'inherit' });
     } catch {
         // Release doesn't exist, create it
-        execSync(`gh release create ${tagName} "${zipFile}" --title "${tagName}" --notes "${releaseNotes}"`);
+        const prereleaseFlag = isPrerelease ? '--prerelease' : '';
+        const command = `gh release create ${tagName} ${filesArg} --title "${releaseName}" --notes "${releaseNotes}" ${prereleaseFlag}`.trim();
+        execSync(command, { stdio: 'inherit' });
     }
 
     console.log(`✅ GitHub release ${tagName} published successfully!`);
-    console.log(`🔗 View at: https://github.com/your-username/obsidian-eln-plugin/releases/tag/${tagName}`);
+    console.log(`🔗 View at: https://github.com/fcskit/obsidian-eln-plugin/releases/tag/${tagName}`);
     
 } catch (error) {
     console.error(`❌ Failed to publish release: ${error.message}`);

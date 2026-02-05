@@ -25,8 +25,20 @@ export const polymerSubclassMetadataTemplate = {
             "input": {
                 "query": true,
                 "inputType": "number",
-                "default": "",
+                "default": 0,
+                "units": ["g/mol"],
                 "defaultUnit": "g/mol",
+            }
+        },
+        {
+            "fullKey": "chemical.properties.boiling point",
+            "newKey": "chemical.properties.glass temperature",
+            "input": {
+                "query": true,
+                "inputType": "number",
+                "default": 0,
+                "units": ["°C", "K"],
+                "defaultUnit": "K",
             }
         },
         {

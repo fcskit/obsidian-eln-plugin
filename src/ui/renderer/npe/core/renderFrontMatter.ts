@@ -42,7 +42,9 @@ export function renderFrontMatter(
             return container;
         }
 
-        const frontMatter = app.metadataCache.getFileCache(view.currentFile)?.frontmatter as FrontMatterCache | object;
+        const frontMatter = ('getFrontmatter' in view && typeof view.getFrontmatter === 'function') 
+            ? view.getFrontmatter() 
+            : app.metadataCache.getFileCache(view.currentFile)?.frontmatter as FrontMatterCache | object;
 
         let parentKey = "";
         let fm: FrontMatterCache | object | unknown = frontMatter;

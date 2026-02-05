@@ -3,6 +3,9 @@ import { fixDeprecatedKey, deprecatedToPlural } from "../utils/fixDeprecatedKey"
 import type { NestedPropertiesEditorView } from "../../../views/NestedPropertiesEditor";
 import type { NestedPropertiesEditorCodeBlockView } from "../../../views/NestedPropertiesEditor";
 import { renderObject } from "../core/renderObject";
+import { createLogger } from "../../../../utils/Logger";
+
+const logger = createLogger('npe');
 
 // deprecatedToPlural is now imported from utils
 
@@ -32,7 +35,7 @@ export function createFixDepricatedPropertiesButton(
         if (!frontmatter) return;
 
         for (const [deprecatedKey, pluralKey] of Object.entries(deprecatedToPlural)) {
-            console.debug(`Fixing deprecated key: ${deprecatedKey} -> ${pluralKey}`);
+            logger.debug(`Fixing deprecated key: ${deprecatedKey} -> ${pluralKey}`);
             await fixDeprecatedKey(app, file, deprecatedKey, pluralKey);
             changed = true;
         }

@@ -16,14 +16,14 @@ export const meetingSubclassMetadataTemplate = {
                 "default": "",
             },
         },
-        // {
-        //     "fullKey": "project.sponsors",
-        //     "input": {
-        //         "query": true,
-        //         "inputType": "list",
-        //         "default": "",
-        //     },
-        // },
+        {
+            "fullKey": "project.sponsors",
+            "input": {
+                "query": true,
+                "inputType": "list",
+                "default": "",
+            },
+        },
         {
             "fullKey": "project.agenda",
             "input": {

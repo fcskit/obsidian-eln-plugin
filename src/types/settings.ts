@@ -37,8 +37,8 @@ export interface ELNSettings {
     };
     note: {
         [key: string]: {
-            titleTemplate: PathTemplate;
-            folderTemplate: PathTemplate;
+            fileName: PathTemplate;
+            folderPath: PathTemplate;
             folder?: string; // Simple folder path
             customMetadataTemplate: boolean;
             customMarkdownTemplate: boolean;

@@ -1,0 +1,29 @@
+========================================
+Health check started: Fri Jul 25 11:05:42 CEST 2025
+Checking for zero-byte files...
+Health check completed: Fri Jul 25 11:05:42 CEST 2025
+========================================
+Health check started: Wed Aug 13 11:33:54 CEST 2025
+Checking for zero-byte files...
+WARNING: Found        2 zero-byte TypeScript files!
+/Users/gc9830/Documents/GitHub/obsidian-eln-plugin/src/ui/renderer/renderFrontMatter.ts
+/Users/gc9830/Documents/GitHub/obsidian-eln-plugin/src/data/templates/loadMetaDataTemplate.ts
+Health check completed: Wed Aug 13 11:33:54 CEST 2025
+========================================
+Health check started: Wed Oct 22 22:29:56 CEST 2025
+Checking for zero-byte files...
+WARNING: Found        2 zero-byte TypeScript files!
+/Users/gc9830/Documents/GitHub/obsidian-eln-plugin/src/ui/renderer/renderFrontMatter.ts
+/Users/gc9830/Documents/GitHub/obsidian-eln-plugin/src/data/templates/loadMetaDataTemplate.ts
+ERROR: Critical file missing: src/ui/modals/components/EditableObjectInput.ts
+ERROR: Critical file missing: src/ui/modals/components/EnhancedObjectListInput.ts
+Health check completed: Wed Oct 22 22:29:56 CEST 2025
+========================================
+Health check started: Tue Oct 28 09:33:34 CET 2025
+Checking for zero-byte files...
+WARNING: Found        2 zero-byte TypeScript files!
+/Users/gc9830/Documents/GitHub/obsidian-eln-plugin/src/ui/renderer/renderFrontMatter.ts
+/Users/gc9830/Documents/GitHub/obsidian-eln-plugin/src/data/templates/loadMetaDataTemplate.ts
+ERROR: Critical file missing: src/ui/modals/components/EditableObjectInput.ts
+ERROR: Critical file missing: src/ui/modals/components/EnhancedObjectListInput.ts
+Health check completed: Tue Oct 28 09:33:34 CET 2025

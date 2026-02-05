@@ -29,7 +29,7 @@ export const semiconductorSubclassMetadataTemplate = {
             "input": {
                 "query": true,
                 "inputType": "number",
-                "default": "",
+                "default": 0,
                 "units": ["cm⁻³", "m⁻³"],
                 "defaultUnit": "cm⁻³",
             }
@@ -39,7 +39,7 @@ export const semiconductorSubclassMetadataTemplate = {
             "input": {
                 "query": true,
                 "inputType": "number",
-                "default": "",
+                "default": 0,
                 "units": ["eV", "meV"],
                 "defaultUnit": "eV",
             }
@@ -57,7 +57,7 @@ export const semiconductorSubclassMetadataTemplate = {
             "input": {
                 "query": true,
                 "inputType": "number",
-                "default": "",
+                "default": 0,
                 "units": ["cm²/(V·s)", "m²/(V·s)"],
                 "defaultUnit": "cm²/(V·s)",
             }

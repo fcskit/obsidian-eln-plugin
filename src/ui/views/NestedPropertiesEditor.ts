@@ -4,10 +4,12 @@ import {
     MarkdownPostProcessorContext,
     MarkdownRenderChild,
     WorkspaceLeaf,
-    TFile, addIcon
+    TFile, 
+    addIcon
 } from "obsidian";
 import { renderFrontMatter } from "../renderer/npe/core/renderFrontMatter";
 import { createLogger } from "../../utils/Logger";
+import type ElnPlugin from "../../main";
 
 const logger = createLogger('npe');
 
@@ -16,42 +18,49 @@ const logger = createLogger('npe');
  */
 class NPEComponent extends MarkdownRenderChild {
     private view: NestedPropertiesEditorView;
-    private static instanceCount = 0;
-    private instanceId: number;
+    private componentId: string;
     private hasRendered = false;
     private isRendering = false;
     
     constructor(containerEl: HTMLElement, view: NestedPropertiesEditorView) {
         super(containerEl);
         this.view = view;
-        this.instanceId = ++NPEComponent.instanceCount;
+        
+        // Use filename (without extension) as component ID for clearer logging
+        const currentFile = view.currentFile;
+        if (currentFile) {
+            const filename = currentFile.basename; // Gets filename without extension
+            this.componentId = filename;
+        } else {
+            this.componentId = 'no-file';
+        }
         
         // Track component creation for debugging
         const globalWindow = window as unknown as { npeDebug?: { trackComponent: (comp: NPEComponent) => void } };
         if (globalWindow.npeDebug) {
             globalWindow.npeDebug.trackComponent(this);
         }
-        logger.debug(`Component ${this.instanceId} created`);
+        logger.debug(`Component ${this.componentId} created`);
     }
 
     onload() {
-        logger.debug(`Component ${this.instanceId} loading (onload called)`);
+        logger.debug(`Component ${this.componentId} loading (onload called)`);
         // Don't render automatically in onload to prevent double rendering
         // The parent view will explicitly call renderNPEContent() when ready
     }
 
     renderNPEContent() {
         if (this.hasRendered) {
-            logger.debug(`Component ${this.instanceId} already rendered, skipping duplicate render`);
+            logger.debug(`Component ${this.componentId} already rendered, skipping duplicate render`);
             return;
         }
         
         if (this.isRendering) {
-            logger.debug(`Component ${this.instanceId} is already rendering, skipping concurrent render`);
+            logger.debug(`Component ${this.componentId} is already rendering, skipping concurrent render`);
             return;
         }
         
-        logger.debug(`Component ${this.instanceId} rendering NPE content`);
+        logger.debug(`Component ${this.componentId} rendering NPE content`);
         this.isRendering = true;
         this.hasRendered = true;
         
@@ -72,11 +81,11 @@ class NPEComponent extends MarkdownRenderChild {
      */
     refreshContent() {
         if (this.isRendering) {
-            logger.debug(`Component ${this.instanceId} is currently rendering, skipping refresh`);
+            logger.debug(`Component ${this.componentId} is currently rendering, skipping refresh`);
             return;
         }
         
-        logger.debug(`Component ${this.instanceId} refreshing content incrementally`);
+        logger.debug(`Component ${this.componentId} refreshing content incrementally`);
         
         // Find the properties container to preserve button state and expand/collapse states
         const propertiesContainer = this.containerEl.querySelector('.npe-properties-container');
@@ -85,33 +94,25 @@ class NPEComponent extends MarkdownRenderChild {
             // Store expand/collapse states before refresh
             const expandedStates = this.saveExpandedStates(propertiesContainer);
             
-            // Clear only the properties container, not the entire content
-            propertiesContainer.innerHTML = '';
+            // Clear the entire container since we're re-rendering the complete structure
+            this.containerEl.empty();
             
-            // Create a temporary container for rendering
-            const tempContainer = this.containerEl.createDiv();
-            
-            // Create a view proxy that uses the temp container
+            // Create a view proxy that renders directly into the real container
             const viewProxy = this.createViewProxy();
-            viewProxy.contentEl = tempContainer; // Override contentEl to use temp container
+            viewProxy.contentEl = this.containerEl;
             
-            // Re-render into the temp container
-            const newContent = renderFrontMatter(viewProxy);
+            // Re-render directly into the real container
+            renderFrontMatter(viewProxy);
             
-            // Extract the new properties content
-            const newPropertiesContainer = newContent.querySelector('.npe-properties-container');
+            // Find the newly created properties container and restore states
+            const newPropertiesContainer = this.containerEl.querySelector('.npe-properties-container');
             if (newPropertiesContainer) {
-                propertiesContainer.innerHTML = newPropertiesContainer.innerHTML;
-                
                 // Restore expand/collapse states
-                this.restoreExpandedStates(propertiesContainer, expandedStates);
+                this.restoreExpandedStates(newPropertiesContainer, expandedStates);
             }
-            
-            // Clean up temp container
-            tempContainer.remove();
         } else {
             // Fallback to full re-render if structure is not as expected
-            logger.debug(`Component ${this.instanceId} falling back to full re-render`);
+            logger.debug(`Component ${this.componentId} falling back to full re-render`);
             this.containerEl.empty();
             this.hasRendered = false; // Reset the flags for full re-render
             this.isRendering = false;
@@ -161,17 +162,27 @@ class NPEComponent extends MarkdownRenderChild {
     }
 
     private createViewProxy() {
-        // Create a proxy of the view that routes registerDomEvent to this component
+        // Create a proxy of the view to prevent memory leaks and ensure proper cleanup:
+        // - Routes registerDomEvent calls to this NPE component instead of the view
+        // - When component unloads, all DOM events are automatically cleaned up
+        // - Delegates setInternalChangeFlag to the actual view instance (not proxy)
+        // - Without this, orphaned event handlers would remain after component destruction
         const proxy = Object.create(this.view);
         proxy.registerDomEvent = (el: HTMLElement, type: keyof HTMLElementEventMap, fn: (e: Event) => void) => {
             this.registerDomEvent(el, type, fn);
         };
+        
+        // Ensure setInternalChangeFlag operates on the actual view instance, not the proxy
+        proxy.setInternalChangeFlag = () => {
+            return this.view.setInternalChangeFlag();
+        };
+        
         return proxy;
     }
 
     onunload() {
         // This automatically cleans up all registerDomEvent calls
-        logger.debug(`Component ${this.instanceId} unloading, cleaning up event handlers`);
+        logger.debug(`Component ${this.componentId} unloading, cleaning up event handlers`);
         
         // Track component destruction for debugging
         const globalWindow = window as unknown as { npeDebug?: { untrackComponent: (comp: NPEComponent) => void } };
@@ -185,16 +196,31 @@ export class NestedPropertiesEditorView extends ItemView {
     static viewType = "NPE_VIEW";
     private component!: HTMLElement;
     public currentFile: TFile | null = null;
+    public plugin: ElnPlugin; // Reference to the plugin for settings access
     private activeLeafChangeRef: (() => void) | null = null;
     private metadataChangeRef: ((file: TFile) => void) | null = null;
     private isUpdating = false;
     private currentNPEComponent: NPEComponent | null = null;
     private updateTimeout: NodeJS.Timeout | null = null;
-    private lastUpdateTime = 0;
-    private lastUpdateFile: string | null = null;
+    
+    // Internal frontmatter cache to avoid triggering metadata events on internal updates
+    private internalFrontmatterCache: Record<string, unknown> | null = null;
+    
+    // Simple flag to ignore our own metadata changes - set immediately before processFrontMatter
+    private isInternalChange = false;
 
-    constructor(leaf: WorkspaceLeaf) {
+    constructor(leaf: WorkspaceLeaf, plugin: ElnPlugin) {
         super(leaf);
+        this.plugin = plugin;
+    }
+
+    /**
+     * Set the internal change flag to prevent metadata change event processing.
+     * This should be called before any processFrontMatter operations.
+     */
+    public setInternalChangeFlag(): void {
+        this.isInternalChange = true;
+        logger.debug('Internal change flag set');
     }
 
     async onOpen(): Promise<void> {
@@ -228,19 +254,27 @@ export class NestedPropertiesEditorView extends ItemView {
         };
 
         this.metadataChangeRef = (file: TFile) => {
-            const now = Date.now();
-            logger.debug(`Metadata changed event for ${file.path} at ${now}`);
+            logger.debug(`Metadata change event - internal flag: ${this.isInternalChange}`);
+            // Simple and reliable filtering: if we set the internal change flag, ignore this event
+            if (this.isInternalChange) {
+                logger.debug('Ignoring internal metadata change');
+                // Reset the flag immediately so external changes can be processed again
+                this.isInternalChange = false;
+                return;
+            }
             
             // Only update if the changed file is currently displayed and still exists
             if (this.currentFile && 
                 file.path === this.currentFile.path && 
                 this.app.vault.getAbstractFileByPath(this.currentFile.path)) {
                 
-                const timeSinceLastUpdate = now - this.lastUpdateTime;
-                logger.debug(`Metadata changed for current file (${timeSinceLastUpdate}ms since last update), scheduling debounced update`);
-                this.debouncedUpdateView(false); // Debounced update for metadata changes
-            } else {
-                logger.debug(`Metadata changed for different file or file doesn't exist, ignoring`);
+                logger.debug('Processing external metadata change');
+                
+                // Clear internal cache when external changes are detected
+                this.internalFrontmatterCache = null;
+                
+                // Immediate update for external changes
+                this.debouncedUpdateView(true);
             }
         };
 
@@ -257,6 +291,8 @@ export class NestedPropertiesEditorView extends ItemView {
 			clearTimeout(this.updateTimeout);
 			this.updateTimeout = null;
 		}
+		// Clear internal change flag
+		this.isInternalChange = false;
 		// Clear the current file reference
 		this.currentFile = null;
 		logger.debug('View closed, cleanup complete');
@@ -266,6 +302,9 @@ export class NestedPropertiesEditorView extends ItemView {
     clearView() {
         // Clean up existing component first
         this.cleanupCurrentComponent();
+        
+        // Clear internal cache when no file is selected
+        this.internalFrontmatterCache = null;
         
         // Clean up any pending update timeout
         if (this.updateTimeout) {
@@ -285,11 +324,13 @@ export class NestedPropertiesEditorView extends ItemView {
         if (this.currentNPEComponent) {
             logger.debug('Cleaning up current component');
             
+            // NOTE: Don't clear internal cache here - it will be re-initialized in updateView if needed
+            
             // Force cleanup of any DOM references
             const containerEl = this.currentNPEComponent.containerEl;
             if (containerEl) {
                 // Clear any potential circular references
-                containerEl.innerHTML = '';
+                containerEl.empty();
                 // Remove any attached data
                 (containerEl as HTMLElement & { _npeComponent?: unknown })._npeComponent = null;
             }
@@ -348,20 +389,11 @@ export class NestedPropertiesEditorView extends ItemView {
         
         const activeFile = this.app.workspace.getActiveFile();
         const filePath = activeFile?.path || 'none';
-        const now = Date.now();
-        
-        // Check if this is a redundant update (same file within 200ms)
-        if (this.lastUpdateFile === filePath && (now - this.lastUpdateTime) < 200) {
-            logger.debug(`Skipping redundant update for ${filePath} (last update ${now - this.lastUpdateTime}ms ago)`);
-            return;
-        }
         
         this.isUpdating = true;
-        this.lastUpdateTime = now;
-        this.lastUpdateFile = filePath;
 
         try {
-            logger.debug(`Updating view for file: ${filePath} at ${now}`);
+            logger.debug(`Updating view for file: ${filePath}`);
             
             // Check if file exists
             if (activeFile && !this.app.vault.getAbstractFileByPath(activeFile.path)) {
@@ -378,7 +410,7 @@ export class NestedPropertiesEditorView extends ItemView {
                 this.currentFile = activeFile;
                 
                 if (isSameFile && this.currentNPEComponent) {
-                    // Incremental update - preserve DOM state
+                    // Incremental update - preserve DOM state for external changes only
                     logger.debug('Performing incremental update for same file');
                     this.currentNPEComponent.refreshContent();
                 } else {
@@ -386,6 +418,16 @@ export class NestedPropertiesEditorView extends ItemView {
                     logger.debug('Full refresh for new file');
                     this.cleanupCurrentComponent();
                     this.contentEl.empty();
+                    
+                    // Initialize internal cache for the new file
+                    const fileCache = this.app.metadataCache.getFileCache(activeFile);
+                    if (fileCache?.frontmatter) {
+                        this.internalFrontmatterCache = JSON.parse(JSON.stringify(fileCache.frontmatter));
+                        logger.debug('Initialized internal frontmatter cache for new file');
+                    } else {
+                        this.internalFrontmatterCache = {};
+                        logger.debug('Initialized empty internal frontmatter cache for new file');
+                    }
                     
                     // Create and register new component
                     this.currentNPEComponent = new NPEComponent(this.contentEl, this);
@@ -420,6 +462,29 @@ export class NestedPropertiesEditorView extends ItemView {
 		return "Nested Properties Editor View";
 	}
 
+	/**
+	 * Get the current frontmatter, preferring internal cache over file cache
+	 */
+	getFrontmatter(): Record<string, unknown> | null {
+		if (this.internalFrontmatterCache) {
+			return this.internalFrontmatterCache;
+		}
+		
+		if (this.currentFile) {
+			const fileCache = this.app.metadataCache.getFileCache(this.currentFile);
+			const frontmatter = fileCache?.frontmatter;
+			
+			// Initialize internal cache on first access
+			if (frontmatter) {
+				this.internalFrontmatterCache = JSON.parse(JSON.stringify(frontmatter));
+				logger.debug('Initialized internal frontmatter cache on first access');
+				return this.internalFrontmatterCache;
+			}
+		}
+		
+		return null;
+	}
+
 	getIcon(): string {
 		return "npe-icon";
 	}
@@ -427,6 +492,7 @@ export class NestedPropertiesEditorView extends ItemView {
 
 export class NestedPropertiesEditorCodeBlockView extends MarkdownRenderChild {
     public app: App;
+    public plugin: ElnPlugin; // Reference to the plugin for settings access
     public contentEl: HTMLElement;
     public currentFile: TFile | null;
     public key?: string;
@@ -436,6 +502,7 @@ export class NestedPropertiesEditorCodeBlockView extends MarkdownRenderChild {
 
     constructor(
         app: App,
+        plugin: ElnPlugin,
         containerEl: HTMLElement,
         ctx: MarkdownPostProcessorContext,
         currentFile: TFile | null,
@@ -446,6 +513,7 @@ export class NestedPropertiesEditorCodeBlockView extends MarkdownRenderChild {
     ) {
         super(containerEl);
         this.app = app;
+        this.plugin = plugin;
         this.contentEl = containerEl;
         this.currentFile = currentFile;
         this.key = key;

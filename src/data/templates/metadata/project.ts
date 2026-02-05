@@ -4,7 +4,11 @@ const projectMetadataTemplate : MetaDataTemplate = {
     "ELN version": {
         "query": false,
         "inputType": "text",
-        "default": { type: "function", value: "this.manifest.version" },
+        "default": {
+            type: "function",
+            context: ["plugin"],
+            expression: "plugin.manifest.version"
+        },
     },
     "cssclasses": {
         "query": false,
@@ -24,12 +28,20 @@ const projectMetadataTemplate : MetaDataTemplate = {
     "author": {
         "query": true,
         "inputType": "dropdown",
-        "options": { type: "function", value: "this.settings.authors.map((item) => item.name)" },
+        "options": {
+            type: "function",
+            context: ["settings"],
+            expression: "settings.authors?.map((item) => item.name) || []"
+        },
     },
     "date created": {
         "query": false,
         "inputType": "date",
-        "default": { type: "function", value: "new Date().toISOString().split('T')[0]" },
+        "default": {
+            type: "function",
+            context: ["date"],
+            expression: "date.today"
+        },
     },
     "note type": {
         "query": false,
@@ -40,28 +52,34 @@ const projectMetadataTemplate : MetaDataTemplate = {
         "query": false,
         "inputType": "list",
         "default": { 
-          type: "function", 
-          userInputs: ["project.type"],
-          value: "project.type ? [`project/${project.name.replace(/\\s/g, '_')}`] : ['project/unknown']"
+            type: "function", 
+            context: ["userInput"],
+            reactiveDeps: ["project.type"],
+            expression: "[`project/${userInput.project.type.replace(/\\s/g, '_')}`]",
+            fallback: ["project/unknown"]
         },
-      },
+    },
     "project": {
         "name": {
             "query": true,
             "inputType": "text",
             "default": "",
-
+            "placeholder": "Enter project name",
         },
         "abbreviation": {
             "query": true,
             "inputType": "text",
             "default": "",
-
+            "placeholder": "Enter project abbreviation",
         },
         "type": {
             "query": true,
             "inputType": "subclass",
-            "options": "this.settings.note.project.type.map((item) => item.name)",
+            "options": {
+                type: "function",
+                context: ["settings"],
+                expression: "settings.note?.project?.type?.map((item) => item.name) || []"
+            },
         },
         // "category": {
         //     "query": true,
@@ -73,7 +91,8 @@ const projectMetadataTemplate : MetaDataTemplate = {
             "query": true,
             "inputType": "text",
             "default": "",
-
+            "multiline": true,
+            "placeholder": "Enter project description",
         },
         "status": {
             "query": true,
@@ -84,14 +103,16 @@ const projectMetadataTemplate : MetaDataTemplate = {
         "start": {
             "query": true,
             "inputType": "date",
-            "default": { type: "function", value: "new Date().toISOString().split('T')[0]" },
-
+            "default": {
+                type: "function",
+                context: ["date"],
+                expression: "date.today"
+            },
         },
         "end": {
             "query": true,
             "inputType": "date",
             "default": "",
-
         },
     }
 };

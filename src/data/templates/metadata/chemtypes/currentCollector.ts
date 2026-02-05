@@ -5,8 +5,8 @@ export const currentCollectorSubclassMetadataTemplate = {
             "input": {
                 "query": true,
                 "inputType": "number",
-                "default": "",
-                "units": "µm",
+                "default": 0,
+                "units": ["µm", "mm"],
                 "defaultUnit": "µm",
             }
         },
@@ -20,6 +20,8 @@ export const currentCollectorSubclassMetadataTemplate = {
         },
     ],
     "remove": [
-        "chemical.properties.solubility in water"
+        "chemical.properties.solubility in water",
+        "chemical.properties.boiling point",
+        "chemical.properties.melting point",
     ],
 }

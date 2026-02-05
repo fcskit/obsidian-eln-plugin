@@ -29,13 +29,10 @@ export function renderObject(
         }
 
         if (Array.isArray(value)) {
-            // console.debug(`renderObject: Rendering array for key: ${key}, fullKey: ${fullKey}`);
             renderArray(view, key, value as FrontmatterArray, parent, level, fullKey, filterKeys);
         } else if (typeof value === "object" && value !== null) {
-            // console.debug(`renderObject: Rendering object for key: ${key}, fullKey: ${fullKey}`);
             renderObjectContainer(view, key, value as FrontmatterObject, parent, level, fullKey, filterKeys);
         } else {
-            // console.debug(`renderObject: Rendering primitive for key: ${key}, fullKey: ${fullKey}`);
             renderPrimitive(view, key, value as FrontmatterPrimitive, parent, level, fullKey);
         }
     });

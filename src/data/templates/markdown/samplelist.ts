@@ -9,27 +9,33 @@ const defaultMarkdownTemplate = `
 
 \`\`\`base
 formulas:
-  chemical formula: sample["chemical formula"]
-  educts: sample.educts.name
-  mass: sample.educts.mass
-  date created: date-created
+  chemical formula: sample.product["chemical formula"]
+  educts: sample.educts.map([value.name + " (" + value.amount.value + " " + value.amount.unit + ")"])
+properties:
+  file.name:
+    displayName: Compound
+  formula.chemical formula:
+    displayName: Chemical formula
+  formula.educts:
+    displayName: Educts
 views:
   - type: table
-    name: Table
+    name: Compounds
     filters:
       and:
         - tags.contains("sample")
-        - project.name.equals(this.project.name)
-        - sample.type.equals("compound")
+        - project.name == this.project.name
+        - sample.type == "compound"
     order:
-      - file.link
+      - file.name
       - formula.chemical formula
       - formula.educts
-      - formula.mass
-      - formula.date created
+      - date created
     sort:
-      - property: file.link
-        direction: ASC
+      - property: file.name
+        direction: DESC
+    columnSize:
+      formula.educts: 296
 
 \`\`\`
 
@@ -37,31 +43,33 @@ views:
 
 \`\`\`base
 formulas:
-  active material: sample["active material"].name
-  AM mass: sample["active material"].mass
-  binder mass: sample.binder.mass
-  cond additive mass: sample["conductive additive"].mass
-  date created: date-created
+  active_material: sample["active material"].map([value.name + " (" + value.mass.value + " " + value.mass.unit + ")"])
+  binder: sample.binder.map([value.name + " (" + value.mass.value + " " + value.mass.unit + ")"])
+  cond_additive: sample["conductive additive"].map([value.name + " (" + value.mass.value + " " + value.mass.unit + ")"])
+properties:
+  file.name:
+    displayName: Electrode
 views:
   - type: table
-    name: Table
+    name: Electrodes
     filters:
       and:
         - tags.contains("sample")
-        - project.name.equals(this.project.name)
-        - sample.type.equals("electrode")
+        - project.name == this.project.name
+        - sample.type == "electrode"
     order:
-      - file.link
-      - formula.active material
-      - formula.AM mass
-      - formula.binder mass
-      - formula.cond additive mass
-      - formula.date created
+      - file.name
+      - formula.active_material
+      - formula.binder
+      - formula.cond_additive
+      - date created
     sort:
+      - property: file.name
+        direction: DESC
       - property: formula.active material
         direction: ASC
-      - property: file.link
-        direction: ASC
+    columnSize:
+      formula.active_material: 321
 
 \`\`\`
 
@@ -69,29 +77,31 @@ views:
 
 \`\`\`base
 formulas:
-  working electrode: sample["working electrode"]["name"]
-  counter electrode: sample["counter electrode"]["name"]
-  reference electrode: sample["reference electrode"]["name"]
-  electrolyte: sample["electrolyte"]["name"]
-  date created: date-created
+  working electrode: sample["working electrode"]["link"]
+  counter electrode: sample["counter electrode"]["link"]
+  reference electrode: sample["reference electrode"]["link"]
+  electrolyte: sample.electrolyte.link
+properties:
+  file.name:
+    displayName: Cell/Battery
 views:
   - type: table
-    name: Table
+    name: Echem. Cells/Batteries
     filters:
       and:
         - tags.contains("sample")
-        - project.name.equals(this.project.name)
-        - sample.type.equals("electrochemical cell")
+        - project.name == this.project.name
+        - sample.type == "electrochemical cell"
     order:
-      - file.link
+      - file.name
       - formula.working electrode
       - formula.counter electrode
       - formula.reference electrode
       - formula.electrolyte
-      - formula.date created
+      - date created
     sort:
-      - property: file.link
-        direction: ASC
+      - property: file.name
+        direction: DESC
 
 \`\`\`
 
@@ -101,24 +111,28 @@ views:
 formulas:
   type: sample.type
   description: sample.description
-  date created: date-created
+properties:
+  file.name:
+    displayName: Sample
 views:
   - type: table
-    name: Table
+    name: All Samples
     filters:
       and:
         - tags.contains("sample")
-        - project.name.equals(this.project.name)
+        - project.name == this.project.name
     order:
-      - file.link
+      - file.name
       - formula.type
       - formula.description
-      - formula.date created
+      - date created
     sort:
+      - property: file.name
+        direction: DESC
       - property: formula.type
         direction: ASC
-      - property: file.link
-        direction: ASC
+    columnSize:
+      formula.description: 475
 
 \`\`\`
 `;

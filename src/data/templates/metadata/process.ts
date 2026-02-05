@@ -4,7 +4,11 @@ const processMetadataTemplate: MetaDataTemplate = {
   "ELN version": {
     "query": false,
     "inputType": "text",
-    "default": { type: "function", value: "this.manifest.version" },
+    "default": {
+      type: "function",
+      context: ["plugin"],
+      expression: "plugin.manifest.version"
+    },
   },
   "cssclasses": {
     "query": false,
@@ -14,12 +18,20 @@ const processMetadataTemplate: MetaDataTemplate = {
   "date created": {
     "query": false,
     "inputType": "date",
-    "default": { type: "function", value: "new Date().toISOString().split('T')[0]" },
+    "default": {
+      type: "function",
+      context: ["date"],
+      expression: "date.today"
+    },
   },
   "author": {
     "query": true,
     "inputType": "dropdown",
-    "options": { type: "function", value: "this.settings.authors.map((item) => item.name)" },
+    "options": {
+      type: "function",
+      context: ["settings"],
+      expression: "settings.authors?.map((item) => item.name) || []"
+    },
   },
   "note type": {
     "query": false,
@@ -31,8 +43,10 @@ const processMetadataTemplate: MetaDataTemplate = {
     "inputType": "list",
     "default": { 
       type: "function", 
-      userInputs: ["process.type"],
-      value: "process.type ? [`process/${process.type.replace(/\\s/g, '_')}`] : ['process/unknown']"
+      context: ["userInput"],
+      reactiveDeps: ["process.type"],
+      expression: "[`process/${userInput.process.type.replace(/\\s/g, '_')}`]",
+      fallback: ["process/unknown"]
     },
   },
   "process": {
@@ -44,7 +58,11 @@ const processMetadataTemplate: MetaDataTemplate = {
     "type": {
       "query": true,
       "inputType": "subclass",
-      "options": { type: "function", value: "this.settings.note.process.type" },
+      "options": {
+        type: "function",
+        context: ["settings"],
+        expression: "settings.note?.process?.type || []"
+      },
     },
     "description": {
       "query": true,
@@ -70,7 +88,7 @@ const processMetadataTemplate: MetaDataTemplate = {
     "parameters": {
       "query": true,
       "inputType": "editableObject",
-      "default": {},
+      "objectTemplate": {},
       "editableKey": true,
       "allowTypeSwitch": true,
       "removeable": true,

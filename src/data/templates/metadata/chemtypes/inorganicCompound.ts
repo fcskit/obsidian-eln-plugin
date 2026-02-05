@@ -14,8 +14,8 @@ export const inorganicCompoundSubclassMetadataTemplate = {
             "input": {
                 "query": true,
                 "inputType": "number",
-                "default": "",
-                "units": ["µm", "nm"],
+                "default": 0,
+                "units": ["mm","µm", "nm"],
                 "defaultUnit": "µm",
             }
         },

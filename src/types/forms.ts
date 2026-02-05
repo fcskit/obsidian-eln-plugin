@@ -16,6 +16,7 @@ export type FormFieldValue =
     | string[] 
     | number[] 
     | boolean[]
+    | Date[]
     | { [key: string]: FormFieldValue };
 
 /**

@@ -25,7 +25,7 @@ export const solventSubclassMetadataTemplate = {
                 "inputType": "number",
                 "default": 0,
                 "units": ["°C", "K"],
-                "defaultUnit": "°C",
+                "defaultUnit": "K",
             },
         }
     ],

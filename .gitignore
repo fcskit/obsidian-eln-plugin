@@ -1,5 +1,6 @@
 # vscode
-.vscode 
+.vscode
+obsidian-eln-plugin.code-workspace
 
 # Intellij
 *.iml
@@ -7,6 +8,12 @@
 
 # npm
 node_modules
+
+# Backup folder for refactoring work
+backup/
+
+# Other project related files for internal use only
+misc/
 
 # Don't include the compiled main.js file in the repo.
 # They should be uploaded to GitHub releases instead.
@@ -28,3 +35,10 @@ release/
 # Exclude Copilot Summary Markdown Files
 RELEASE.md
 src/renderer/README.md
+
+# Development test vault - contains work-in-progress test notes
+test-vault-dev/
+
+# Exclude debug logs and test artifacts from any test vault
+test-vault/debug-log.txt
+test-vault/test-note-result.json

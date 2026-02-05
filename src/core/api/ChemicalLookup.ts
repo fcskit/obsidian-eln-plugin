@@ -19,16 +19,22 @@ export class ChemicalLookup {
      * Resolves chemical identifier and populates multiple fields at once
      * This function is designed to be used in templates as an action callback
      * @param identifier Chemical name, CAS number, or other identifier
-     * @param formData Current form data to update
-     * @param updateField Callback to update individual fields
+     * @param formData Current form data to update (optional - if not provided, shows notice)
+     * @param updateField Callback to update individual fields (optional - if not provided, shows notice)
      * @returns Promise that resolves when lookup is complete
      */
     async resolveChemicalIdentifier(
         identifier: string, 
-        formData: FormData, 
-        updateField: (fieldKey: string, value: FormFieldValue) => void
+        formData?: FormData, 
+        updateField?: (fieldKey: string, value: FormFieldValue) => void
     ): Promise<void> {
         if (!identifier || identifier.trim() === "") {
+            return;
+        }
+
+        // If formData and updateField are not provided, show notice about unavailability
+        if (!formData || !updateField) {
+            new Notice('Chemical lookup functionality is currently not available. This feature will be reimplemented in a future update.');
             return;
         }
 
@@ -162,16 +168,22 @@ export class ChemicalLookup {
     /**
      * Resolves chemical identifier using CAS Common Chemistry and populates multiple fields
      * @param identifier Chemical name or identifier to search for
-     * @param formData Current form data to update
-     * @param updateField Callback to update individual fields
+     * @param formData Current form data to update (optional - if not provided, shows notice)
+     * @param updateField Callback to update individual fields (optional - if not provided, shows notice)
      * @returns Promise that resolves when lookup is complete
      */
     async resolveChemicalIdentifierCAS(
         identifier: string, 
-        formData: FormData, 
-        updateField: (fieldKey: string, value: FormFieldValue) => void
+        formData?: FormData, 
+        updateField?: (fieldKey: string, value: FormFieldValue) => void
     ): Promise<void> {
         if (!identifier || identifier.trim() === "") {
+            return;
+        }
+
+        // If formData and updateField are not provided, show notice about unavailability
+        if (!formData || !updateField) {
+            new Notice('Chemical lookup functionality is currently not available. This feature will be reimplemented in a future update.');
             return;
         }
 

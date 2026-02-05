@@ -4,7 +4,7 @@ const sampleListMetadataTemplate : MetaDataTemplate = {
   "ELN version": {
     "query": false,
     "inputType": "text",
-    "default": { type: "function", value: "this.manifest.version" },
+    "default": { type: "function", context: ["plugin"], expression: "plugin.manifest.version" },
   },
   "cssclasses": {
     "query": false,
@@ -14,12 +14,12 @@ const sampleListMetadataTemplate : MetaDataTemplate = {
   "date created": {
     "query": false,
     "inputType": "date",
-    "default": { type: "function", value: "new Date().toISOString().split('T')[0]" },
+    "default": { type: "function", context: ["date"], expression: "date.today" },
   },
   "author": {
     "query": true,
     "inputType": "dropdown",
-    "options": { type: "function", value: "this.settings.authors.map((item) => item.name)" },
+    "options": { type: "function", context: ["settings"], expression: "settings.authors?.map((item) => item.name) || []" },
   },
   "note type": {
     "query": false,

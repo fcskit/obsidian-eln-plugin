@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
+    "outDir": "./test-vault/.obsidian/plugins/obsidian-eln",
     "rootDir": "./src",
     "baseUrl": ".",
     "inlineSourceMap": true,

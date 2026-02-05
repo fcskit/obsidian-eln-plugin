@@ -6,6 +6,7 @@ export const researchSubclassMetadataTemplate = {
                 "query": true,
                 "inputType": "text",
                 "default": "",
+                "placeholder": "Enter funding agency",
             }
         },
         {
@@ -14,6 +15,7 @@ export const researchSubclassMetadataTemplate = {
                 "query": true,
                 "inputType": "text",
                 "default": "",
+                "placeholder": "Enter funding code",
             },
         },
         {
@@ -22,6 +24,7 @@ export const researchSubclassMetadataTemplate = {
                 "query": true,
                 "inputType": "text",
                 "default": "",
+                "placeholder": "Enter full project title",
             },
         },
         {
@@ -30,6 +33,7 @@ export const researchSubclassMetadataTemplate = {
                 "query": true,
                 "inputType": "text",
                 "default": "",
+                "placeholder": "Enter subproject title if applicable",
             },
         },
         {
@@ -38,6 +42,7 @@ export const researchSubclassMetadataTemplate = {
                 "query": true,
                 "inputType": "text",
                 "default": "",
+                "placeholder": "Enter project acronym",
             },
         },
         {
@@ -46,6 +51,7 @@ export const researchSubclassMetadataTemplate = {
                 "query": true,
                 "inputType": "text",
                 "default": "",
+                "placeholder": "Enter project coordinator (science)",
             },
         },
         {
@@ -54,6 +60,27 @@ export const researchSubclassMetadataTemplate = {
                 "query": true,
                 "inputType": "text",
                 "default": "",
+                "placeholder": "Enter project manager (administration)",
+            },
+        },
+        {
+            "fullKey": "project.due dates",
+            "input": {
+                "query": true,
+                "inputType": "list",
+                "listType": "object",
+                "initialItems": 1,
+                "objectTemplate": {
+                    "type": {
+                        "inputType": "text",
+                        "default": "",
+                        "placeholder": "e.g., report, milestone, deliverable",
+                    },
+                    "date": {
+                        "inputType": "date",
+                        "default": "",
+                    },
+                },
             },
         },
     ],

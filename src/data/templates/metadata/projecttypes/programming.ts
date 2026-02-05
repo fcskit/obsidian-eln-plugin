@@ -7,7 +7,6 @@ export const programmingSubclassMetadataTemplate = {
                 "inputType": "dropdown",
                 "options": ["Python", "JavaScript", "Java", "C++", "Ruby", "Go", "Rust", "Swift", "Kotlin", "PHP"],
                 "default": "Python",
-                "callback": { type: "function", value: "(value) => value" },
             }
         },
         {
@@ -24,7 +23,6 @@ export const programmingSubclassMetadataTemplate = {
         //         "query": true,
         //         "inputType": "list",
         //         "default": [],
-        //         "callback": { type: "function", value: "(value) => value.map(lib => lib.trim()).filter(lib => lib !== '')" },
         //     },
         // },
         {
@@ -34,7 +32,6 @@ export const programmingSubclassMetadataTemplate = {
                 "inputType": "dropdown",
                 "options": ["Git", "SVN", "Mercurial", "None"],
                 "default": "Git",
-                "callback": { type: "function", value: "(value) => value" },
             }
         },
         {
@@ -59,7 +56,6 @@ export const programmingSubclassMetadataTemplate = {
         //         "query": true,
         //         "inputType": "list",
         //         "default": [],
-        //         "callback": { type: "function", value: "(value) => value.map(contributor => contributor.trim()).filter(contributor => contributor !== '')" },
         //     },
         // },
     ],

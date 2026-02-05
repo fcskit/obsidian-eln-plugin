@@ -1,5 +1,8 @@
 import { App, TFile } from "obsidian";
 import { ELNSettings } from "../../settings/settings";
+import { createLogger } from "../../utils/Logger";
+
+const logger = createLogger('template');
 
 import analysisMarkdownTemplate from "./markdown/analysis";
 import chemicalMarkdownTemplate from "./markdown/chemical";
@@ -7,12 +10,16 @@ import contactMarkdownTemplate from "./markdown/contact";
 import dailyNoteMarkdownTemplate from "./markdown/dailynote";
 import defaultMarkdownTemplate from "./markdown/default";
 import deviceMarkdownTemplate from "./markdown/device";
+import echemCellMarkdownTemplate from "./markdown/echemcell";
+import electrodeMarkdownTemplate from "./markdown/electrode";
 import instrumentMarkdownTemplate from "./markdown/instrument";
+import labMarkdownTemplate from "./markdown/lab";
 import meetingMarkdownTemplate from "./markdown/meeting";
 import processMarkdownTemplate from "./markdown/process";
 import projectMarkdownTemplate from "./markdown/project";
 import sampleMarkdownTemplate from "./markdown/sample";
 import sampleListMarkdownTemplate from "./markdown/samplelist";
+import testMarkdownTemplate from "./markdown/test";
 
 export const markdownTemplates = {
     analysis: analysisMarkdownTemplate,
@@ -21,12 +28,16 @@ export const markdownTemplates = {
     dailyNote: dailyNoteMarkdownTemplate,
     default: defaultMarkdownTemplate,
     device: deviceMarkdownTemplate,
+    electrode: electrodeMarkdownTemplate,
+    echemCell: echemCellMarkdownTemplate,
     instrument: instrumentMarkdownTemplate,
+    lab: labMarkdownTemplate,
     meeting: meetingMarkdownTemplate,
     process: processMarkdownTemplate,
     project: projectMarkdownTemplate,
     sample: sampleMarkdownTemplate,
     sampleList: sampleListMarkdownTemplate,
+    test: testMarkdownTemplate,
 };
 
 export async function loadMarkdownTemplates(app: App, settings: ELNSettings) {
@@ -60,7 +71,7 @@ export async function loadMarkdownTemplates(app: App, settings: ELNSettings) {
             const content = await app.vault.read(file);
             markdownTemplates[key] = content;
         } else {
-            console.warn(`Markdown template not found: ${templatePath}`);
+            logger.warn(`Markdown template not found: ${templatePath}`);
         }
     }
 

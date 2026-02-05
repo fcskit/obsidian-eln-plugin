@@ -1,23 +1,55 @@
-# Documentation
+# Obsidian ELN Plugin Documentation
 
-This folder contains documentation for the Obsidian ELN plugin development and features.
+Welcome to the comprehensive documentation for the Obsidian ELN (Electronic Lab Notebook) Plugin. This documentation is organized into sections for different audiences and use cases.
 
-## Files
+## 📖 Documentation Sections
 
-- `DYNAMIC_NOTE_SYSTEM.md` - Documentation for the dynamic note creation system
-- `FUNCTION_DESCRIPTORS.md` - Guide for the function descriptor system used in templates
-- `Obsidian_Plugin_Howto.md` - General Obsidian plugin development guide
-- `REACTIVE_TEMPLATE_DEBUG.md` - Debugging guide for reactive template fields
-- `REACTIVE_TEMPLATE_TEST.md` - Testing guide for reactive templates
-- `TAGS_FIELD_FIX.md` - Documentation for the tags field fix implementation
-- `TEMPLATE_MIGRATION_SUMMARY.md` - Summary of template system migration
+### 👥 [User Documentation](./user/README.md)
+Complete guides for end users of the plugin:
+- **Installation & Setup** - Getting started with the plugin
+- **Template System** - Understanding and customizing metadata templates  
+- **Note Creation** - Creating and managing lab notebook entries
+- **Features Overview** - All plugin features and capabilities
+- **Template Examples** - Ready-to-use templates for common lab scenarios
 
-## Examples
+### 🔧 [Developer Documentation](./developer/)
+Technical documentation for plugin developers and contributors:
+- **Architecture Overview** - High-level system design and components
+- **Core Systems** - Implementation details of major subsystems
+- **API Reference** - TypeScript interfaces and public APIs
+- **Development Setup** - Environment setup and build process
+- **Testing Guide** - Testing strategies and debugging tools
 
-The `examples/` folder contains example template implementations:
+### 📋 [Examples](./examples/)
+Practical examples and templates:
+- **Template Examples** - Complete template implementations
+- **Integration Examples** - How to integrate with other Obsidian features
+- **Usage Patterns** - Common use cases and best practices
 
-- `example-function-descriptors.ts` - Examples of using function descriptors in templates
-- `example-list-input.ts` - Examples of the list input type
-- `example-reactive-template.ts` - Examples of reactive template fields
+## 🚀 Quick Start
 
-These examples serve as references for template development and demonstrate best practices.
+### For Users
+1. Start with [User Documentation](./user/README.md)
+2. Follow the [Installation Guide](./user/installation.md)
+3. Try the [Template Examples](./examples/)
+
+### For Developers
+1. Read the [Architecture Overview](./developer/architecture.md)
+2. Set up your [Development Environment](./developer/development-setup.md)
+3. Explore the [API Reference](./developer/api-reference.md)
+
+## 📄 Version Information
+
+- **Plugin Version**: 0.7.0
+- **Documentation Last Updated**: September 1, 2025
+- **Compatibility**: Obsidian v1.0+
+
+## 🔗 Additional Resources
+
+- [GitHub Repository](https://github.com/fcskit/obsidian-eln-plugin)
+- [Issue Tracker](https://github.com/fcskit/obsidian-eln-plugin/issues)
+- [Community Discussions](https://github.com/fcskit/obsidian-eln-plugin/discussions)
+
+## 📝 Contributing to Documentation
+
+Documentation improvements are welcome! Please see the [Contributing Guide](./developer/contributing.md) for guidelines on submitting documentation updates.

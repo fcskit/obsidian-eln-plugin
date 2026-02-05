@@ -1,0 +1,356 @@
+{
+  "ELN version": {
+    "query": false,
+    "inputType": "text",
+    "default": {
+      "type": "function",
+      "value": "this.manifest.version"
+    }
+  },
+  "date created": {
+    "query": false,
+    "inputType": "date",
+    "default": {
+      "type": "function",
+      "value": "new Date().toISOString().split('T')[0]"
+    }
+  },
+  "author": {
+    "query": true,
+    "inputType": "dropdown",
+    "options": {
+      "type": "function",
+      "value": "this.settings.authors.map(author => author.name)"
+    }
+  },
+  "title": {
+    "query": true,
+    "inputType": "text",
+    "default": ""
+  },
+  "description": {
+    "query": true,
+    "inputType": "text",
+    "default": ""
+  },
+  "category": {
+    "query": true,
+    "inputType": "dropdown",
+    "options": ["research", "development", "production", "quality", "safety", "compliance"],
+    "default": "research"
+  },
+  "priority": {
+    "query": true,
+    "inputType": "dropdown",
+    "options": ["low", "medium", "high", "critical"],
+    "default": "medium"
+  },
+  "status": {
+    "query": true,
+    "inputType": "dropdown",
+    "options": ["planning", "active", "on_hold", "completed", "cancelled"],
+    "default": "planning"
+  },
+  "dates": {
+    "start_date": {
+      "query": true,
+      "inputType": "date",
+      "default": {
+        "type": "function",
+        "value": "new Date().toISOString().split('T')[0]"
+      }
+    },
+    "end_date": {
+      "query": true,
+      "inputType": "date",
+      "default": null
+    },
+    "deadline": {
+      "query": true,
+      "inputType": "date",
+      "default": null
+    }
+  },
+  "team": {
+    "lead": {
+      "query": true,
+      "inputType": "dropdown",
+      "options": {
+        "type": "function",
+        "value": "this.settings.authors.map(author => author.name)"
+      }
+    },
+    "members": {
+      "query": true,
+      "inputType": "multiselect",
+      "options": {
+        "type": "function",
+        "value": "this.settings.authors.map(author => author.name)"
+      },
+      "default": []
+    },
+    "collaborators": {
+      "inputType": "queryDropdown",
+      "search": [
+        {
+          "tag": "contact",
+          "where": [
+            {
+              "field": "contact.type",
+              "operator": "is",
+              "value": "external"
+            }
+          ]
+        }
+      ],
+      "return": ["file.name", "contact.organization"]
+    }
+  },
+  "budget": {
+    "total": {
+      "inputType": "number",
+      "default": 0,
+      "units": ["USD", "EUR", "GBP"],
+      "defaultUnit": "USD"
+    },
+    "spent": {
+      "inputType": "number",
+      "default": 0,
+      "units": ["USD", "EUR", "GBP"],
+      "defaultUnit": "USD"
+    },
+    "categories": {
+      "inputType": "objectList",
+      "object": [
+        {
+          "key": "category",
+          "inputType": "dropdown",
+          "options": ["materials", "equipment", "personnel", "travel", "services", "other"],
+          "default": "materials"
+        },
+        {
+          "key": "budgeted",
+          "inputType": "number",
+          "default": 0,
+          "units": ["USD", "EUR", "GBP"],
+          "defaultUnit": "USD"
+        },
+        {
+          "key": "actual",
+          "inputType": "number",
+          "default": 0,
+          "units": ["USD", "EUR", "GBP"],
+          "defaultUnit": "USD"
+        }
+      ]
+    }
+  },
+  "objectives": {
+    "primary": {
+      "inputType": "text",
+      "default": ""
+    },
+    "secondary": {
+      "inputType": "list",
+      "default": []
+    },
+    "success_criteria": {
+      "inputType": "list",
+      "default": []
+    }
+  },
+  "methodology": {
+    "approach": {
+      "inputType": "text",
+      "default": ""
+    },
+    "techniques": {
+      "inputType": "multiselect",
+      "options": [
+        "synthesis",
+        "analytical chemistry",
+        "spectroscopy",
+        "chromatography",
+        "crystallography",
+        "computational chemistry",
+        "materials science",
+        "biochemistry",
+        "electrochemistry",
+        "catalysis"
+      ],
+      "default": []
+    },
+    "equipment_needed": {
+      "inputType": "queryDropdown",
+      "search": [
+        {
+          "tag": "instrument"
+        },
+        {
+          "tag": "device"
+        }
+      ],
+      "return": ["file.name", "instrument.type"]
+    }
+  },
+  "milestones": {
+    "inputType": "objectList",
+    "object": [
+      {
+        "key": "title",
+        "inputType": "text",
+        "default": ""
+      },
+      {
+        "key": "description",
+        "inputType": "text",
+        "default": ""
+      },
+      {
+        "key": "due_date",
+        "inputType": "date",
+        "default": null
+      },
+      {
+        "key": "status",
+        "inputType": "dropdown",
+        "options": ["not_started", "in_progress", "completed", "delayed"],
+        "default": "not_started"
+      },
+      {
+        "key": "completion_date",
+        "inputType": "date",
+        "default": null
+      }
+    ]
+  },
+  "deliverables": {
+    "inputType": "objectList",
+    "object": [
+      {
+        "key": "type",
+        "inputType": "dropdown",
+        "options": ["report", "publication", "patent", "prototype", "software", "data", "presentation"],
+        "default": "report"
+      },
+      {
+        "key": "title",
+        "inputType": "text",
+        "default": ""
+      },
+      {
+        "key": "due_date",
+        "inputType": "date",
+        "default": null
+      },
+      {
+        "key": "status",
+        "inputType": "dropdown",
+        "options": ["planned", "in_progress", "draft", "review", "completed"],
+        "default": "planned"
+      }
+    ]
+  },
+  "risks": {
+    "inputType": "objectList",
+    "object": [
+      {
+        "key": "description",
+        "inputType": "text",
+        "default": ""
+      },
+      {
+        "key": "probability",
+        "inputType": "dropdown",
+        "options": ["low", "medium", "high"],
+        "default": "medium"
+      },
+      {
+        "key": "impact",
+        "inputType": "dropdown",
+        "options": ["low", "medium", "high"],
+        "default": "medium"
+      },
+      {
+        "key": "mitigation",
+        "inputType": "text",
+        "default": ""
+      }
+    ]
+  },
+  "progress": {
+    "percent_complete": {
+      "query": true,
+      "inputType": "number",
+      "default": 0,
+      "units": ["%"],
+      "defaultUnit": "%"
+    },
+    "last_update": {
+      "inputType": "date",
+      "default": {
+        "type": "function",
+        "value": "new Date().toISOString().split('T')[0]"
+      }
+    },
+    "summary": {
+      "inputType": "text",
+      "default": ""
+    },
+    "next_steps": {
+      "inputType": "list",
+      "default": []
+    }
+  },
+  "related_projects": {
+    "parent": {
+      "inputType": "queryDropdown",
+      "search": [
+        {
+          "tag": "project"
+        }
+      ],
+      "return": ["file.name"]
+    },
+    "dependencies": {
+      "inputType": "queryDropdown",
+      "search": [
+        {
+          "tag": "project",
+          "where": [
+            {
+              "field": "status",
+              "operator": "not",
+              "value": "completed"
+            }
+          ]
+        }
+      ],
+      "return": ["file.name", "status"]
+    }
+  },
+  "resources": {
+    "literature": {
+      "inputType": "list",
+      "default": []
+    },
+    "data_repositories": {
+      "inputType": "list",
+      "default": []
+    },
+    "external_links": {
+      "inputType": "list",
+      "default": []
+    }
+  },
+  "tags": {
+    "query": false,
+    "inputType": "list",
+    "default": ["project"]
+  },
+  "cssclasses": {
+    "query": false,
+    "inputType": "list",
+    "default": ["note", "project"]
+  }
+}

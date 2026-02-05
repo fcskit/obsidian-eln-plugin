@@ -160,13 +160,11 @@ export class Footer {
         const cache = this.app.metadataCache.getFileCache(file);
         const frontmatter = cache?.frontmatter;
 
-        // Create info sections
-        const infoSections: string[] = [];
-
-        // Version information
-        if (settings.includeVersion) {
-            const version = this.plugin.manifest.version;
-            infoSections.push(`ELN v${version}`);
+        // Modification time (last modified)
+        if (settings.includeMtime) {
+            const mtime = new Date(file.stat.mtime);
+            const infoEl = contentEl.createDiv({ cls: 'eln-footer--info' });
+            infoEl.innerHTML = `<strong>Last Modified:</strong> ${this.formatDate(mtime)}`;
         }
 
         // Author information
@@ -176,26 +174,16 @@ export class Footer {
                 author = this.plugin.settings.general.authors[0].name;
             }
             if (author) {
-                infoSections.push(`Author: ${author}`);
+                const infoEl = contentEl.createDiv({ cls: 'eln-footer--info' });
+                infoEl.innerHTML = `<strong>Author:</strong> ${author}`;
             }
         }
 
-        // Creation time
-        if (settings.includeCtime) {
-            const ctime = new Date(file.stat.ctime);
-            infoSections.push(`Created: ${this.formatDate(ctime)}`);
-        }
-
-        // Modification time  
-        if (settings.includeMtime) {
-            const mtime = new Date(file.stat.mtime);
-            infoSections.push(`Modified: ${this.formatDate(mtime)}`);
-        }
-
-        // Add all sections to footer
-        if (infoSections.length > 0) {
-            const infoContainer = contentEl.createDiv({ cls: 'eln-footer--info' });
-            infoContainer.textContent = infoSections.join(' • ');
+        // Version information
+        if (settings.includeVersion) {
+            const version = this.plugin.manifest.version;
+            const infoEl = contentEl.createDiv({ cls: 'eln-footer--info' });
+            infoEl.innerHTML = `<strong>Version:</strong> ${version}`;
         }
     }
 

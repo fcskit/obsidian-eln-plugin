@@ -17,36 +17,53 @@ cssclasses: eln-sample
 ## Processing
 
 **Open process description**
-- [[{{process.name}}]]
 
-\`\`\`eln-properties
-file: sample.process.name
-key: process
-actionButtons: hidden
-cssclasses: eln-process
+\`\`\`base
+formulas:
+  processes: sample.preparation.map([value.link])
+views:
+  - type: list
+    name: Processes
+    filters:
+      and:
+        - tags.contains("sample")
+        - sample.name == this.sample.name
+    order:
+      - formula.processes
+
 \`\`\`
-
 
 ## My Notes
 
 > [!Info]
 > Add your notes for this sample here.
 
-## Characterization
+## All Characterizations
 
 \`\`\`base
 formulas:
-  analytical method: analysis.method
+  analytical method: analysis.method.name
   operator: analysis.operator
   date: analysis.date
   status: analysis.status
+properties:
+  file.name:
+    displayName: Analysis
+  formula.analytical method:
+    displayName: Method
+  formula.operator:
+    displayName: Operator
+  formula.date:
+    displayName: Date
+  formula.status:
+    displayName: Status
 views:
   - type: table
-    name: Table
+    name: Analyses
     filters:
       and:
         - tags.contains("analysis")
-        - sample.name.contains(this.file.name)
+        - sample.name == this.file.name
     order:
       - file.name
       - formula.analytical method
@@ -59,23 +76,34 @@ views:
 
 \`\`\`
 
-## Electrochemical Characterization
+## Electrochemical Characterizations
 
 \`\`\`base
 formulas:
-  analytical method: analysis.method
+  analytical method: analysis.method.name
   operator: analysis.operator
   date: analysis.date
   status: analysis.status
   WE electrode: sample["working electrode"]["name"]
+properties:
+  file.name:
+    displayName: Analysis
+  formula.analytical method:
+    displayName: Method
+  formula.operator:
+    displayName: Operator
+  formula.date:
+    displayName: Date
+  formula.status:
+    displayName: Status
 views:
   - type: table
-    name: Table
+    name: Echem. Analyses
     filters:
       and:
         - tags.contains("analysis")
-        - sample.name.contains(this.file.name)
-        - analysis.method.contains(GCPL)  
+        - sample.name == this.file.name
+        - - analysis.method.name == GCPL
     order:
       - file.name
       - formula.analytical method
@@ -86,6 +114,8 @@ views:
     sort: []
 
 \`\`\`
+
+
 
 `;
 

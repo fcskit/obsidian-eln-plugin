@@ -1,40 +1,24 @@
-import { Plugin } from "obsidian";
-import { NewNoteModal } from "../modals/notes/NewNoteModal";
-import { ChemicalNoteModal } from "../modals/notes/ChemicalNoteModal";
-import { DailyNoteModal } from "../modals/notes/DailyNoteModal";
+import type ElnPlugin from "../main";
+import { NewNote } from "../core/notes/NewNote";
 
-export function addNewNoteCommands(plugin: Plugin) {
-    // Register the command to create a new chemical note
-    plugin.addCommand({
-        id: "create-chemical-note",
-        name: "Create Chemical Note",
-        callback: () => {
-            const modal = new ChemicalNoteModal(plugin);
-            modal.open();
-        },
-    });
-
-    // Register the command to create a new device note
-    plugin.addCommand({
-        id: "create-daily-note",
-        name: "Create Daily Note",
-        callback: () => {
-            const modal = new DailyNoteModal(plugin);
-            modal.open();
-        },
-    });
-
-    // Register the command to create a new instrument note
-    plugin.addCommand({
-        id: "create-new-note",
-        name: "Create New Note",
-        callback: () => {
-            const modal = new NewNoteModal(plugin, {
-                modalTitle: "New Note",
-                noteTitle: "New Note",
-                noteType: "default",
+export function addNewNoteCommands(plugin: ElnPlugin) {
+    const { note } = plugin.settings;
+    
+    // Dynamically register commands for all enabled note types using REFACTORED modal
+    Object.entries(note).forEach(([noteType, config]) => {
+        if (config.commands.enabled) {
+            plugin.addCommand({
+                id: config.commands.id,
+                name: config.commands.name,
+                callback: async () => {
+                    const newNote = new NewNote(plugin);
+                    await newNote.createNote({
+                        noteType: noteType,
+                        initialData: {},
+                        skipModal: false // Always show the modal for user interaction
+                    });
+                },
             });
-            modal.open();
-        },
+        }
     });
 }

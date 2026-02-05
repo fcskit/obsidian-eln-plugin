@@ -1,7 +1,7 @@
 {
 	"id": "obsidian-eln",
 	"name": "Electronic Lab Notebook",
-	"version": "0.7.0",
+	"version": "0.8.0-beta.1",
 	"minAppVersion": "0.15.0",
 	"description": "Integrates an electronic lab notebook into Obsidian. This plugin allows you to create and manage lab notebooks, including features for organizing experiments, tracking samples, and documenting results.",
 	"author": "fcskit",

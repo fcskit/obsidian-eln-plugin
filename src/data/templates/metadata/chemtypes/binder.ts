@@ -17,8 +17,8 @@ export const binderSubclassMetadataTemplate = {
             "input": {
                 "query": true,
                 "inputType": "number",
-                "default": "",
-                "defaultUnit": "g/mol",
+                "default": 0,
+                "units": ["g/mol"],
             }
         },
         {
@@ -26,9 +26,13 @@ export const binderSubclassMetadataTemplate = {
             "newKey": "chemical.properties.soluble in",
             "input": {
                 "query": true,
-                "inputType": "text",
-                "default": "",
+                "inputType": "list",
+                "listType": "text",
+                "placeholder": "Enter comma separated list of solvents...",
             }
         }
-    ]
+    ],
+    "remove": [
+        "chemical.properties.boiling point",
+    ],
 }

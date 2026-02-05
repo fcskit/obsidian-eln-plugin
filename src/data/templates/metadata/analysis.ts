@@ -4,7 +4,11 @@ const analysisMetadataTemplate : MetaDataTemplate = {
     "ELN version": {
         "query": false,
         "inputType": "text",
-        "default": { type: "function", value: "this.manifest.version" },
+        "default": {
+            type: "function",
+            context: ["plugin"],
+            expression: "plugin.manifest.version"
+        },
     },
     "cssclasses": {
         "query": false,
@@ -14,12 +18,20 @@ const analysisMetadataTemplate : MetaDataTemplate = {
     "date created": {
         "query": false,
         "inputType": "date",
-        "default": { type: "function", value: "new Date().toISOString().split('T')[0]" },
+        "default": {
+            type: "function",
+            context: ["date"],
+            expression: "date.today"
+        },
     },
     "author": {
         "query": true,
         "inputType": "dropdown",
-        "options": { type: "function", value: "this.settings.authors.map((item) => item.name)" },
+        "options": {
+            type: "function",
+            context: ["settings"],
+            expression: "settings.authors?.map((item) => item.name) || []"
+        },
     },
     "note type": {
         "query": false,
@@ -30,9 +42,11 @@ const analysisMetadataTemplate : MetaDataTemplate = {
         "query": false,
         "inputType": "list",
         "default": { 
-          type: "function", 
-          userInputs: ["analysis.technique"],
-          value: "analysis.technique ? [`analysis/${analysis.technique.replace(/\\s/g, '_')}`] : ['analysis/unknown']"
+            type: "function",
+            context: ["userInput"],
+            reactiveDeps: ["analysis.technique"],
+            expression: "[`analysis/${userInput.analysis.technique.replace(/\\s/g, '_')}`]",
+            fallback: ["analysis/unknown"]
         },
     },
     "project": {
@@ -45,6 +59,31 @@ const analysisMetadataTemplate : MetaDataTemplate = {
                 "is": "project"
             }
         ],
+        "return": {
+            "project.name": "project.name",
+            "project.link": "file.link",
+        }
+    },
+    "sample": {
+        "query": true,
+        "inputType": "queryDropdown",
+        "search": "sample",
+        "where": [
+            {
+                "field": "project.name",
+                "is": {
+                    type: "function",
+                    context: ["userInput"],
+                    reactiveDeps: ["project.name"],
+                    expression: "userInput.project.name",
+                    fallback: ""
+                }
+            }
+        ],
+        "return": {
+            "sample.name": "file.name",
+            "sample.link": "file.link",
+        }
     },
     "analysis": {
         "title": {
@@ -52,109 +91,102 @@ const analysisMetadataTemplate : MetaDataTemplate = {
             "inputType": "text",
             "default": "",
         },
-        "technique": {
-            "query": true,
-            "inputType": "dropdown",
-            "options": ["XRD", "SEM", "TEM", "XPS", "FTIR", "NMR", "UV-Vis", "CV", "EIS", "galvanostatic", "potentiostatic", "other"],
-            "default": "",
-        },
         "description": {
             "query": true,
             "inputType": "text",
             "default": "",
         },
-        "samples": {
+        "operator": {
             "query": true,
-            "inputType": "objectList",
-            "object": {
-                "sample": {
-                    "query": true,
-                    "inputType": "queryDropdown",
-                    "search": "sample",
-                    "where": [
-                        {
-                            "field": "note type",
-                            "is": "sample"
-                        }
-                    ],
-                },
-                "preparation": {
-                    "query": true,
-                    "inputType": "text",
-                    "default": "",
-                },
-                "note": {
-                    "query": true,
-                    "inputType": "text",
-                    "default": "",
-                }
+            "inputType": "dropdown",
+            "options": {
+              type: "function",
+              context: ["settings"],
+              expression: "settings.general?.operators?.map((item) => item.name) || []"
             },
-            "editableKey": false,
-            "removeable": true,
-            "initialItems": 1,
+        },
+        "date": {
+            "query": true,
+            "inputType": "date",
+            "default": {
+                type: "function",
+                context: ["date"],
+                expression: "date.today"
+            },
+        },
+        "status": {
+            "query": true,
+            "inputType": "dropdown",
+            "options": ["planned", "in progress", "completed", "failed"],
+            "default": "completed",
+        },
+        "technique": {
+            "query": true,
+            "inputType": "dropdown",
+            "options": ["SEM", "TEM", "XRD", "NMR", "FTIR", "UV-Vis", "XPS", "AFM", "STM", "Raman", "Mass Spec", "other"],
+            "default": "",
         },
         "instrument": {
             "query": true,
             "inputType": "queryDropdown",
-            "search": "device",
+            "search": "instrument",
             "where": [
                 {
                     "field": "note type",
-                    "is": "device"
+                    "is": "instrument"
                 }
             ],
+            "return": {
+                "analysis.instrument.name": "file.name",
+                "analysis.instrument.link": "file.link"
+            }
         },
-        "parameters": {
+        "method": {
             "query": true,
-            "inputType": "editableObject",
-            "default": {},
-            "editableKey": true,
-            "editableUnit": true,
-            "allowTypeSwitch": true,
-            "removeable": true,
-        },
-        "results": {
-            "query": true,
-            "inputType": "objectList",
-            "object": {
-                "metric": {
-                    "query": true,
-                    "inputType": "text",
-                    "default": "",
-                },
-                "value": {
-                    "query": true,
-                    "inputType": "number",
-                    "default": "",
-                    "defaultUnit": "",
-                    "units": [],
-                    "editableUnit": true,
-                },
-                "uncertainty": {
-                    "query": true,
-                    "inputType": "number",
-                    "default": "",
-                },
-                "note": {
-                    "query": true,
-                    "inputType": "text",
-                    "default": "",
-                }
+            "inputType": "queryDropdown",
+            "from": {
+                type: "function",
+                context: ["userInput"],
+                reactiveDeps: ["analysis.instrument.name"],
+                expression: "userInput.analysis.instrument.name",
+                fallback: ""
             },
-            "editableKey": false,
-            "removeable": true,
-            "initialItems": 1,
+            "get": {
+                type: "function",
+                context: ["queryDropdown"],
+                expression: "queryDropdown.frontmatter?.instrument?.methods?.map((item) => item.name) || []",
+                fallback: []
+            },
+            "return": {
+                "analysis.method.name": {
+                    type: "function",
+                    context: ["queryDropdown"],
+                    expression: "queryDropdown.selection",
+                    fallback: ""
+                },
+                "analysis.method.parameters": {
+                    type: "function",
+                    context: ["queryDropdown"],
+                    expression: "queryDropdown.frontmatter?.instrument?.methods?.find(m => m.name === queryDropdown.selection)?.parameters || {}",
+                    fallback: {}
+                }
+            }
         },
         "data": {
-            "query": true,
-            "inputType": "editableObject",
-            "default": {},
-            "editableKey": true,
-            "allowTypeSwitch": true,
-            "removeable": true,
+            "raw files": {
+                "query": true,
+                "inputType": "filePicker",
+                "baseFolder": "Data/",
+                "placeholder": "Select raw data files"
+            },
+            "processed files": {
+                "query": true,
+                "inputType": "filePicker",
+                "baseFolder": "Data/",
+                "placeholder": "Select processed files"
+            }
         }
     }
-    // Add the rest of the JSON content here...
 };
 
 export default analysisMetadataTemplate;

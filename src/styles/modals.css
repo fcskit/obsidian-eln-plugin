@@ -7,11 +7,73 @@
  * Input modals and dialog components
  */
 
+/* Root CSS variables - dropdown sizing control */
+:root {
+    --resizing-dropdown-padding-horizontal: 12px;
+    --resizing-dropdown-padding-vertical: 6px;
+    --resizing-dropdown-arrow-width: 20px;
+}
+
+/* New Note Modal Layout Variables */
+.eln-new-note-modal {
+    /* Layout dimensions */
+    --eln-modal-width: 650px;
+    --eln-modal-max-width: 90vw;
+    --eln-input-key-width: 180px;
+    --eln-input-key-min-width: 120px;
+    --eln-input-gap: 12px;
+    --eln-input-padding: 8px 12px;
+    --eln-object-padding: 12px;
+    --eln-border-radius: 6px;
+    
+    /* Typography */
+    --eln-key-font-size: var(--font-ui-medium);
+    --eln-key-font-weight: 500;
+    --eln-value-font-size: var(--font-ui-medium);
+    --eln-value-font-weight: 400;
+    --eln-label-font-size: var(--font-ui-medium);
+    --eln-label-font-weight: 500;
+}
+
+
+/* Dropdown width helper element - matches dropdown typography */
+.dropdown-width-helper {
+    position: absolute;
+    visibility: hidden;
+    white-space: nowrap;
+    pointer-events: none;
+    padding: 0; /* Reset padding for accurate text measurement */
+    /* Match dropdown typography exactly */
+    font-size: var(--eln-value-font-size, var(--font-ui-medium));
+    font-weight: var(--eln-value-font-weight, 400);
+    font-family: var(--font-interface);
+    letter-spacing: inherit;
+    line-height: 1.4;
+}
+
+/* Enhanced Input Key Section Overrides for New Note Modal */
+.eln-new-note-modal {
+    width: var(--eln-modal-width);
+    max-width: var(--eln-modal-max-width);
+}
+
+.eln-new-note-modal .enhanced-input-key-section {
+    min-width: var(--eln-input-key-width);
+    flex-shrink: 0;
+    font-size: var(--eln-key-font-size);
+    font-weight: var(--eln-key-font-weight);
+}
+
+.eln-new-note-modal .enhanced-input-wrapper {
+    gap: var(--eln-input-gap);
+    padding: 4px 0;
+}
+
 /* Enhanced Input Wrapper Styles - Consistent across all input types */
 .eln-input-wrapper {
     margin: 10px 0;
     border: 1px solid var(--background-modifier-border);
-    border-radius: 6px;
+    border-radius: var(--eln-border-radius, 6px);
     overflow: hidden;
     background: var(--background-primary);
 }
@@ -20,22 +82,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 12px;
+    padding: var(--eln-input-padding, 8px 12px);
     background: var(--background-secondary);
     border-bottom: 1px solid var(--background-modifier-border);
 }
 
 .eln-input-label {
-    font-weight: 500;
+    font-weight: var(--eln-label-font-weight, 500);
+    font-size: var(--eln-label-font-size, var(--font-ui-medium));
     color: var(--text-normal);
     margin: 0;
 }
 
 .eln-input-content {
-    padding: 12px;
+    padding: var(--eln-object-padding, 12px);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--eln-input-gap, 8px);
 }
 
 /* Remove borders from input elements - use clean styling like editableObject */
@@ -47,6 +110,8 @@
     padding: 6px 8px;
     background: transparent;
     color: var(--text-normal);
+    font-size: var(--eln-value-font-size, var(--font-ui-medium));
+    font-weight: var(--eln-value-font-weight, 400);
     border-bottom: 1px solid transparent;
     transition: border-color 0.2s ease;
 }
@@ -63,11 +128,323 @@
     font-style: italic;
 }
 
-/* Ensure dropdowns maintain their arrow indicator */
+/* Standard dropdowns maintain normal width behavior */
 .eln-input-content select {
     -webkit-appearance: menulist;
     -moz-appearance: menulist;
     appearance: auto;
+}
+
+/* Resizing dropdowns - controlled padding and width set dynamically via JavaScript */
+select.resizing-dropdown {
+    font-size: var(--eln-value-font-size, var(--font-ui-medium));
+    font-weight: var(--eln-value-font-weight, 400);
+    color: var(--text-normal);
+    min-width: 120px; /* Fallback minimum width for normal dropdowns */
+    padding: var(--resizing-dropdown-padding-vertical) var(--resizing-dropdown-padding-horizontal);
+    box-sizing: border-box;
+}
+
+/* Unit dropdowns - smaller minimum width for units */
+select.resizing-dropdown.unit-dropdown {
+    min-width: 40px; /* Smaller minimum width for unit dropdowns */
+}
+
+/* Static unit text - aligned next to input field */
+.eln-unit {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--eln-value-font-size, var(--font-ui-medium));
+    font-weight: var(--eln-value-font-weight, 400);
+    color: var(--text-muted);
+    margin-left: 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Hidden helper element for measuring dropdown option text width */
+.dropdown-width-helper {
+    position: absolute;
+    top: 0;
+    left: -9999px;
+    visibility: hidden;
+    height: auto;
+    width: auto;
+    white-space: nowrap;
+    font-size: var(--eln-value-font-size, var(--font-ui-medium));
+    font-weight: var(--eln-value-font-weight, 400);
+    font-family: inherit;
+    pointer-events: none;
+}
+
+/* === Modal Enhanced Input Component Styles === */
+/* Modal-specific input components with proper styling separation from NPE */
+
+.eln-modal-enhanced-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--eln-input-gap, 12px);
+    padding: var(--eln-input-padding, 8px 12px);
+    border-radius: var(--eln-border-radius, 6px);
+    min-height: 40px;
+    background: transparent;
+    transition: background-color 0.2s ease;
+}
+
+.eln-modal-enhanced-input-wrapper:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+.eln-modal-enhanced-input-key-section {
+    min-width: var(--eln-input-key-width, 180px);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.eln-modal-enhanced-input-key-static {
+    font-size: var(--eln-key-font-size, var(--font-ui-medium));
+    font-weight: var(--eln-key-font-weight, 500);
+    color: var(--text-normal);
+    line-height: 1.4;
+    padding: 4px 8px;
+}
+
+.eln-modal-enhanced-input-key-editable {
+    font-size: var(--eln-key-font-size, var(--font-ui-medium));
+    font-weight: var(--eln-key-font-weight, 500);
+    color: var(--text-normal);
+    border: 1px solid transparent;
+    border-radius: var(--eln-border-radius, 6px);
+    padding: 4px 8px;
+    line-height: 1.4;
+    min-width: 60px;
+    cursor: text;
+    transition: all 0.2s ease;
+}
+
+.eln-modal-enhanced-input-key-editable:hover {
+    border-color: var(--interactive-accent-hover);
+    background: var(--background-modifier-hover);
+}
+
+.eln-modal-enhanced-input-key-editable:focus {
+    border-color: var(--interactive-accent);
+    background: var(--background-modifier-form-field);
+    outline: none;
+}
+
+.eln-modal-enhanced-input-value-section {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Multiselect containers should wrap their content */
+.eln-modal-enhanced-input-value-section.eln-modal-multiselect-container {
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.eln-modal-enhanced-input-value-section input,
+.eln-modal-enhanced-input-value-section select,
+.eln-modal-enhanced-input-value-section .eln-modal-editable-div {
+    font-size: var(--eln-value-font-size, var(--font-ui-medium));
+    font-weight: var(--eln-value-font-weight, 400);
+    line-height: 1.4;
+}
+
+.eln-modal-enhanced-input-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    flex-shrink: 0;
+}
+
+.eln-modal-enhanced-input-wrapper:hover .eln-modal-enhanced-input-controls {
+    opacity: 1;
+}
+
+.eln-modal-enhanced-input-type-button,
+.eln-modal-enhanced-input-remove-button {
+    padding: 2px !important;
+    min-height: 20px !important;
+    min-width: 20px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    transition: all 0.15s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.eln-modal-enhanced-input-type-button:hover,
+.eln-modal-enhanced-input-remove-button:hover {
+    background: var(--background-modifier-hover) !important;
+}
+
+.eln-modal-enhanced-input-remove-button:hover {
+    background: var(--background-modifier-error) !important;
+    color: var(--text-on-accent) !important;
+}
+
+.eln-modal-enhanced-input-type-menu {
+    position: absolute;
+    background: var(--background-primary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--radius-s);
+    padding: 4px;
+    box-shadow: var(--shadow-s);
+    z-index: 1000;
+    min-width: 100px;
+}
+
+.eln-modal-enhanced-input-type-menu-item {
+    padding: 6px 8px;
+    cursor: pointer;
+    border-radius: var(--radius-s);
+    font-size: var(--font-ui-small);
+    transition: background-color 0.15s ease;
+}
+
+.eln-modal-enhanced-input-type-menu-item:hover {
+    background: var(--background-modifier-hover);
+}
+
+/* Multiline input support for modals */
+.eln-modal-enhanced-input-wrapper.eln-modal-enhanced-input-multiline {
+    align-items: flex-start;
+    min-height: 60px;
+}
+
+.eln-modal-enhanced-input-wrapper.eln-modal-enhanced-input-multiline .eln-modal-enhanced-input-key-section {
+    padding-top: 4px;
+}
+
+.eln-modal-enhanced-input-wrapper.eln-modal-enhanced-input-multiline .eln-modal-editable-div-multiline {
+    min-height: 48px;
+    max-height: 120px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    resize: vertical;
+}
+
+/* Single-line input behavior */
+.eln-modal-enhanced-input-value-section .eln-modal-editable-div:not(.eln-modal-editable-div-multiline) {
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    word-wrap: normal;
+    overflow-wrap: normal;
+    max-width: 100%;
+    scrollbar-width: none;
+}
+
+.eln-modal-enhanced-input-value-section .eln-modal-editable-div:not(.eln-modal-editable-div-multiline)::-webkit-scrollbar {
+    display: none;
+}
+
+.eln-modal-enhanced-input-value-section .eln-modal-editable-div:not(.eln-modal-editable-div-multiline):not(:focus) {
+    text-overflow: ellipsis;
+}
+
+.eln-modal-enhanced-input-value-section .eln-modal-editable-div:not(.eln-modal-editable-div-multiline):focus {
+    text-overflow: clip;
+}
+
+/* Boolean input (checkbox) styling */
+.eln-modal-enhanced-input-value-section .eln-boolean-input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    margin: 0;
+    accent-color: var(--interactive-accent);
+}
+
+.eln-modal-enhanced-input-value-section .eln-boolean-input:focus {
+    outline: 2px solid var(--interactive-accent);
+    outline-offset: 2px;
+}
+
+/* Action button for actiontext input type */
+.eln-modal-action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+    min-height: 28px;
+    min-width: 28px;
+    margin-left: auto; /* Push button to the right */
+    background: var(--interactive-accent);
+    border: none;
+    border-radius: var(--radius-s);
+    color: var(--text-on-accent);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+
+.eln-modal-action-button:hover {
+    background: var(--interactive-accent-hover);
+    transform: scale(1.05);
+}
+
+.eln-modal-action-button:active {
+    transform: scale(0.95);
+}
+
+.eln-modal-action-button svg {
+    width: 16px;
+    height: 16px;
+}
+
+.eln-modal-action-button svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Enhanced object features */
+.enhanced-input-key-editable {
+    border: 1px solid transparent;
+    padding: 2px 4px;
+    border-radius: 3px;
+    min-width: 60px;
+}
+
+.enhanced-input-key-editable:hover {
+    border-color: var(--interactive-accent-hover);
+    background: var(--background-modifier-hover);
+}
+
+.enhanced-input-key-editable:focus {
+    border-color: var(--interactive-accent);
+    background: var(--background-modifier-form-field);
+    outline: none;
+}
+
+.enhanced-input-type-switch {
+    margin-left: 8px;
+    font-size: 12px;
+    padding: 2px 4px;
+    min-width: 70px;
+}
+
+.enhanced-input-remove-button {
+    margin-left: 8px;
+    padding: 2px 6px;
+    font-size: 12px;
+    color: var(--text-error);
+}
+
+.enhanced-input-remove-button:hover {
+    background: var(--background-modifier-error-hover);
+    color: var(--text-on-accent);
 }
 
 .eln-input-content button {
@@ -90,6 +467,38 @@
     align-items: stretch;
 }
 
+/* Enhanced Object Container Styles - Unified with EditableObject */
+.enhanced-object-container {
+    margin: 10px 0;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--eln-border-radius, 6px);
+    overflow: hidden;
+}
+
+.enhanced-object-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--eln-input-padding, 8px 12px);
+    background: var(--background-secondary);
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.enhanced-object-header .enhanced-input-key-section {
+    min-width: var(--eln-input-key-width, 120px);
+    flex-shrink: 0;
+}
+
+.enhanced-object-key {
+    font-weight: var(--eln-key-font-weight, 500);
+    font-size: var(--eln-key-font-size, var(--font-ui-medium));
+    color: var(--text-normal);
+}
+
+.enhanced-object-properties {
+    padding: var(--eln-object-padding, 12px);
+}
+
 /* Simple input components for nested contexts */
 .eln-simple-input {
     display: flex;
@@ -105,7 +514,8 @@
 }
 
 .eln-simple-label {
-    font-weight: 500;
+    font-weight: var(--eln-key-font-weight, 500);
+    font-size: var(--eln-key-font-size, var(--font-ui-medium));
     color: var(--text-normal);
     width: 40%;
     margin: 0;
@@ -119,6 +529,8 @@
     padding: 6px 8px;
     background: transparent;
     color: var(--text-normal);
+    font-size: var(--eln-value-font-size, var(--font-ui-medium));
+    font-weight: var(--eln-value-font-weight, 400);
     border-bottom: 1px solid transparent;
     transition: border-color 0.2s ease;
 }
@@ -139,6 +551,10 @@ select.eln-simple-field {
     -webkit-appearance: menulist;
     -moz-appearance: menulist;
     appearance: auto;
+    /* Dynamic width adaptation for simple dropdowns */
+    width: auto;
+    min-width: 120px;
+    max-width: 60%;
 }
 
 .eln-modal-chemical {
@@ -176,8 +592,16 @@ select.eln-simple-field {
 }
 
 .eln-modal-dropdown-wrapper label {
-    font-size: var(--font-ui-medium);
+    font-size: var(--eln-label-font-size, var(--font-ui-medium));
+    font-weight: var(--eln-label-font-weight, 500);
     width: 70%;
+}
+
+.eln-modal-dropdown-wrapper select {
+    font-size: var(--eln-value-font-size, var(--font-ui-medium));
+    font-weight: var(--eln-value-font-weight, 400);
+    min-width: 120px;
+    max-width: 30%;
 }
 
 .eln-modal-multiselect-dropdown-wrapper {
@@ -193,6 +617,9 @@ select.eln-simple-field {
     border: none;
     padding-left: 10px;
     padding-right: 5px;
+    font-size: var(--eln-value-font-size, var(--font-ui-medium));
+    font-weight: var(--eln-value-font-weight, 400);
+    min-width: 100px;
 }
 
 .eln-modal-multiselect-dropdown-wrapper button {
@@ -305,8 +732,8 @@ select.eln-simple-field {
 }
 
 .eln-modal-section-title {
-    font-size: var(--font-ui-medium);
-    font-weight: var(--font-semibold);
+    font-size: var(--eln-label-font-size, var(--font-ui-medium));
+    font-weight: var(--eln-label-font-weight, var(--font-semibold));
     margin-top: 0.75em;
     margin-bottom: 0.75em;
 }
@@ -322,7 +749,8 @@ select.eln-simple-field {
 }
 
 .eln-modal-multi-query-dropdown-wrapper label {
-    font-size: var(--font-ui-medium);
+    font-size: var(--eln-label-font-size, var(--font-ui-medium));
+    font-weight: var(--eln-label-font-weight, 500);
     margin-bottom: 8px;
     color: var(--text-normal);
 }
@@ -344,6 +772,11 @@ select.eln-simple-field {
     padding-left: 10px;
     padding-right: 5px;
     flex: 1;
+    font-size: var(--eln-value-font-size, var(--font-ui-medium));
+    font-weight: var(--eln-value-font-weight, 400);
+    /* Dynamic width adaptation */
+    width: auto;
+    min-width: 120px;
 }
 
 .eln-modal-multi-query-dropdown-item button {
@@ -395,7 +828,7 @@ select.eln-simple-field {
 .enhanced-object-list-wrapper {
     margin: 10px 0;
     border: 1px solid var(--background-modifier-border);
-    border-radius: 6px;
+    border-radius: var(--eln-border-radius, 6px);
     overflow: hidden;
 }
 
@@ -403,13 +836,14 @@ select.eln-simple-field {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 12px;
+    padding: var(--eln-input-padding, 8px 12px);
     background: var(--background-secondary);
     border-bottom: 1px solid var(--background-modifier-border);
 }
 
 .enhanced-object-list-label {
-    font-weight: 500;
+    font-weight: var(--eln-label-font-weight, 500);
+    font-size: var(--eln-label-font-size, var(--font-ui-medium));
     color: var(--text-normal);
 }
 
@@ -456,7 +890,8 @@ select.eln-simple-field {
 }
 
 .enhanced-object-list-object-title {
-    font-weight: 500;
+    font-weight: var(--eln-key-font-weight, 500);
+    font-size: var(--eln-key-font-size, var(--font-ui-medium));
     color: var(--text-normal);
 }
 
@@ -493,7 +928,7 @@ select.eln-simple-field {
 }
 
 .enhanced-object-list-fields {
-    padding: 12px;
+    padding: var(--eln-object-padding, 12px);
 }
 
 .enhanced-object-list-field {
@@ -523,11 +958,93 @@ select.eln-simple-field {
     color: var(--text-normal);
 }
 
+/* Object List Container - no border to avoid duplication with wrapper, padding like editable-object-fields */
+.object-list-container {
+    border: none;
+    padding: var(--eln-object-padding, 12px);
+}
+
+/* Object List Wrapper - dedicated styling for object lists */
+.object-list-wrapper {
+    margin: 10px 0;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--eln-border-radius, 6px);
+    overflow: hidden;
+}
+
+/* Object List Header - match editable object header exactly */
+.object-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--eln-input-padding, 8px 12px);
+    background: var(--background-secondary);
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+/* Object List Label */
+.object-list-label {
+    font-size: var(--eln-label-font-size, var(--font-ui-medium));
+    font-weight: var(--eln-label-font-weight, 500);
+    color: var(--text-normal);
+}
+
+/* Object List Add Button - match editable object add button exactly */
+.object-list-add-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.object-list-add-button:hover {
+    background: var(--interactive-accent-hover);
+}
+
+/* Object List Item - individual item styling */
+.object-list-item {
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.object-list-item:last-child {
+    border-bottom: none;
+}
+
+/* Object List Remove Button - subtle styling */
+.object-list-remove-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    background: var(--background-modifier-border);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    margin-left: auto; /* Push to the right side of the header */
+}
+
+.object-list-remove-button:hover {
+    background: var(--background-modifier-border-hover);
+    color: var(--text-normal);
+}
+
 /* Editable Object Styles */
 .editable-object-wrapper {
     margin: 10px 0;
     border: 1px solid var(--background-modifier-border);
-    border-radius: 6px;
+    border-radius: var(--eln-border-radius, 6px);
     overflow: hidden;
 }
 
@@ -535,13 +1052,14 @@ select.eln-simple-field {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 12px;
+    padding: var(--eln-input-padding, 8px 12px);
     background: var(--background-secondary);
     border-bottom: 1px solid var(--background-modifier-border);
 }
 
 .editable-object-label {
-    font-weight: 500;
+    font-weight: var(--eln-label-font-weight, 500);
+    font-size: var(--eln-label-font-size, var(--font-ui-medium));
     color: var(--text-normal);
 }
 
@@ -565,7 +1083,7 @@ select.eln-simple-field {
 }
 
 .editable-object-fields {
-    padding: 12px;
+    padding: var(--eln-object-padding, 12px);
 }
 
 .editable-object-field {
@@ -586,3 +1104,225 @@ select.eln-simple-field {
     font-style: italic;
     font-size: var(--font-size-small);
 }
+
+.object-list-item:last-child {
+    border-bottom: none;
+}
+
+/* Modal submit button alignment */
+.eln-modal-submit-button {
+    margin-left: auto; /* Push button to the right */
+    margin-top: var(--size-4-4, 16px); /* Add some top margin for spacing */
+    display: block; /* Ensure it takes full width for margin auto to work */
+}
+
+/* Modal Footer and Button Container Styles */
+.eln-modal-footer {
+    margin-top: var(--size-4-4, 16px);
+    padding-top: var(--size-4-4, 16px);
+}
+
+.eln-modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--size-4-2, 8px);
+}
+
+.eln-modal-buttons .clickable-icon {
+    margin: 0; /* Remove default margins from ButtonComponent */
+}
+
+.eln-modal-buttons button {
+    margin: 0; /* Remove default margins */
+    min-width: 80px; /* Ensure buttons have consistent minimum width */
+}
+
+/* Readonly Field Styles */
+.eln-modal-enhanced-input-wrapper.readonly {
+    opacity: 0.8;
+}
+
+.eln-modal-enhanced-input-value-readonly {
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 4px 8px;
+    background: var(--background-modifier-border);
+    border-radius: var(--radius-s);
+    flex: 1;
+    min-width: 0;
+    font-size: var(--eln-value-font-size, var(--font-ui-medium));
+    font-weight: var(--eln-value-font-weight, 400);
+    line-height: 1.4;
+}
+
+/* Number with Unit Input Modal Styles */
+.number-with-unit-modal .modal-content {
+    min-width: 450px;
+}
+
+.number-with-unit-modal .modal-button-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.number-with-unit-modal .setting-item {
+    margin-bottom: 16px;
+}
+
+.number-with-unit-modal .setting-item-control {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.number-with-unit-modal .setting-item-control button {
+    min-width: 100px;
+    flex-shrink: 0;
+}
+
+/* Unit selection button styling */
+.number-with-unit-modal .setting-item-control input[type="text"] {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Dropdown for unit selection */
+.number-with-unit-modal .setting-item-control select {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--button-radius);
+    padding: 6px 8px;
+    background: var(--background-primary);
+    color: var(--text-normal);
+}
+
+.number-with-unit-modal .setting-item-control select:focus {
+    border-color: var(--interactive-accent);
+    outline: none;
+}
+
+/* Unit category menu styling - improve readability */
+.menu .menu-item[data-disabled="true"] {
+    color: var(--text-accent) !important;
+    font-weight: 500;
+    padding: 4px 12px;
+    cursor: default;
+}
+
+.menu .menu-item[data-disabled="true"]:hover {
+    background: none !important;
+}
+
+/* Indent unit items under categories */
+.menu .menu-item[title*="  "] {
+    padding-left: 24px;
+}
+
+/* ============================================
+ * FilePicker Component Styles
+ * ============================================ */
+
+/* File list container */
+.eln-file-picker-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 8px;
+    min-height: 24px;
+}
+
+/* Individual file item */
+.eln-file-picker-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    background: var(--background-secondary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    transition: background-color 0.1s ease;
+}
+
+.eln-file-picker-item:hover {
+    background: var(--background-modifier-hover);
+}
+
+.eln-file-picker-icon {
+    opacity: 0.6;
+    flex-shrink: 0;
+}
+
+.eln-file-picker-path {
+    flex: 1;
+    font-size: 0.9em;
+    color: var(--text-normal);
+    word-break: break-word;
+}
+
+.eln-file-picker-path:hover {
+    color: var(--text-accent);
+    text-decoration: underline;
+}
+
+.eln-file-picker-remove {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+}
+
+.eln-file-picker-placeholder {
+    padding: 6px 8px;
+}
+
+/* Button container */
+.eln-file-picker-button-container {
+    display: flex;
+    justify-content: flex-start;
+}
+
+/* File selection overlay modal */
+.eln-file-picker-overlay {
+    z-index: 1000;
+}
+
+.eln-file-picker-menu {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.eln-file-picker-menu-item {
+    transition: background-color 0.1s ease;
+}
+
+.eln-file-picker-menu-item:hover {
+    background: var(--background-modifier-hover);
+}
+
+/* Search input in file picker menu */
+.eln-file-picker-search input:focus {
+    border-color: var(--interactive-accent);
+    outline: none;
+}
+
+/* File list scrollable area */
+.eln-file-picker-menu-list {
+    max-height: 400px;
+}
+
+/* No results message */
+.eln-file-picker-no-results {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Menu buttons */
+.eln-file-picker-menu-buttons {
+    margin-top: 12px;
+}
+

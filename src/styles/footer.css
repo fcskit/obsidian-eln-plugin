@@ -9,7 +9,7 @@
 /* ...footer CSS content as previously modularized... */
 /* Footer base styles */
 .eln-footer {
-    margin-top: 30px !important;
+    margin-top: 8rem !important;
     margin-bottom: 20px !important;
     padding-top: 10px !important;
     opacity: 1;
@@ -22,8 +22,7 @@
 
 /* Footer separator line */
 .eln-footer--separator {
-    border-top: 1px dashed var(--text-accent);
-    opacity: 0.6;
+    border-top: 1px solid var(--divider-color);
     margin-bottom: 10px;
 }
 
@@ -31,15 +30,20 @@
 .eln-footer--content {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
 }
 
 /* Footer info text */
 .eln-footer--info {
-    font-size: 0.85em;
-    color: var(--text-muted);
     text-align: right;
     opacity: 0.8;
+}
+
+/* Field labels should be bold */
+.eln-footer--info strong {
+    font-weight: bold;
 }
 
 /* Editor mode specific styles */

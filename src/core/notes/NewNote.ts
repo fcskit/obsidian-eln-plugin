@@ -1,144 +1,174 @@
-import { TFile, Notice } from "obsidian";
+import { App, Notice } from "obsidian";
+import { ELNSettings } from "../../settings/settings";
+import { NewNoteModal } from "../../ui/modals/notes/NewNoteModal";
+import { TemplateManager } from "../templates/TemplateManager";
+import { NoteCreator, NoteCreationOptions } from "./NoteCreator";
 import type ElnPlugin from "../../main";
-import type { FormData, PathTemplate, MetaDataTemplateProcessed } from "../../types";
-import { MetadataProcessor } from "./MetadataProcessor";
-import { NoteCreator } from "./NoteCreator";
-import { NewNoteModal, type NewNoteModalOptions } from "../../ui/modals/notes/NewNoteModal";
+import type { FormData, MetaDataTemplateProcessed } from "../../types";
+import { createLogger } from "../../utils/Logger";
+
+const logger = createLogger('note');
 
 export interface NewNoteOptions {
-    noteType?: string;
-    noteTitle?: string;
-    noteTitleTemplate?: PathTemplate;
-    folderPath?: string;
-    modalTitle?: string;
-    openNote?: boolean;
-    openInNewLeaf?: boolean;
-    formData?: FormData; // Pre-populated form data
+    noteType: string;
+    initialData?: Record<string, unknown>;
+    skipModal?: boolean;
 }
 
-/**
- * Orchestrates the note creation process.
- * Determines whether user input is required and handles the entire workflow.
- */
 export class NewNote {
+    private app: App;
+    private settings: ELNSettings;
     private plugin: ElnPlugin;
-    private metadataProcessor: MetadataProcessor;
     private noteCreator: NoteCreator;
 
     constructor(plugin: ElnPlugin) {
         this.plugin = plugin;
-        this.metadataProcessor = new MetadataProcessor(plugin);
-        this.noteCreator = new NoteCreator(plugin);
+        this.app = plugin.app;
+        this.settings = plugin.settings;
+        this.noteCreator = new NoteCreator(this.plugin);
     }
 
     /**
-     * Creates a new note, with or without modal input depending on requirements
-     * @param options Configuration options for note creation
-     * @returns Promise that resolves to the created TFile or null if creation failed/was cancelled
+     * Create a new note using the refactored modal system
      */
-    async create(options: NewNoteOptions = {}): Promise<TFile | null> {
+    async createNote(options: NewNoteOptions): Promise<void> {
+        const { noteType, initialData = {}, skipModal = false } = options;
+
+        // Validate note type exists in settings
+        const noteConfig = this.settings.note[noteType as keyof typeof this.settings.note];
+        if (!noteConfig) {
+            new Notice(`Invalid note type: ${noteType}`);
+            return;
+        }
+
         try {
-            // Load and preprocess the metadata template
-            const template = this.metadataProcessor.loadMetadataTemplate(options.noteType);
-            const processedTemplate = this.metadataProcessor.preprocessTemplate(template, options.noteType);
-
-            // Determine if user input is required
-            const requiresUserInput = this.requiresUserInput(processedTemplate);
-
-            let formData: FormData;
-            let finalTemplate: MetaDataTemplateProcessed;
-
-            if (requiresUserInput && !options.formData) {
-                // Show modal to collect user input
-                const modalResult = await this.collectUserInput(processedTemplate, options);
-                if (!modalResult) {
-                    // User cancelled the modal
-                    return null;
-                }
-                formData = modalResult.formData;
-                finalTemplate = modalResult.template; // Use the template with subclass modifications
+            if (skipModal) {
+                // For direct creation, we'll use the existing NewNote from core for now
+                // This is a temporary implementation - in a full refactor this would handle everything
+                await this.createNoteDirectly(noteType, initialData);
             } else {
-                // Use provided form data or empty object if no input is required
-                formData = options.formData || {};
-                finalTemplate = processedTemplate; // Use the base template since no modal was shown
+                // Use modal for user input
+                await this.openNewNoteModal(noteType, initialData);
             }
+        } catch (error) {
+            logger.error(`Failed to create ${noteType} note:`, error);
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            new Notice(`Failed to create note: ${errorMessage}`);
+        }
+    }
 
-            // Create the note using the collected data and final template
-            const noteFile = await this.noteCreator.createNote({
-                noteType: options.noteType,
-                noteTitle: options.noteTitle,
-                noteTitleTemplate: options.noteTitleTemplate,
-                folderPath: options.folderPath,
-                formData,
-                metadataTemplate: finalTemplate, // Use the final template (with subclass modifications if any)
-                openNote: options.openNote ?? true,
-                openInNewLeaf: options.openInNewLeaf ?? false
+    /**
+     * Create note directly without modal (for programmatic creation)
+     */
+    private async createNoteDirectly(noteType: string, data: Record<string, unknown>): Promise<void> {
+        try {
+            // Get note configuration
+            const noteConfig = this.settings.note[noteType as keyof typeof this.settings.note];
+            
+            // Convert data to FormData format
+            const formData = data as FormData;
+            
+            // Create a TemplateManager to get the processed template
+            const templateManager = new TemplateManager({
+                plugin: this.plugin,
+                noteType: noteType,
+                initialData: formData
             });
 
-            if (noteFile) {
-                new Notice("Note created successfully!");
-            }
+            // Extract title from data or provide a fallback
+            const noteTitle = String(data.title || `${noteType} Note`);
 
-            return noteFile;
-
-        } catch (error) {
-            console.error("Error creating note:", error);
-            new Notice("Failed to create note. Check the console for details.");
-            return null;
-        }
-    }
-
-    /**
-     * Determines if the template requires user input
-     * @param template The processed metadata template
-     * @returns True if user input is required
-     */
-    private requiresUserInput(template: Record<string, unknown>): boolean {
-        return this.hasQueryFields(template);
-    }
-
-    /**
-     * Recursively checks if template has any fields with query=true
-     * @param template The template to check
-     * @returns True if any field requires user input
-     */
-    private hasQueryFields(template: Record<string, unknown>): boolean {
-        if (!template || typeof template !== "object") {
-            return false;
-        }
-
-        for (const value of Object.values(template)) {
-            if (value && typeof value === "object") {
-                if ("query" in value && value.query === true) {
-                    return true;
-                }
-                // Recursively check nested objects (but not fields with inputType)
-                if (!("inputType" in value) && this.hasQueryFields(value as Record<string, unknown>)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Shows the modal to collect user input
-     * @param template The processed metadata template
-     * @param options The note creation options
-     * @returns Promise that resolves to the form data and template or null if cancelled
-     */
-    private async collectUserInput(template: Record<string, unknown>, options: NewNoteOptions): Promise<{ formData: FormData; template: MetaDataTemplateProcessed } | null> {
-        return new Promise((resolve) => {
-            const modalOptions: NewNoteModalOptions = {
-                modalTitle: options.modalTitle || "New Note",
-                noteType: options.noteType || "default",
-                metadataTemplate: template as MetaDataTemplateProcessed,
-                onSubmit: resolve
+            // Create note creation options
+            const options: NoteCreationOptions = {
+                noteType: noteType,
+                noteTitle: noteTitle, // Explicitly provide the title
+                formData: formData,
+                metadataTemplate: templateManager.getCurrentTemplate(),
+                openNote: true,
+                openInNewLeaf: false,
+                createSubfolder: noteConfig.createSubfolder
             };
 
-            const modal = new NewNoteModal(this.plugin, modalOptions);
+            const file = await this.noteCreator.createNote(options);
+            
+            if (!file) {
+                throw new Error('Failed to create note file');
+            }
+            
+        } catch (error) {
+            logger.error('Failed to create note directly:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Open the refactored modal for note creation
+     */
+    private async openNewNoteModal(noteType: string, initialData: Record<string, unknown>): Promise<void> {
+        return new Promise((resolve) => {
+            // Create a single TemplateManager instance to be shared with the modal
+            const templateManager = new TemplateManager({
+                plugin: this.plugin,
+                noteType: noteType,
+                initialData: initialData as FormData
+            });
+            
+            const modal = new NewNoteModal(this.plugin, {
+                modalTitle: `Create ${noteType} Note`,
+                noteType: noteType,
+                templateManager: templateManager, // Pass the shared TemplateManager instance
+                onSubmit: async (result) => {
+                    if (result) {
+                        logger.debug('✅ Form submitted, creating note with refactored system...');
+                        // For now, we'll create a simple note
+                        await this.createNoteFromModalData(noteType, result.formData, result.template);
+                    }
+                    resolve();
+                }
+            });
+            
             modal.open();
         });
     }
+
+    /**
+     * Create note from modal form data
+     */
+    private async createNoteFromModalData(noteType: string, formData: FormData, template: MetaDataTemplateProcessed): Promise<void> {
+        try {
+            // Get note configuration
+            const noteConfig = this.settings.note[noteType as keyof typeof this.settings.note];
+            
+            // Debug: Log the form data to see what we're working with
+            logger.debug('[NewNote] Form data received:', formData);
+            
+            // Use NoteCreator which properly handles metadata processing
+            // The modal already provided us with a processed template
+
+            // Let NoteCreator generate the title from titleTemplate - don't provide noteTitle
+            logger.debug('[NewNote] Letting NoteCreator generate title from template');
+
+            // Create note creation options using the same structure as original NoteCreator
+            const options: NoteCreationOptions = {
+                noteType: noteType,
+                // Don't provide noteTitle - let it be generated from titleTemplate
+                formData: formData,
+                metadataTemplate: template, // Use the template provided by the modal
+                openNote: true,
+                openInNewLeaf: false,
+                createSubfolder: noteConfig.createSubfolder
+            };
+
+            const file = await this.noteCreator.createNote(options);
+            
+            if (!file) {
+                throw new Error('Failed to create note file');
+            }
+            
+        } catch (error) {
+            logger.error('Failed to create note from modal data:', error);
+            throw error;
+        }
+    }
+
 }

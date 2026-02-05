@@ -5,14 +5,14 @@ import { updateProperties } from "../utils/updateProperties";
 import { showTypeSwitchMenu } from "../helpers/showTypeSwitchMenu";
 import { addKeyWrapperResizeHandle } from "../helpers/addKeyWrapperResizeHandle";
 import { renderArrayValueContainer } from "./renderArrayValueContainer";
-import type { NestedPropertiesEditorView } from "../../../views/NestedPropertiesEditor";
+import { NestedPropertiesEditorView } from "../../../views/NestedPropertiesEditor";
 import type { NestedPropertiesEditorCodeBlockView } from "../../../views/NestedPropertiesEditor";
-import type { FrontmatterPrimitiveArray } from "../../../../types/core";
+import type { FrontmatterValue } from "../../../../types/core";
 
 export function renderPrimitiveArray(
     view: NestedPropertiesEditorView | NestedPropertiesEditorCodeBlockView,
     key: string,
-    array: FrontmatterPrimitiveArray,
+    array: Array<FrontmatterValue>,
     container: HTMLElement,
     level: number,
     parentKey: string,
@@ -50,7 +50,13 @@ export function renderPrimitiveArray(
     view.registerDomEvent(keyLabelDiv, 'blur', async () => {
         const newKey = keyLabelDiv.textContent?.trim();
         if (newKey && newKey !== key) {
-            await changeKeyName(app, view.currentFile!, fullKey, newKey);
+            // Update the key in the frontmatter using standard changeKeyName function
+            if (view instanceof NestedPropertiesEditorView && view.currentFile) {
+                await changeKeyName({ app: view.app, file: view.currentFile, key: fullKey, newKeyName: newKey, view });
+            } else if (view.currentFile) {
+                // Fallback for code block view
+                await changeKeyName({ app, file: view.currentFile, key: fullKey, newKeyName: newKey });
+            }
             updateDataKeys(arrayContainer, fullKey, newKey);
         }
     });
@@ -73,15 +79,19 @@ export function renderPrimitiveArray(
         cls: 'npe-array-value-container', 
         attr: { 'style': `--npe-data-level: ${level};` } 
     });
-    renderArrayValueContainer(view, valueContainer, array, fullKey);
+    renderArrayValueContainer(view, valueContainer, array, fullKey, level);
 
     // --- Remove Button ---
     const removeButton = arrayContainer.createDiv({ cls: 'npe-button npe-button--remove', text: '×' });
     view.registerDomEvent(removeButton, 'click', () => {
         if (view.currentFile) {
+            // Set internal change flag BEFORE calling updateProperties
+            if (view instanceof NestedPropertiesEditorView) {
+                view.setInternalChangeFlag();
+            }
             // Use internal update to prevent full re-render for removal operations
-            if ('updatePropertiesInternal' in view && typeof view.updatePropertiesInternal === 'function') {
-                view.updatePropertiesInternal(fullKey, undefined, 'undefined');
+            if ('updateProperties' in view && typeof view.updateProperties === 'function') {
+                view.updateProperties(fullKey, undefined, 'undefined');
             } else {
                 updateProperties(view.app, view.currentFile, fullKey, undefined, 'undefined');
             }

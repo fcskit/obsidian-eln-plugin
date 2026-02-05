@@ -12,6 +12,17 @@ const __dirname = dirname(__filename);
 const packageJson = JSON.parse(readFileSync(join(__dirname, "package.json"), "utf8"));
 const version = packageJson.version;
 
+console.log(`Building release for version ${version}...`);
+
+// Step 1: Sync files from test-vault if they're newer
+console.log("🔄 Syncing files from test-vault...");
+try {
+    execSync('node sync-from-vault.mjs', { stdio: 'inherit' });
+} catch (error) {
+    console.error(`⚠️  Warning: Failed to sync from test-vault: ${error.message}`);
+    console.log("Continuing with build...");
+}
+
 // Create release directory
 const releaseDir = join(__dirname, "release");
 if (!existsSync(releaseDir)) {

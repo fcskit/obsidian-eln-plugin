@@ -5,7 +5,7 @@ export const conductiveAdditiveSubclassMetadataTemplate = {
             "input": {
                 "query": true,
                 "inputType": "number",
-                "default": "",
+                "default": 0,
                 "units": ["µm", "nm"],
                 "defaultUnit": "µm",
             }
@@ -15,7 +15,7 @@ export const conductiveAdditiveSubclassMetadataTemplate = {
             "input": {
                 "query": true,
                 "inputType": "number",
-                "default": "",
+                "default": 0,
                 "units": ["m²/g", "cm²/g"],
                 "defaultUnit": "m²/g",
             }
@@ -25,13 +25,15 @@ export const conductiveAdditiveSubclassMetadataTemplate = {
             "input": {
                 "query": true,
                 "inputType": "number",
-                "default": "",
+                "default": 0,
                 "units": ["S/m"],
                 "defaultUnit": "S/m",
             }
         },
     ],
     "remove": [
-        "chemical.properties.solubility in water"
+        "chemical.properties.solubility in water",
+        "chemical.properties.boiling point",
+        "chemical.properties.melting point",
     ],
 }

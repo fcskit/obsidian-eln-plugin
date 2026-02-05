@@ -9,7 +9,7 @@ cssclasses: analysis
 # Analysis Results
 
 \`\`\`image-viewer
-folder: Experiments/Analyses/Dummy Sample/Dummy Analysis/plots
+folder: {{folderPath}}/plots
 bgColor: #f5f5f5
 size: 800
 shuffle: manual

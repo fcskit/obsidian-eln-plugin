@@ -1,80 +1,109 @@
 export const compoundSubclassMetadataTemplate = {
     "add": [
-        {
-            "fullKey": "sample.chemical formula",
-            "input": {
-                "query": true,
-                "inputType": "text",
-                "default": "",
-            },
-        },
-        {
-            "fullKey": "sample.smiles",
-            "input": {
-                "query": true,
-                "inputType": "text",
-                "default": "",
-            },
-        },
-        {
-            "fullKey": "sample.molar mass",
+            {
+            "fullKey": "sample.total mass",
             "input": {
                 "query": true,
                 "inputType": "number",
+                "default": 0,
+                "defaultUnit": "mg",
+                "units": ["mg", "g", "kg"],
+            },
+        },
+        {
+            "fullKey": "sample.product.chemical formula",
+            "input": {
+                "query": true,
+                "inputType": "text",
                 "default": "",
+                "placeholder": "Enter the chemical formula"
+            },
+        },
+        {
+            "fullKey": "sample.product.smiles",
+            "input": {
+                "query": true,
+                "inputType": "text",
+                "default": "",
+                "placeholder": "Enter the SMILES representation"
+            },
+        },
+        {
+            "fullKey": "sample.product.molar mass",
+            "input": {
+                "query": true,
+                "inputType": "number",
+                "default": 0,
                 "defaultUnit": "g/mol",
                 "units": ["g/mol"],
+            },
+        },
+        {
+            "fullKey": "sample.product.yield",
+            "input": {
+                "query": true,
+                "inputType": "number",
+                "default": 0,
+                "defaultUnit": "%",
+                "units": ["%", "mg", "g", "kg"],
             },
         },
         {
             "fullKey": "sample.educts",
             "input": {
                 "query": true,
-                "inputType": "objectList",
-                "object": [
-                    {
+                "inputType": "list",
+                "listType": "object",
+                "initialItems": 1,
+                "objectTemplate": {
+                    "name": {
                         "query": true,
-                        "key": "name",
                         "inputType": "queryDropdown",
-                        "search": [
+                        "search": "chemical",
+                        "where": [
                             {
-                                "tag": "chemical",
-                                "where": [
-                                    {
-                                        "field": "chemical.field of use",
-                                        "is": "synthesis",
-                                    },
-                                ],
-                            },
-                            {
-                                "tag": "sample",
-                                "where": [
-                                    {
-                                        "field": "project.name",
-                                        "is": "this.project.name",
-                                    },
-                                ],
-                            },
-                        ]   
+                                "field": "chemical.field of use",
+                                "contains": "synthesis"
+                            }
+                        ],
+                        "return": {
+                            "sample.educts.name": "chemical.name",
+                            "sample.educts.link": "file.link",
+                        },
                     },
-                    {
+                    "amount": {
                         "query": true,
-                        "key": "mass",
                         "inputType": "number",
-                        "default": "0",
+                        "default": 0,
                         "defaultUnit": "mg",
-                        "units": ["mg", "g", "kg"],
+                        "units": ["mg", "g", "kg", "ml", "l", "mol", "mmol"],
                     },
-                ]
+                },
             }
         },
         {
             "fullKey": "sample.side products",
             "input": {
                 "query": true,
-                "inputType": "text",
-                "default": "",
-            },
+                "inputType": "list",
+                "listType": "object",
+                "initialItems": 1,
+                "objectTemplate": {
+                    "name": {
+                        "query": true,
+                        "inputType": "text",
+                        "placeholder": "Enter side product name",
+                        "default": "",
+                    },
+                    "amount": {
+                        "query": true,
+                        "inputType": "number",
+                        "default": 0,
+                        "defaultUnit": "mg",
+                        "units": ["%", "mg", "g", "kg"],
+                    }
+                },
+            }
         },
     ],
 }

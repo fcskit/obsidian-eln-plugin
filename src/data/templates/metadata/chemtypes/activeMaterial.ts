@@ -6,10 +6,9 @@ export const activeMaterialSubclassMetadataTemplate = {
             "input": {
                 "query": true,
                 "inputType": "number",
-                "default": "",
+                "default": 0,
                 "units": ["mAh/g", "Ah/kg"],
                 "defaultUnit": "mAh/g",
-                "callback": { type: "function", value: "(value) => value.trim()" }
             }
         },
         {
@@ -19,17 +18,18 @@ export const activeMaterialSubclassMetadataTemplate = {
                 "query": true,
                 "inputType": "dropdown",
                 "options": [
-                    { label: "Intercalation", value: "intercalation" },
-                    { label: "Conversion", value: "conversion" },
-                    { label: "Alloying", value: "alloying" },
-                    { label: "Other", value: "other" }
+                    "intercalation",
+                    "conversion",
+                    "alloying",
+                    "other"
                 ],
                 "default": "intercalation",
             }
         }
     ],
     "remove": [
-        "chemical.properties.solubility in water"
+        "chemical.properties.solubility in water",
+        "chemical.properties.boiling point",
     ],
     "replace": [
         {

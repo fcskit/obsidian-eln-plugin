@@ -4,7 +4,11 @@ const sampleMetadataTemplate: MetaDataTemplate = {
   "ELN version": {
       "query": false,
       "inputType": "text",
-      "default": { type: "function", value: "this.manifest.version" },
+      "default": {
+        type: "function",
+        context: ["plugin"],
+        expression: "plugin.manifest.version"
+      },
     },
     "cssclasses": {
       "query": false,
@@ -14,13 +18,20 @@ const sampleMetadataTemplate: MetaDataTemplate = {
     "date created": {
       "query": false,
       "inputType": "date",
-      "default": { type: "function", value: "new Date().toISOString().split('T')[0]" },
+      "default": {
+        type: "function",
+        context: ["date"],
+        expression: "date.today"
+      },
     },
     "author": {
       "query": true,
       "inputType": "dropdown",
-      "options": { type: "function", value: "this.settings.authors.map((item) => item.name)" },
-      "placeholder": "Select the sample author...",
+      "options": {
+        type: "function",
+        context: ["settings"],
+        expression: "settings.authors?.map((item) => item.name) || []"
+      },
     },
     "note type": {
       "query": false,
@@ -31,9 +42,11 @@ const sampleMetadataTemplate: MetaDataTemplate = {
       "query": false,
       "inputType": "list",
       "default": { 
-        type: "function", 
-        userInputs: ["sample.type"],
-        value: "sample.type ? [`sample/${sample.type.replace(/\\s/g, '_')}`] : ['sample/unknown']"
+        type: "function",
+        context: ["userInput"],
+        reactiveDeps: ["sample.type"],
+        expression: "[`sample/${userInput.sample.type.replace(/\\s/g, '_')}`]",
+        fallback: ["sample/unknown"]
       },
     },
     "project": {
@@ -46,35 +59,46 @@ const sampleMetadataTemplate: MetaDataTemplate = {
                 "is": "project"
             }
         ],
-        "placeholder": "Link to project this sample belongs to...",
+        "return": {
+          "project.name": "project.name",
+          "project.type": "project.type",
+          "project.link": "file.link",
+        }
     },      
     "sample": {
         "name": {
+            "query": false,
+            "inputType": "postprocessor",
+            "default": {
+                type: "function",
+                context: ["postprocessor"],
+                expression: "postprocessor.filename"
+            }
+        },
+        "operator": {
             "query": true,
-            "inputType": "text",
-            "default": "",
-            "placeholder": "Enter a descriptive name for your sample...",
+            "inputType": "dropdown",
+            "options": {
+              type: "function",
+              context: ["settings"],
+              expression: "settings.general?.operators?.map((item) => item.name) || []"
+            },
         },
         "type": {
             "query": true,
             "inputType": "subclass",
-            "options": { type: "function", value: "this.settings.note.sample.type.map((item) => item.name)" },
-            "placeholder": "Select the type of sample (electrode, compound, etc.)...",
+            "options": {
+              type: "function",
+              context: ["settings"],
+              expression: "settings.note?.sample?.type?.map((item) => item.name) || []"
+            },
         },
         "description": {
             "query": true,
             "inputType": "text",
+            "multiline": true,
             "default": "",
             "placeholder": "Describe the sample composition, purpose, or key characteristics...",
-        },
-        "properties": {
-            "query": true,
-            "inputType": "editableObject",
-            "default": {},
-            "editableKey": true,
-            "editableUnit": true,
-            "allowTypeSwitch": true,
-            "removeable": true,
         },
         "preparation": {
             "query": true,
@@ -87,12 +111,22 @@ const sampleMetadataTemplate: MetaDataTemplate = {
                 }
             ],
             "return": {
-                "sample.preparation.name": "process.name",
-                "sample.preparation.type": "process.type",
-                "sample.preparation.devices": "process.devices",
-                "sample.preparation.parameters": "process.parameters"
-            }
-        }
+              "sample.preparation.name": "process.name",
+              "sample.preparation.link": "file.link",
+              "sample.preparation.type": "process.type",
+              "sample.preparation.devices": "process.devices",
+              "sample.preparation.parameters": "process.parameters"
+          },
+        },
+        "properties": {
+            "query": true,
+            "inputType": "editableObject",
+            "objectTemplate": {},
+            "editableKey": true,
+            "editableUnit": true,
+            "allowTypeSwitch": true,
+            "removeable": true,
+        },
     },
 };
 

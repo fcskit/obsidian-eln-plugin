@@ -1,5 +1,8 @@
 import { App, TFile } from "obsidian";
 import type { FrontmatterValue } from "../../../../types/core";
+import { createLogger } from "../../../../utils/Logger";
+
+const logger = createLogger('npe');
 
 /**
  * Faithful port of updateProperties from renderer/updateProperties.ts, but for a given TFile.
@@ -21,7 +24,7 @@ export async function updateProperties(
     
     // Check if file still exists before attempting to update
     if (!app.vault.getAbstractFileByPath(file.path)) {
-        console.warn(`NPE: Cannot update properties - file ${file.path} no longer exists`);
+        logger.warn(`NPE: Cannot update properties - file ${file.path} no longer exists`);
         return;
     }
 
@@ -31,7 +34,8 @@ export async function updateProperties(
             value = value != null ? value.toString() : "";
             break;
         case "link":
-            value = value != null ? `[[${value}]]` : "";
+            // Expect the full link syntax to be passed (e.g., "[[linkname]]")
+            value = value != null ? value.toString() : "";
             break;
         case "external-link":
             value = value != null ? value.toString() : "";
@@ -42,7 +46,7 @@ export async function updateProperties(
         case "boolean":
             break;
         case "latex":
-            value = value != null ? `$${value}$` : "";
+            // Don't add $ signs - store exactly as provided by user
             break;
         default:
             break;

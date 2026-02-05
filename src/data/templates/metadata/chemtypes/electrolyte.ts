@@ -4,24 +4,73 @@ export const electrolyteSubclassMetadataTemplate = {
             "fullKey": "chemical.properties.composition.solvents",
             "input": {
                 "query": true,
-                "inputType": "text",
-                "default": "",
+                "inputType": "list",
+                "listType": "object",
+                "initialItems": 1,
+                "objectTemplate": {
+                    "name": {
+                        "query": true,
+                        "inputType": "text",
+                        "placeholder": "Enter solvent name...",
+                        "default": "",
+                    },
+                    "volume fraction": {
+                        "query": true,
+                        "inputType": "text",
+                        "placeholder": "Enter solvent volume fraction...",
+                        "default": "",
+                    }
+                }
             }
         },
         {
             "fullKey": "chemical.properties.composition.salts",
             "input": {
                 "query": true,
-                "inputType": "text",
-                "default": "",
+                "inputType": "list",
+                "listType": "object",
+                "initialItems": 1,
+                "objectTemplate": {
+                    "name": {
+                        "query": true,
+                        "inputType": "text",
+                        "placeholder": "Enter salt name...",
+                        "default": "",
+                    },
+                    "concentration": {
+                        "query": true,
+                        "inputType": "number",
+                        "placeholder": "Enter salt concentration...",
+                        "default": 0,
+                        "units": ["mol/L", "mmol/L"],
+                        "defaultUnit": "mol/L",
+                    }
+                }
             }
         },
         {
             "fullKey": "chemical.properties.composition.additives",
             "input": {
                 "query": true,
-                "inputType": "text",
-                "default": "",
+                "inputType": "list",
+                "listType": "object",
+                "initialItems": 1,
+                "objectTemplate": {
+                    "name": {
+                        "query": true,
+                        "inputType": "text",
+                        "placeholder": "Enter additive name...",
+                        "default": "",
+                    },
+                    "concentration": {
+                        "query": true,
+                        "inputType": "number",
+                        "placeholder": "Enter additive concentration...",
+                        "default": 0,
+                        "units": ["mol/L", "mmol/L"],
+                        "defaultUnit": "mmol/L",
+                    }
+                }
             }
         },
         {
@@ -29,7 +78,7 @@ export const electrolyteSubclassMetadataTemplate = {
             "input": {
                 "query": true,
                 "inputType": "number",
-                "default": "",
+                "default": 0,
                 "units": ["mol/L", "mmol/L"],
                 "defaultUnit": "mol/L",
             }
@@ -39,7 +88,7 @@ export const electrolyteSubclassMetadataTemplate = {
             "input": {
                 "query": true,
                 "inputType": "number",
-                "default": "",
+                "default": 0,
                 "units": ["S/m", "mS/m"],
                 "defaultUnit": "S/m",
             }
@@ -49,7 +98,7 @@ export const electrolyteSubclassMetadataTemplate = {
             "input": {
                 "query": true,
                 "inputType": "number",
-                "default": "",
+                "default": 0,
                 "units": ["mPa·s", "cP"],
                 "defaultUnit": "mPa·s",
             }

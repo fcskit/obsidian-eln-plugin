@@ -1,168 +1,259 @@
-import { PathTemplate, MetaDataTemplate } from "../utils/types";
-import { metadataTemplates, subClassMetadataTemplates } from "../templates/metadataTemplates";
-import { markdownTemplates } from "../templates/markdownTemplates";
+import { MetaDataTemplate, PathTemplate } from "../types";
+import { metadataTemplates, subClassMetadataTemplates } from "../data/templates/metadataTemplates";
+import { markdownTemplates } from "../data/templates/markdownTemplates";
 
-export interface ELNSettings {
-    addNavbar: boolean;
-    addFooter: boolean;
-    includeVersion: boolean;
-    includeAuthor: boolean;
+// Navbar group configuration
+export interface NavbarGroup {
+    id: string;
+    name: string;
+    order: number;
+}
+
+// Navbar configuration for note types
+export interface NoteNavbarConfig {
+    display: boolean;
+    name: string;
+    group: string;
+}
+
+// Command configuration for note types
+export interface NoteCommandConfig {
+    enabled: boolean;
+    id: string;
+    name: string;
+}
+
+// Base note configuration interface
+export interface BaseNoteConfig {
+    navbar: NoteNavbarConfig;
+    commands: NoteCommandConfig;
+    fileName: PathTemplate;
+    folderPath: PathTemplate;
+    createSubfolder?: string[];
+    customMetadataTemplate: boolean;
+    customMarkdownTemplate: boolean;
+    customMetadataTemplatePath: string;
+    customMarkdownTemplatePath: string;
+    metadataTemplate: MetaDataTemplate;
+    markdownTemplate: string;
+    [key: string]: unknown;
+}
+
+// General configuration
+export interface GeneralConfig {
     authors: { name: string; initials: string }[];
     operators: { name: string; initials: string }[];
+}
+
+// Navbar configuration
+export interface NavbarConfig {
+    enabled: boolean;
+    groups: NavbarGroup[];
+}
+
+// Footer configuration
+export interface FooterConfig {
+    enabled: boolean;
+    includeVersion: boolean;
+    includeAuthor: boolean;
+    includeMtime: boolean;
+    includeCtime: boolean;
+}
+
+export interface ELNSettings {
+    general: GeneralConfig;
+    navbar: NavbarConfig;
+    footer: FooterConfig;
     note: {
-        analysis: {
+        analysis: BaseNoteConfig & {
             status: string[];
-            titleTemplate: PathTemplate;
-            folderTemplate: PathTemplate;
-            customMetadataTemplate: boolean;
-            customMarkdownTemplate: boolean;
-            customMetadataTemplatePath: string;
-            customMarkdownTemplatePath: string;
-            metadataTemplate: MetaDataTemplate;
-            markdownTemplate: string;
         };
-        chemical: {
-            type: { name: string; subClassMetadataTemplate: MetaDataTemplate }[];
+        chemical: BaseNoteConfig & {
+            type: ChemicalType[];
             fieldOfUse: string[];
             supplier: { name: string; web: string }[];
             manufacturer: { name: string; web: string }[];
-            titleTemplate: PathTemplate;
-            folderTemplate: PathTemplate;
-            customMetadataTemplate: boolean;
-            customMarkdownTemplate: boolean;
-            customMetadataTemplatePath: string;
-            customMarkdownTemplatePath: string;
-            metadataTemplate: MetaDataTemplate;
-            markdownTemplate: string;
         };
-        dailyNote: {
-            titleTemplate: PathTemplate;
-            folderTemplate: PathTemplate;
-            customMetadataTemplate: boolean;
-            customMarkdownTemplate: boolean;
-            customMetadataTemplatePath: string;
-            customMarkdownTemplatePath: string;
-            metadataTemplate: MetaDataTemplate;
-            markdownTemplate: string;
+        contact: BaseNoteConfig;
+        dailyNote: BaseNoteConfig;
+        device: BaseNoteConfig & {
+            type: DeviceType[];
         };
-        device: {
-            type: { name: string; method: string[] }[];
-            titleTemplate: PathTemplate;
-            folderTemplate: PathTemplate;
-            customMetadataTemplate: boolean;
-            customMarkdownTemplate: boolean;
-            customMetadataTemplatePath: string;
-            customMarkdownTemplatePath: string;
-            metadataTemplate: MetaDataTemplate;
-            markdownTemplate: string;
+        echemCell: BaseNoteConfig & {
+            type: EchemCellType[];
         };
-        instrument: {
-            type: { name: string; abbreviation: string; technique: string[] }[];
-            titleTemplate: PathTemplate;
-            folderTemplate: PathTemplate;
-            customMetadataTemplate: boolean;
-            customMarkdownTemplate: boolean;
-            customMetadataTemplatePath: string;
-            customMarkdownTemplatePath: string;
-            metadataTemplate: MetaDataTemplate;
-            markdownTemplate: string;
+        electrode: BaseNoteConfig & {
+            type: ElectrodeType[];
         };
-        meeting: {
+        instrument: BaseNoteConfig & {
+            type: InstrumentType[];
+        };
+        lab: BaseNoteConfig & {
             type: string[];
-            titleTemplate: PathTemplate;
-            folderTemplate: PathTemplate;
-            customMetadataTemplate: boolean;
-            customMarkdownTemplate: boolean;
-            customMetadataTemplatePath: string;
-            customMarkdownTemplatePath: string;
-            metadataTemplate: MetaDataTemplate;
-            markdownTemplate: string;
         };
-        process: {
+        meeting: BaseNoteConfig & {
+            type: string[];
+        };
+        process: BaseNoteConfig & {
             class: string;
             type: string[];
-            titleTemplate: PathTemplate;
-            folderTemplate: PathTemplate;
-            customMetadataTemplate: boolean;
-            customMarkdownTemplate: boolean;
-            customMetadataTemplatePath: string;
-            customMarkdownTemplatePath: string;
-            metadataTemplate: MetaDataTemplate;
-            markdownTemplate: string;
         };
-        project: {
-            type: { name: string; category: string[]; subClassMetadataTemplate: MetaDataTemplate }[];
-            titleTemplate: PathTemplate;
-            folderTemplate: PathTemplate;
-            customMetadataTemplate: boolean;
-            customMarkdownTemplate: boolean;
-            customMetadataTemplatePath: string;
-            customMarkdownTemplatePath: string;
-            metadataTemplate: MetaDataTemplate;
-            markdownTemplate: string;
+        project: BaseNoteConfig & {
+            type: ProjectType[];
         };
-        sample: {
-            type: { name: string; subClassMetadataTemplate: MetaDataTemplate }[];
-            titleTemplate: PathTemplate;
-            folderTemplate: PathTemplate;
-            customMetadataTemplate: boolean;
-            customMarkdownTemplate: boolean;
-            customMetadataTemplatePath: string;
-            customMarkdownTemplatePath: string;
-            metadataTemplate: MetaDataTemplate;
-            markdownTemplate: string;
+        sample: BaseNoteConfig & {
+            type: SampleType[];
         };
-        sampleList: {
-            titleTemplate: PathTemplate;
-            folderTemplate: PathTemplate;
-            customMetadataTemplate: boolean;
-            customMarkdownTemplate: boolean;
-            customMetadataTemplatePath: string;
-            customMarkdownTemplatePath: string;
-            metadataTemplate: MetaDataTemplate;
-            markdownTemplate: string;
-        };
-        default: {
-            titleTemplate: PathTemplate;
-            folderTemplate: PathTemplate;
-            customMetadataTemplate: boolean;
-            customMarkdownTemplate: boolean;
-            customMetadataTemplatePath: string;
-            customMarkdownTemplatePath: string;
-            metadataTemplate: MetaDataTemplate;
-            markdownTemplate: string;
-        };
+        sampleList: BaseNoteConfig;
+        default: BaseNoteConfig;
+        test: BaseNoteConfig;
+    };
+    npe: {
+        showDataTypes: boolean;
     };
 }
 
+// Transformation template for modifying base metadata templates
+export interface MetaDataTemplateTransform {
+    add?: Array<{
+        fullKey: string;
+        insertAfter?: string;
+        input: {
+            query: boolean;
+            inputType: string;
+            default?: string | string[] | number | boolean | { type: string; value: string } | { type: string; context: string[]; expression: string; reactiveDeps?: string[]; fallback?: unknown };
+            options?: string[];
+            units?: string | string[];
+            defaultUnit?: string;
+            callback?: { type: string; value: string } | { type: string; context: string[]; expression: string } | string;
+        };
+    }>;
+    remove?: string[];
+    replace?: Array<{
+        fullKey: string;
+        newKey?: string;
+        input: {
+            query: boolean;
+            inputType: string;
+            default?: string | string[] | number | boolean | { type: string; value: string } | { type: string; context: string[]; expression: string; reactiveDeps?: string[]; fallback?: unknown };
+            options?: string[];
+            units?: string | string[];
+            defaultUnit?: string;
+            callback?: { type: string; value: string } | { type: string; context: string[]; expression: string } | string;
+        };
+    }>;
+}
+
+// Chemical type configuration
+export interface ChemicalType {
+    name: string;
+    subClassMetadataTemplate: MetaDataTemplateTransform;
+    [key: string]: unknown;
+}
+
+// Electrochemical Cell type configuration
+export interface EchemCellType {
+    name: string;
+    subClassMetadataTemplate: MetaDataTemplateTransform;
+    [key: string]: unknown;
+}
+
+// Electrode type configuration
+export interface ElectrodeType {
+    name: string;
+    subClassMetadataTemplate: MetaDataTemplateTransform;
+    [key: string]: unknown;
+}
+
+
+// Project type configuration
+export interface ProjectType {
+    name: string;
+    category: string[];
+    subClassMetadataTemplate: MetaDataTemplateTransform;
+    autoCreate?: string[];
+    [key: string]: unknown;
+}
+
+// Sample type configuration
+export interface SampleType {
+    name: string;
+    abbreviation?: string;
+    subClassMetadataTemplate: MetaDataTemplateTransform;
+    [key: string]: unknown;
+}
+
+// Device type configuration
+export interface DeviceType {
+    name: string;
+    method: string[];
+    [key: string]: unknown;
+}
+
+// Instrument type configuration
+export interface InstrumentType {
+    name: string;
+    abbreviation: string;
+    technique: string[];
+    [key: string]: unknown;
+}
+
 export const DEFAULT_SETTINGS: ELNSettings = {
-    addNavbar: true,
-    addFooter: true,
-    includeVersion: true,
-    includeAuthor: true,
-    authors: [
-        { name: "Anne Anybody", initials: "AA" },
-        { name: "Nick Nobody", initials: "NN" },
-    ],
-    operators: [
-        { name: "Anne Anybody", initials: "AA" },
-        { name: "Nick Nobody", initials: "NN" },
-    ],
+    general: {
+        authors: [
+            { name: "Anne Anybody", initials: "AA" },
+            { name: "Nick Nobody", initials: "NN" },
+        ],
+        operators: [
+            { name: "Anne Anybody", initials: "AA" },
+            { name: "Nick Nobody", initials: "NN" },
+        ],
+    },
+    navbar: {
+        enabled: true,
+        groups: [
+            { id: "resources", name: "Resources", order: 1 },
+            { id: "experiments", name: "Experiments", order: 2 },
+            { id: "other", name: "Other", order: 3 },
+        ],
+    },
+    footer: {
+        enabled: true,
+        includeVersion: true,
+        includeAuthor: true,
+        includeMtime: true,
+        includeCtime: false,
+    },
     note: {
         analysis: {
+            navbar: {
+                display: true,
+                name: "Analysis",
+                group: "experiments"
+            },
+            commands: {
+                enabled: true,
+                id: "create-analysis-note",
+                name: "Create Analysis Note"
+            },
             status: ["pending", "in progress", "completed", "failed"],
-            titleTemplate: [
-                { type: 'userInput' , field: "sample.name", separator: " - " },
-                { type: 'userInput' , field: "analysis.method", separator: "_" },
-                { type: 'index' , field: "02", separator: "" },
-            ],
-            folderTemplate: [
-                { type: 'string', field: "Experiments/Analyses", separator: "/" },
-                { type: 'userInput', field: "project.name", separator: "/" },
-                { type: 'userInput', field: "sample.name", separator: "/" },
-                { type: 'userInput', field: "analysis.method", separator: "_" },
-                { type: 'index', field: "02", separator: "" },
-            ],
+            fileName: {
+                segments: [
+                    { kind: "field", path: "sample.name", separator: " - " },
+                    { kind: "field", path: "analysis.method.name", separator: "_" },
+                    { kind: "counter", inheritFrom: "folderPath", separator: "" },
+                ]
+            },
+            folderPath: {
+                segments: [
+                    { kind: "literal", value: "Experiments/Analyses", separator: "/" },
+                    { kind: "field", path: "project.name", separator: "/" },
+                    { kind: "field", path: "sample.name", separator: "/" },
+                    { kind: "field", path: "analysis.method.name", separator: "_" },
+                    { kind: "counter", prefix: "", separator: "" },
+                ]
+            },
+            createSubfolder: ["data", "plots"],
             customMetadataTemplate: false,
             customMarkdownTemplate: false,
             customMetadataTemplatePath: "",
@@ -171,7 +262,21 @@ export const DEFAULT_SETTINGS: ELNSettings = {
             markdownTemplate: markdownTemplates.analysis,
         },
         chemical: {
+            navbar: {
+                display: true,
+                name: "Chemical",
+                group: "resources"
+            },
+            commands: {
+                enabled: true,
+                id: "create-chemical-note",
+                name: "Create Chemical Note"
+            },
             type: [
+                {
+                    name: "acid",
+                    subClassMetadataTemplate: subClassMetadataTemplates.chemical.acid
+                },
                 {
                     name: "active material",
                     subClassMetadataTemplate: subClassMetadataTemplates.chemical["active material"]
@@ -231,6 +336,7 @@ export const DEFAULT_SETTINGS: ELNSettings = {
                 { name: "Sigma Aldrich", web: "https://www.sigmaaldrich.com" },
                 { name: "VWR", web: "https://www.vwr.com" },
                 { name: "TCI", web: "https://www.tci-chemicals.com" },
+                { name: "other", web: "https://www.other.com" },
             ],
             manufacturer: [
                 { name: "abcr", web: "https://www.abcr.com" },
@@ -241,14 +347,19 @@ export const DEFAULT_SETTINGS: ELNSettings = {
                 { name: "Sigma Aldrich", web: "https://www.sigmaaldrich.com" },
                 { name: "VWR", web: "https://www.vwr.com" },
                 { name: "TCI", web: "https://www.tci-chemicals.com" },
+                { name: "other", web: "https://www.other.com" },
             ],
-            titleTemplate: [
-                { type: 'userInput', field: "chemical.name", separator: "" },
-            ],
-            folderTemplate: [
-                { type: 'string', field: "Resources/Chemicals", separator: "/" },
-                { type: 'userInput', field: "chemical.type", separator: "" },
-            ],
+            fileName: {
+                segments: [
+                    { kind: "field", path: "chemical.name", separator: "" },
+                ]
+            },
+            folderPath: {
+                segments: [
+                    { kind: "literal", value: "Resources/Chemicals", separator: "/" },
+                    { kind: "field", path: "chemical.type", separator: "" },
+                ]
+            },
             customMetadataTemplate: false,
             customMarkdownTemplate: false,
             customMetadataTemplatePath: "",
@@ -256,19 +367,60 @@ export const DEFAULT_SETTINGS: ELNSettings = {
             metadataTemplate: metadataTemplates.chemical,
             markdownTemplate: markdownTemplates.chemical,
         },
+        contact: {
+            navbar: {
+                display: true,
+                name: "Contact",
+                group: "other"
+            },
+            commands: {
+                enabled: true,
+                id: "create-contact-note",
+                name: "Create Contact Note"
+            },
+            fileName: {
+                segments: [
+                    { kind: "field", path: "name.given name", separator: " " },
+                    { kind: "field", path: "name.family name", separator: "" }
+                ]
+            },
+            folderPath: {
+                segments: [
+                    { kind: "literal", value: "Contacts", separator: "/" },
+                    { kind: "field", path: "address.work.affiliation", separator: "" }
+                ]
+            },
+            customMetadataTemplate: false,
+            customMarkdownTemplate: false,
+            customMetadataTemplatePath: "",
+            customMarkdownTemplatePath: "",
+            metadataTemplate: metadataTemplates.contact,
+            markdownTemplate: markdownTemplates.contact,
+        },
         dailyNote: {
-            titleTemplate: [
-                { type: 'dateField' , field: "currentDate", separator: " - " },
-                { type: 'dateField' , field: "weekday", separator: ", " },
-                { type: 'dateField' , field: "dayOfMonth", separator: ". " },
-                { type: 'dateField' , field: "monthName", separator: "" },
-            ],
-            folderTemplate: [
-                { type: 'string', field: "Daily Notes", separator: "/" },
-                { type: 'dateField', field: "year", separator: "/" },
-                { type: 'dateField', field: "month", separator: " " },
-                { type: 'dateField', field: "monthName", separator: "" },
-            ],
+            navbar: {
+                display: true,
+                name: "Daily Note",
+                group: "other"
+            },
+            commands: {
+                enabled: true,
+                id: "create-daily-note",
+                name: "Create Daily Note"
+            },
+            fileName: {
+                segments: [
+                    { kind: "function", context: ["date"], expression: "date.format('YYYY-MM-DD - dddd, D. MMMM')", separator: "" }
+                ]
+            },
+            folderPath: {
+                segments: [
+                    { kind: "literal", value: "Daily Notes", separator: "/" },
+                    { kind: "function", context: ["date"], expression: "date.year()", separator: "/" },
+                    { kind: "function", context: ["date"], expression: "date.format('MM')", separator: " " },
+                    { kind: "function", context: ["date"], expression: "date.monthName()", separator: "" }
+                ]
+            },
             customMetadataTemplate: false,
             customMarkdownTemplate: false,
             customMetadataTemplatePath: "",
@@ -277,6 +429,16 @@ export const DEFAULT_SETTINGS: ELNSettings = {
             markdownTemplate: markdownTemplates.dailyNote,
         },
         device: {
+            navbar: {
+                display: true,
+                name: "Device",
+                group: "resources"
+            },
+            commands: {
+                enabled: true,
+                id: "create-device-note",
+                name: "Create Device Note"
+            },
             type: [
                 { name: "balance", method: ["weighing"] },
                 { name: "coater", method: ["spin coating", "doctor blade", "slot die", "spray coating"] },
@@ -294,16 +456,22 @@ export const DEFAULT_SETTINGS: ELNSettings = {
                 { name: "sonicator", method: ["ultrasonic cleaning", "sonication"] },
                 { name: "stirrer", method: ["magnetic stirring", "overhead stirring"] },
                 { name: "pH meter", method: ["pH measurement"] },
+                { name: "other", method: ["undefined"] },
             ],
-            titleTemplate: [
-                { type: 'userInput' , field: "device.manufacturer", separator: " - " },
-                { type: 'userInput' , field: "device.name", separator: "" },
-            ],
-            folderTemplate: [
-                { type: 'string', field: "Resources/Devices", separator: "/" },
-                { type: 'userInput' , field: "device.manufacturer", separator: " - " },
-                { type: 'userInput', field: "device.name", separator: "" },
-            ],
+            fileName: {
+                segments: [
+                    { kind: "field", path: "device.manufacturer", separator: " - " },
+                    { kind: "field", path: "device.name", separator: "" }
+                ]
+            },
+            folderPath: {
+                segments: [
+                    { kind: "literal", value: "Resources/Devices", separator: "/" },
+                    { kind: "field", path: "device.manufacturer", separator: " - " },
+                    { kind: "field", path: "device.name", separator: "" }
+                ]
+            },
+            createSubfolder: ["Documents"],
             customMetadataTemplate: false,
             customMarkdownTemplate: false,
             customMetadataTemplatePath: "",
@@ -311,7 +479,102 @@ export const DEFAULT_SETTINGS: ELNSettings = {
             metadataTemplate: metadataTemplates.device,
             markdownTemplate: markdownTemplates.device,
         },
+        echemCell: {
+            navbar: {
+                display: true,
+                name: "Electrochemical Cell",
+                group: "resources"
+            },
+            commands: {
+                enabled: true,
+                id: "create-echemcell-note",
+                name: "Create Electrochemical Cell Note"
+            },
+            type: [
+                {
+                    name: "coin cell",
+                    subClassMetadataTemplate: subClassMetadataTemplates.echemCell.coin,
+                },
+                {
+                    name: "swagelok",
+                    subClassMetadataTemplate: subClassMetadataTemplates.echemCell.swagelok
+                },
+                {
+                    name: "custom",
+                    subClassMetadataTemplate: subClassMetadataTemplates.echemCell.custom
+                },
+                {
+                    name: "pouch bag",
+                    subClassMetadataTemplate: subClassMetadataTemplates.echemCell.pouch
+                }
+            ],
+            fileName: {
+                segments: [
+                    { kind: "field", path: "cell.name", separator: "" }
+                ]
+            },
+            folderPath: {
+                segments: [
+                    { kind: "literal", value: "Resources/Electrochemical Cells", separator: "" }
+                ]
+            },
+            customMetadataTemplate: false,
+            customMarkdownTemplate: false,
+            customMetadataTemplatePath: "",
+            customMarkdownTemplatePath: "",
+            metadataTemplate: metadataTemplates.echemCell,
+            markdownTemplate: markdownTemplates.echemCell,
+        },
+        electrode: {
+            navbar: {
+                display: true,
+                name: "Electrode",
+                group: "resources"
+            },
+            commands: {
+                enabled: true,
+                id: "create-electrode-note",
+                name: "Create Electrode Note"
+            },
+            type: [
+                {
+                    name: "reference",
+                    subClassMetadataTemplate: subClassMetadataTemplates.electrode.reference
+                },
+                {
+                    name: "standard",
+                    subClassMetadataTemplate: subClassMetadataTemplates.electrode.standard
+                },
+            ],
+            fileName: {
+                segments: [
+                    { kind: "field", path: "electrode.name", separator: "" }
+                ]
+            },
+            folderPath: {
+                segments: [
+                    { kind: "literal", value: "Resources/Electrodes", separator: "" }
+                ]
+            },
+            createSubfolder: ["Documents"],
+            customMetadataTemplate: false,
+            customMarkdownTemplate: false,
+            customMetadataTemplatePath: "",
+            customMarkdownTemplatePath: "",
+            metadataTemplate: metadataTemplates.electrode,
+            markdownTemplate: markdownTemplates.electrode,
+        },
         instrument: {
+            navbar: {
+                display: true,
+                name: "Instrument",
+                group: "resources"
+            },
+            commands: {
+                enabled: true,
+                id: "create-instrument-note",
+                name: "Create Instrument Note"
+            },
             type: [
                 {
                     name: "X-ray diffractometer",
@@ -333,16 +596,26 @@ export const DEFAULT_SETTINGS: ELNSettings = {
                     abbreviation: "AFM",
                     technique: ["topography", "phase contrast", "conductivity", "magnetic force", "electric force"],
                 },
+                {
+                    name: "other",
+                    abbreviation: "NN",
+                    technique: ["undefined"],
+                }
             ],
-            titleTemplate: [
-                { type: 'userInput' , field: "instrument.manufacturer", separator: " - " },
-                { type: 'userInput' , field: "instrument.name", separator: "" },
-            ],
-            folderTemplate: [
-                { type: 'string', field: "Resources/Devices", separator: "/" },
-                { type: 'userInput' , field: "instrument.manufacturer", separator: " - " },
-                { type: 'userInput' , field: "instrument.name", separator: "" },
-            ],
+            fileName: {
+                segments: [
+                    { kind: "field", path: "instrument.manufacturer", separator: " - " },
+                    { kind: "field", path: "instrument.name", separator: "" }
+                ]
+            },
+            folderPath: {
+                segments: [
+                    { kind: "literal", value: "Resources/Instruments", separator: "/" },
+                    { kind: "field", path: "instrument.manufacturer", separator: " - " },
+                    { kind: "field", path: "instrument.name", separator: "" }
+                ]
+            },
+            createSubfolder: ["Documents"],
             customMetadataTemplate: false,
             customMarkdownTemplate: false,
             customMetadataTemplatePath: "",
@@ -350,18 +623,64 @@ export const DEFAULT_SETTINGS: ELNSettings = {
             metadataTemplate: metadataTemplates.instrument,
             markdownTemplate: markdownTemplates.instrument,
         },
+        lab: {
+            navbar: {
+                display: true,
+                name: "Lab",
+                group: "resources"
+            },
+            commands: {
+                enabled: true,
+                id: "create-lab-note",
+                name: "Create Lab Note"
+            },
+            type: [ "chemical lab", "materials lab", "electrochemical lab", "physics lab", "biology lab", "clean room" ],
+            fileName: {
+                segments: [
+                    { kind: "field", path: "lab.room", separator: " - " },
+                    { kind: "field", path: "lab.name", separator: "" }
+                ]
+            },
+            folderPath: {
+                segments: [
+                    { kind: "literal", value: "Resources/Labs", separator: "/" },
+                    { kind: "field", path: "lab.building", separator: "" }
+                ]
+            },
+            createSubfolder: [],
+            customMetadataTemplate: false,
+            customMarkdownTemplate: false,
+            customMetadataTemplatePath: "",
+            customMarkdownTemplatePath: "",
+            metadataTemplate: metadataTemplates.lab,
+            markdownTemplate: markdownTemplates.lab,
+        },
         meeting: {
+            navbar: {
+                display: true,
+                name: "Meeting",
+                group: "other"
+            },
+            commands: {
+                enabled: true,
+                id: "create-meeting-note",
+                name: "Create Meeting Note"
+            },
             type: ["meeting", "conference", "workshop", "symposium"],
-            titleTemplate: [
-                { type: 'userInput' , field: "meeting.date", separator: " - " },
-                { type: 'userInput' , field: "meeting.title", separator: "" },
-            ],
-            folderTemplate: [
-                { type: 'string', field: "Meetings", separator: "/" },
-                { type: 'dateField', field: "year", separator: "/" },
-                { type: 'dateField', field: "month", separator: " " },
-                { type: 'dateField', field: "monthName", separator: "" },
-            ],
+            fileName: {
+                segments: [
+                    { kind: "field", path: "meeting.date", separator: " - " },
+                    { kind: "field", path: "meeting.title", separator: "" }
+                ]
+            },
+            folderPath: {
+                segments: [
+                    { kind: "literal", value: "Meetings", separator: "/" },
+                    { kind: "function", context: ["date"], expression: "date.year()", separator: "/" },
+                    { kind: "function", context: ["date"], expression: "date.format('MM')", separator: " " },
+                    { kind: "function", context: ["date"], expression: "date.monthName()", separator: "" }
+                ]
+            },
             customMetadataTemplate: false,
             customMarkdownTemplate: false,
             customMetadataTemplatePath: "",
@@ -370,15 +689,29 @@ export const DEFAULT_SETTINGS: ELNSettings = {
             markdownTemplate: markdownTemplates.meeting,
         },
         process: {
+            navbar: {
+                display: true,
+                name: "Process",
+                group: "experiments"
+            },
+            commands: {
+                enabled: true,
+                id: "create-process-note",
+                name: "Create Process Note"
+            },
             class: "organic synthesis",
             type: ["synthesis", "polymerization", "functionalization", "deprotection", "protection"],
-            titleTemplate: [
-                { type: 'userInput' , field: "process.name", separator: "" },
-            ],
-            folderTemplate: [
-                { type: 'string', field: "Processes", separator: "/" },
-                { type: 'userInput' , field: "process.class", separator: "" },
-            ],
+            fileName: {
+                segments: [
+                    { kind: "field", path: "process.name", separator: "" }
+                ]
+            },
+            folderPath: {
+                segments: [
+                    { kind: "literal", value: "Processes", separator: "/" },
+                    { kind: "field", path: "process.class", separator: "" }
+                ]
+            },
             customMetadataTemplate: false,
             customMarkdownTemplate: false,
             customMetadataTemplatePath: "",
@@ -387,11 +720,22 @@ export const DEFAULT_SETTINGS: ELNSettings = {
             markdownTemplate: markdownTemplates.process,
         },
         project: {
+            navbar: {
+                display: true,
+                name: "Project",
+                group: "other"
+            },
+            commands: {
+                enabled: true,
+                id: "create-project-note",
+                name: "Create Project Note"
+            },
             type: [
                 {
                     name: "research",
                     category: ["chemistry", "electrochemistry", "physics", "materials science", "engineering"],
                     subClassMetadataTemplate: subClassMetadataTemplates.project.research,
+                    autoCreate: ["sampleList"],
                 },
                 {
                     name: "development",
@@ -409,13 +753,18 @@ export const DEFAULT_SETTINGS: ELNSettings = {
                     subClassMetadataTemplate: subClassMetadataTemplates.project.meeting,
                 },
             ],
-            titleTemplate: [
-                { type: 'userInput' , field: "project.name", separator: "" },
-            ],
-            folderTemplate: [
-                { type: 'string', field: "Projects", separator: "/" },
-                { type: 'userInput', field: "project.type", separator: "" },
-            ],
+            fileName: {
+                segments: [
+                    { kind: "field", path: "project.name", separator: "" }
+                ]
+            },
+            folderPath: {
+                segments: [
+                    { kind: "literal", value: "Projects", separator: "/" },
+                    { kind: "field", path: "project.type", separator: "/" },
+                    { kind: "field", path: "project.name", separator: "" }
+                ]
+            },
             customMetadataTemplate: false,
             customMarkdownTemplate: false,
             customMetadataTemplatePath: "",
@@ -424,31 +773,48 @@ export const DEFAULT_SETTINGS: ELNSettings = {
             markdownTemplate: markdownTemplates.project,
         },
         sample: {
+            navbar: {
+                display: true,
+                name: "Sample",
+                group: "experiments"
+            },
+            commands: {
+                enabled: true,
+                id: "create-sample-note",
+                name: "Create Sample Note"
+            },
             type: [
                 {
                     name: "compound",
+                    abbreviation: "CPD",
                     subClassMetadataTemplate: subClassMetadataTemplates.sample.compound,
                 },
                 {
                     name: "electrode",
+                    abbreviation: "ELE",
                     subClassMetadataTemplate: subClassMetadataTemplates.sample.electrode,
                 },
                 {
                     name: "electrochemical cell",
+                    abbreviation: "CELL",
                     subClassMetadataTemplate: subClassMetadataTemplates.sample["electrochemical cell"],
                 }
             ],
-            titleTemplate: [
-                { type: 'operator' , field: "operators[sample.operator].initials", separator: "-" },
-                { type: 'project' , field: "projects[project.name].abbreviation", separator: "-" },
-                { type: 'setting' , field: "note.sample.type[sample.type].abbreviation", separator: "" },
-                { type: 'index' , field: "03", separator: "" },
-            ],
-            folderTemplate: [
-                { type: 'string', field: "Experiments/Samples", separator: "/" },
-                { type: 'userInput' , field: "project.name", separator: "/" },
-                { type: 'userInput', field: "sample.type", separator: "" },
-            ],
+            fileName: {
+                segments: [
+                    { kind: "function", context: ["settings", "userInput"], expression: "settings.general.operators.find(op => op.name === userInput.sample?.operator)?.initials || 'XX'", separator: "-" },
+                    { kind: "function", context: ["noteMetadata", "userInput"], expression: "noteMetadata.get(userInput.project?.name)?.project?.abbreviation || 'PRJ'", separator: "-" },
+                    { kind: "function", context: ["settings", "userInput"], expression: "settings.note.sample.type.find(t => t.name === userInput.sample?.type)?.abbreviation || 'SMP'", separator: "-" },
+                    { kind: "counter", prefix: "", separator: "", width: 3 }
+                ]
+            },
+            folderPath: {
+                segments: [
+                    { kind: "literal", value: "Experiments/Samples", separator: "/" },
+                    { kind: "field", path: "project.name", separator: "/" },
+                    { kind: "field", path: "sample.type", separator: "" }
+                ]
+            },
             customMetadataTemplate: false,
             customMarkdownTemplate: false,
             customMetadataTemplatePath: "",
@@ -457,14 +823,28 @@ export const DEFAULT_SETTINGS: ELNSettings = {
             markdownTemplate: markdownTemplates.sample,
         },
         sampleList: {
-            titleTemplate: [
-                { type: 'string', field: "Samples", separator: " - " },
-                { type: 'userInput', field: "project.name", separator: "" },
-            ],
-            folderTemplate: [
-                { type: 'string', field: "Projects", separator: "/" },
-                { type: 'userInput', field: "project.name", separator: "" },
-            ],
+            navbar: {
+                display: true,
+                name: "Sample List",
+                group: "experiments"
+            },
+            commands: {
+                enabled: true,
+                id: "create-sample-list-note",
+                name: "Create Sample List Note"
+            },
+            fileName: {
+                segments: [
+                    { kind: "literal", value: "Samples", separator: " - " },
+                    { kind: "field", path: "project.name", separator: "" }
+                ]
+            },
+            folderPath: {
+                segments: [
+                    { kind: "literal", value: "Projects", separator: "/" },
+                    { kind: "field", path: "project.name", separator: "" }
+                ]
+            },
             customMetadataTemplate: false,
             customMarkdownTemplate: false,
             customMetadataTemplatePath: "",
@@ -473,12 +853,26 @@ export const DEFAULT_SETTINGS: ELNSettings = {
             markdownTemplate: markdownTemplates.sampleList,
         },
         default: {
-            titleTemplate: [
-                { type: 'string', field: "Untiteled Note", separator: "" },
-            ],
-            folderTemplate: [
-                { type: 'string', field: "Notes", separator: "" },
-            ],
+            navbar: {
+                display: false,
+                name: "Default Note",
+                group: "other"
+            },
+            commands: {
+                enabled: false,
+                id: "create-default-note",
+                name: "Create Default Note"
+            },
+            fileName: {
+                segments: [
+                    { kind: "literal", value: "Untiteled Note", separator: "" }
+                ]
+            },
+            folderPath: {
+                segments: [
+                    { kind: "literal", value: "Notes", separator: "" }
+                ]
+            },
             customMetadataTemplate: false,
             customMarkdownTemplate: false,
             customMetadataTemplatePath: "",
@@ -486,5 +880,36 @@ export const DEFAULT_SETTINGS: ELNSettings = {
             metadataTemplate: metadataTemplates.default,
             markdownTemplate: markdownTemplates.default,
         },
+        test: {
+            navbar: {
+                display: true,
+                name: "Test Note",
+                group: "other"
+            },
+            commands: {
+                enabled: true,
+                id: "create-test-note",
+                name: "Create Test Note"
+            },
+            fileName: {
+                segments: [
+                    { kind: "field", path: "test.title", separator: "" }
+                ]
+            },
+            folderPath: {
+                segments: [
+                    { kind: "literal", value: "Test Notes", separator: "" }
+                ]
+            },
+            customMetadataTemplate: false,
+            customMarkdownTemplate: false,
+            customMetadataTemplatePath: "",
+            customMarkdownTemplatePath: "",
+            metadataTemplate: metadataTemplates.test,
+            markdownTemplate: markdownTemplates.test,
+        },
+    },
+    npe: {
+        showDataTypes: true,
     },
 };

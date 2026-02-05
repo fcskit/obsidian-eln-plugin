@@ -1,7 +1,7 @@
 import { setIcon } from "obsidian";
-import type { NestedPropertiesEditorView } from "../../../views/NestedPropertiesEditor";
+import { NestedPropertiesEditorView } from "../../../views/NestedPropertiesEditor";
 import type { NestedPropertiesEditorCodeBlockView } from "../../../views/NestedPropertiesEditor";
-import type { FrontmatterObjectArray, FrontmatterObject } from "../../../../types/core";
+import type { FrontmatterValue, FrontmatterObject, FrontmatterObjectArray } from "../../../../types/core";
 import { getPropertyIcon } from "../helpers/getPropertyIcon";
 import { addToggleEvent } from "../helpers/addToggleEvent";
 import { changeKeyName } from "../utils/changeKeyName";
@@ -25,7 +25,7 @@ const specialKeys = [
 export function renderObjectArray(
     view: NestedPropertiesEditorView | NestedPropertiesEditorCodeBlockView,
     key: string,
-    array: FrontmatterObjectArray,
+    array: Array<FrontmatterValue>,
     container: HTMLElement,
     level: number,
     parentKey: string,
@@ -73,7 +73,13 @@ export function renderObjectArray(
             // Therefore we need to update the fullKey from the data-key attribute of the container
             const oldFullKey = container.getAttribute("data-key") || fullKey;
             fullKey = oldFullKey.split('.').slice(0, -1).concat(newKey).join('.');
-            await changeKeyName(app, view.currentFile!, oldFullKey, newKey);
+            // Update the key in the frontmatter using standard changeKeyName function
+            if (view instanceof NestedPropertiesEditorView && view.currentFile) {
+                await changeKeyName({ app: view.app, file: view.currentFile, key: oldFullKey, newKeyName: newKey, view });
+            } else if (view.currentFile) {
+                // Fallback for code block view
+                await changeKeyName({ app, file: view.currentFile, key: oldFullKey, newKeyName: newKey });
+            }
             keyLabelDiv.setAttribute("data-key", newKey);
             // Update the key and fullKey variables and the data-key attribute
             key = newKey;
@@ -110,6 +116,10 @@ export function renderObjectArray(
         }
         renderObjectOfArray(view, key, arr[arr.length - 1], arr.length - 1, arrayObjectsContainer, level, `${fullKey}.${arr.length - 1}`, filterKeys);
         if (view.currentFile) {
+            // Set internal change flag BEFORE calling updateProperties
+            if (view instanceof NestedPropertiesEditorView) {
+                view.setInternalChangeFlag();
+            }
             updateProperties(view.app, view.currentFile, fullKey, arr, "array");
         }
     });
@@ -126,6 +136,10 @@ export function renderObjectArray(
     const removeButton = keyContainer.createDiv({ cls: "npe-button npe-button--remove", text: "×" });
     view.registerDomEvent(removeButton, "click", () => {
         if (view.currentFile) {
+            // Set internal change flag BEFORE calling updateProperties
+            if (view instanceof NestedPropertiesEditorView) {
+                view.setInternalChangeFlag();
+            }
             updateProperties(view.app, view.currentFile, fullKey, undefined, "undefined");
         }
         container.remove();
@@ -143,9 +157,9 @@ export function renderObjectArray(
             renderArray(view, `${key} #${index + 1}`, item, arrayObjectsContainer, level + 1, `${parentKey}.${index}`, filterKeys, false);
         } else {
             // Array may contain mixed item types
-            if (typeof item === "object" && item !== null) {
+            if (typeof item === "object" && item !== null && !Array.isArray(item)) {
                 logger.debug(`renderObjectArray: Rendering object of array for key: ${key}, index: ${index}`);
-                renderObjectOfArray(view, key, item, index, arrayObjectsContainer, level, `${fullKey}.${index}`, filterKeys);
+                renderObjectOfArray(view, key, item as FrontmatterObject, index, arrayObjectsContainer, level, `${fullKey}.${index}`, filterKeys);
             } else if (Array.isArray(item)) {
                 logger.debug(`renderObjectArray: Rendering nested array for key: ${key}, index: ${index}`);
                 renderArray(view, `${key} #${index + 1}`, item, arrayObjectsContainer, level + 1, `${parentKey}.${index}`, filterKeys, false);

@@ -1,0 +1,208 @@
+{
+  "ELN version": {
+    "query": false,
+    "inputType": "text",
+    "default": {
+      "type": "function",
+      "value": "this.manifest.version"
+    }
+  },
+  "date created": {
+    "query": false,
+    "inputType": "date",
+    "default": {
+      "type": "function",
+      "value": "new Date().toISOString().split('T')[0]"
+    }
+  },
+  "author": {
+    "query": true,
+    "inputType": "dropdown",
+    "options": {
+      "type": "function",
+      "value": "this.settings.authors.map(author => author.name)"
+    }
+  },
+  "chemical": {
+    "name": {
+      "query": true,
+      "inputType": "text",
+      "default": ""
+    },
+    "cas_number": {
+      "query": true,
+      "inputType": "text",
+      "default": ""
+    },
+    "formula": {
+      "query": true,
+      "inputType": "text",
+      "default": ""
+    },
+    "smiles": {
+      "query": true,
+      "inputType": "actiontext",
+      "default": "",
+      "icon": "chemistry",
+      "tooltip": "Generate 2D structure",
+      "action": "generateStructure"
+    },
+    "molar_mass": {
+      "query": true,
+      "inputType": "number",
+      "default": 0,
+      "units": ["g/mol"],
+      "defaultUnit": "g/mol"
+    },
+    "physical_state": {
+      "query": true,
+      "inputType": "dropdown",
+      "options": ["solid", "liquid", "gas", "solution", "suspension"],
+      "default": "solid"
+    },
+    "melting_point": {
+      "query": true,
+      "inputType": "number",
+      "default": null,
+      "units": ["°C", "K"],
+      "defaultUnit": "°C"
+    },
+    "boiling_point": {
+      "query": true,
+      "inputType": "number",
+      "default": null,
+      "units": ["°C", "K"],
+      "defaultUnit": "°C"
+    },
+    "density": {
+      "query": true,
+      "inputType": "number",
+      "default": null,
+      "units": ["g/cm³", "g/mL", "kg/L"],
+      "defaultUnit": "g/cm³"
+    },
+    "solubility": {
+      "water": {
+        "inputType": "dropdown",
+        "options": ["insoluble", "slightly soluble", "soluble", "highly soluble", "miscible"],
+        "default": "insoluble"
+      },
+      "organic_solvents": {
+        "inputType": "multiselect",
+        "options": ["ethanol", "methanol", "acetone", "dichloromethane", "toluene", "hexane", "DMSO", "DMF"],
+        "default": []
+      }
+    },
+    "safety": {
+      "hazard_statements": {
+        "inputType": "multiselect",
+        "options": [
+          "H200 - Unstable explosive",
+          "H300 - Fatal if swallowed",
+          "H301 - Toxic if swallowed",
+          "H302 - Harmful if swallowed",
+          "H310 - Fatal in contact with skin",
+          "H311 - Toxic in contact with skin",
+          "H312 - Harmful in contact with skin",
+          "H314 - Causes severe skin burns",
+          "H315 - Causes skin irritation",
+          "H317 - May cause allergic skin reaction",
+          "H318 - Causes serious eye damage",
+          "H319 - Causes serious eye irritation",
+          "H330 - Fatal if inhaled",
+          "H331 - Toxic if inhaled",
+          "H332 - Harmful if inhaled",
+          "H334 - May cause allergy or asthma",
+          "H335 - May cause respiratory irritation",
+          "H340 - May cause genetic defects",
+          "H341 - Suspected of causing genetic defects",
+          "H350 - May cause cancer",
+          "H351 - Suspected of causing cancer",
+          "H360 - May damage fertility or unborn child",
+          "H361 - Suspected of damaging fertility",
+          "H370 - Causes damage to organs",
+          "H371 - May cause damage to organs",
+          "H372 - Causes damage to organs",
+          "H373 - May cause damage to organs",
+          "H400 - Very toxic to aquatic life",
+          "H410 - Very toxic to aquatic life with long lasting effects"
+        ],
+        "default": []
+      },
+      "precautionary_statements": {
+        "inputType": "multiselect",
+        "options": [
+          "P201 - Obtain special instructions",
+          "P202 - Do not handle until all safety precautions have been read",
+          "P210 - Keep away from heat/sparks/open flames",
+          "P220 - Keep away from clothing",
+          "P233 - Keep container tightly closed",
+          "P240 - Ground/bond container",
+          "P241 - Use explosion-proof equipment",
+          "P242 - Use only non-sparking tools",
+          "P243 - Take precautionary measures against static discharge",
+          "P260 - Do not breathe dust/fume/gas/mist/vapours/spray",
+          "P261 - Avoid breathing dust/fume/gas/mist/vapours/spray",
+          "P262 - Do not get in eyes, on skin, or on clothing",
+          "P263 - Avoid contact during pregnancy/while nursing",
+          "P264 - Wash hands thoroughly after handling",
+          "P270 - Do not eat, drink or smoke when using this product",
+          "P271 - Use only outdoors or in a well-ventilated area",
+          "P272 - Contaminated work clothing should not be allowed out of the workplace",
+          "P273 - Avoid release to the environment",
+          "P280 - Wear protective gloves/protective clothing/eye protection/face protection",
+          "P281 - Use personal protective equipment as required"
+        ],
+        "default": []
+      },
+      "signal_word": {
+        "inputType": "dropdown",
+        "options": ["Danger", "Warning", ""],
+        "default": ""
+      }
+    },
+    "supplier": {
+      "name": {
+        "inputType": "text",
+        "default": ""
+      },
+      "catalog_number": {
+        "inputType": "text",
+        "default": ""
+      },
+      "purity": {
+        "inputType": "text",
+        "default": ""
+      },
+      "lot_number": {
+        "inputType": "text",
+        "default": ""
+      }
+    },
+    "storage": {
+      "conditions": {
+        "inputType": "multiselect",
+        "options": ["room temperature", "refrigerated", "frozen", "dry", "inert atmosphere", "dark", "ventilated"],
+        "default": ["room temperature"]
+      },
+      "location": {
+        "inputType": "text",
+        "default": ""
+      }
+    }
+  },
+  "notes": {
+    "inputType": "text",
+    "default": ""
+  },
+  "tags": {
+    "query": false,
+    "inputType": "list",
+    "default": ["chemical"]
+  },
+  "cssclasses": {
+    "query": false,
+    "inputType": "list",
+    "default": ["note", "chemical"]
+  }
+}

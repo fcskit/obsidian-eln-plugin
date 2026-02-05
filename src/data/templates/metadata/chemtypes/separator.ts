@@ -61,13 +61,23 @@ export const separatorSubclassMetadataTemplate = {
             },
         },
         {
-            "fullKey": "chemical.properties.tensile strength",
+            "fullKey": "chemical.properties.tensile strength (TD)",
             "input": {
                 "query": true,
                 "inputType": "number",
                 "default": 0,
-                "units": ["MPa", "psi"],
-                "defaultUnit": "MPa",
+                "units": ["Kg/cm2", "MPa", "psi"],
+                "defaultUnit": "Kg/cm2",
+            },
+        },
+        {
+            "fullKey": "chemical.properties.tensile strength (MD)",
+            "input": {
+                "query": true,
+                "inputType": "number",
+                "default": 0,
+                "units": ["Kg/cm2", "MPa", "psi"],
+                "defaultUnit": "Kg/cm2",
             },
         },
         {
@@ -102,6 +112,9 @@ export const separatorSubclassMetadataTemplate = {
         }
     ],
     "remove": [
-        "chemical.properties.solubility in water"
+        "chemical.properties.solubility in water",
+        "chemical.properties.molar mass",
+        "chemical.properties.density",
+        "chemical.properties.boiling point",
     ],
 }
