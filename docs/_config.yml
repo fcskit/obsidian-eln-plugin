@@ -1,0 +1,70 @@
+# GitHub Pages Configuration for Obsidian ELN Plugin
+theme: jekyll-theme-cayman
+title: Obsidian ELN Plugin
+description: Electronic Lab Notebook functionality for Obsidian
+show_downloads: true
+github:
+  repository_url: https://github.com/fcskit/obsidian-eln-plugin
+  zip_url: https://github.com/fcskit/obsidian-eln-plugin/releases/latest/download/obsidian-eln.zip
+  is_project_page: true
+  owner_name: fcskit
+
+# Navigation
+navigation:
+  - title: User Guide
+    url: /user/
+  - title: Installation
+    url: /user/installation.html
+  - title: Features
+    url: /user/features.html
+  - title: Developer Docs
+    url: /developer/
+
+# Exclude files from GitHub Pages
+exclude:
+  # Internal developer documentation (hidden from public site)
+  - developer/todos/
+  - developer/archive/
+  - developer/core/
+  - developer/components/
+  - developer/infrastructure/
+  - developer/note-creation-architecture/
+  - developer/template-system/
+  - developer/contributing/
+  - developer/guides/
+  # Archive folders (historical, not for public consumption)
+  - archive/
+  # Release materials (handled separately)
+  - release/
+  # System files
+  - .DS_Store
+  - "*.json"
+
+# Markdown settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  hard_wrap: false
+
+# Plugin settings
+plugins:
+  - jekyll-relative-links
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# SEO tags
+url: https://fcskit.github.io
+baseurl: /obsidian-eln-plugin
+logo: /images/periodic_table.png
+
+# Social
+social:
+  name: FCSKit
+  links:
+    - https://github.com/fcskit/obsidian-eln-plugin
+
+# Enable relative links for markdown files
+relative_links:
+  enabled: true
+  collections: false

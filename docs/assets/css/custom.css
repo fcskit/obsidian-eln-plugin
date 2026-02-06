@@ -1,0 +1,187 @@
+/* Custom styles for Obsidian ELN Plugin documentation */
+
+/* Navigation styling */
+.main-nav {
+  margin-top: 1.5rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.main-nav a {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  margin: 0 0.25rem;
+  border-radius: 0.3rem;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.main-nav a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* Header buttons */
+.header-buttons {
+  margin-top: 1rem;
+}
+
+/* Better spacing for content */
+.main-content h1,
+.main-content h2,
+.main-content h3 {
+  margin-top: 2rem;
+}
+
+.main-content h1:first-child,
+.main-content h2:first-child {
+  margin-top: 0;
+}
+
+/* Code blocks */
+.main-content pre {
+  border-radius: 0.3rem;
+}
+
+.main-content code {
+  border-radius: 0.2rem;
+}
+
+/* Blockquotes (for warnings, notes, etc.) */
+.main-content blockquote {
+  border-left: 4px solid #159957;
+  padding: 0 1rem;
+  margin: 1rem 0;
+  font-style: italic;
+  background-color: rgba(21, 153, 87, 0.05);
+}
+
+/* Images */
+.main-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.3rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 1rem 0;
+}
+
+/* Tables */
+.main-content table {
+  border-radius: 0.3rem;
+  overflow: hidden;
+}
+
+/* Badge styling */
+img[alt*="badge"] {
+  box-shadow: none;
+  margin: 0 0.25rem;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Feature list styling */
+.main-content ul li::marker {
+  color: #159957;
+  font-weight: bold;
+}
+
+/* Button styling for download links */
+.download-section {
+  background-color: rgba(21, 153, 87, 0.1);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  margin: 2rem 0;
+  border: 2px solid rgba(21, 153, 87, 0.3);
+}
+
+.download-section h3 {
+  margin-top: 0;
+  color: #159957;
+}
+
+/* Grid layout for screenshots */
+.screenshot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.screenshot-grid img {
+  width: 100%;
+  height: auto;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 42em) {
+  .main-nav {
+    text-align: center;
+  }
+  
+  .main-nav a {
+    display: block;
+    margin: 0.5rem 0;
+    padding: 0.75rem;
+  }
+  
+  .screenshot-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* TOC styling if added */
+.table-of-contents {
+  background-color: rgba(21, 153, 87, 0.05);
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+  border-left: 4px solid #159957;
+}
+
+.table-of-contents h2,
+.table-of-contents h3 {
+  margin-top: 0.5rem;
+}
+
+.table-of-contents ul {
+  margin-bottom: 0;
+}
+
+/* Better link styling in content */
+.main-content a {
+  color: #159957;
+  font-weight: 500;
+}
+
+.main-content a:hover {
+  text-decoration: underline;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 0 0.25rem;
+}
+
+.status-badge.beta {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.status-badge.stable {
+  background-color: #28a745;
+  color: #fff;
+}
+
+/* Improved footer */
+.site-footer {
+  border-top: 2px solid #eff0f1;
+  padding-top: 2rem;
+  margin-top: 4rem;
+}

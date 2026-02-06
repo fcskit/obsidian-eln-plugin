@@ -34,25 +34,41 @@ This is an Obsidian plugin that provides Electronic Lab Notebook (ELN) functiona
 
 - **`docs/`** - All documentation files
   - `docs/user/` - User-facing documentation (installation, features, guides)
-  - `docs/developer/` - Developer documentation (API, architecture, setup)
-    - **KEEP ROOT CLEAN**: Only essential files in `docs/developer/` root
-    - Required root files: `README.md`, `ROADMAP.md`, `KNOWN-ISSUES.md`
-    - Everything else goes in organized subfolders
+    - **Published on GitHub Pages** - Visible to all users
   - `docs/examples/` - Example templates and usage examples
-  - `docs/developer/archive/` - Archived or legacy documentation
+    - **Published on GitHub Pages** - Visible to all users
+  - `docs/developer/` - Developer documentation (API, architecture, setup)
+    - `docs/developer/public/` - **PUBLIC DEVELOPER DOCS** (Published on GitHub Pages)
+      - Contains: README.md, ROADMAP.md, KNOWN-ISSUES.md
+      - Visible to users and contributors on documentation site
+    - All other `docs/developer/` subfolders are **INTERNAL ONLY**
+      - Available in git repository for contributors
+      - Hidden from GitHub Pages (not published on documentation site)
+  - `docs/archive/` - Historical documentation (internal only)
+  - `docs/_layouts/` - Jekyll templates for GitHub Pages
+  - `docs/assets/` - CSS and other assets for GitHub Pages
 
 ### Developer Documentation Organization (CRITICAL)
 
-The `docs/developer/` directory has a **strict organizational structure**. Follow these rules:
+The `docs/developer/` directory has a **two-tier organizational structure**:
 
-#### Root Level - ESSENTIAL FILES ONLY
-- `README.md` - Main developer documentation index
-- `ROADMAP.md` - Project roadmap and version planning  
-- `KNOWN-ISSUES.md` - Known bugs and limitations
+#### Public Developer Documentation (Published on GitHub Pages)
 
-**NEVER add new files to docs/developer/ root.** Use organized subfolders instead.
+**`docs/developer/public/`** - **PUBLICLY VISIBLE ON DOCUMENTATION SITE**
+- `public/README.md` - Developer documentation index and contributing guide
+- `public/ROADMAP.md` - Project roadmap and version planning
+- `public/KNOWN-ISSUES.md` - Known bugs and limitations
+- `public/index.md` - Landing page for developer section
 
-#### Organized Subfolders
+**Purpose**: Information useful for users, potential contributors, and the community
+**Visibility**: Published at https://fcskit.github.io/obsidian-eln-plugin/developer/public/
+
+#### Internal Developer Documentation (Hidden from GitHub Pages)
+
+All other `docs/developer/` subfolders are **INTERNAL ONLY**:
+- Available in the git repository for active contributors
+- Hidden from GitHub Pages (excluded in `docs/_config.yml`)
+- Visible to anyone who clones the repository
 
 **`docs/developer/todos/`** - **PRIMARY TASK TRACKING SYSTEM**
 - `todos/active/` - Current work in progress
@@ -63,7 +79,7 @@ The `docs/developer/` directory has a **strict organizational structure**. Follo
 1. Check `todos/active/` for current priorities
 2. Create detailed plans in `todos/planned/` for future work
 3. Move completed work to `todos/completed/` with full documentation
-4. **ALWAYS update ROADMAP.md** when adding/completing todos
+4. **ALWAYS update public/ROADMAP.md** when adding/completing todos
 
 **`docs/developer/template-system/`** - Template redesign documentation
 - All template-related design docs, proposals, implementation guides
@@ -94,7 +110,7 @@ The `docs/developer/` directory has a **strict organizational structure**. Follo
 
 ### Primary Reference for Work Planning
 
-**ALWAYS check `docs/developer/todos/` and `docs/developer/ROADMAP.md` before starting work.**
+**ALWAYS check `docs/developer/todos/` and `docs/developer/public/ROADMAP.md` before starting work.**
 
 The todo system is the single source of truth for:
 - What needs to be done (`todos/planned/`)
@@ -115,7 +131,7 @@ The todo system is the single source of truth for:
    ls docs/developer/todos/completed/
    ```
 
-2. **Review ROADMAP.md** to understand priority and version target
+2. **Review public/ROADMAP.md** to understand priority and version target
 
 3. **If creating a new todo**, use this template and place in `todos/planned/`:
    ```markdown
@@ -148,7 +164,7 @@ The todo system is the single source of truth for:
 
 1. **Move from `planned/` to `active/`** before starting work
 2. **Update status** to "Active" in the file
-3. **Update ROADMAP.md** current sprint section with link to todo
+3. **Update public/ROADMAP.md** current sprint section with link to todo
 4. **Keep todo updated** as you discover new requirements or blockers
 
 ### When Completing a Todo
@@ -163,7 +179,7 @@ The todo system is the single source of truth for:
 
 2. **Move file**: `todos/active/` → `todos/completed/`
 
-3. **Update ROADMAP.md**:
+3. **Update public/ROADMAP.md**:
    - Move item from current sprint to "Recently Completed"
    - Update version section
    - Add links to completed todo documentation
@@ -199,8 +215,8 @@ If you discover during implementation that:
 
 1. **Update the active todo** with new information
 2. **Create new planned todos** for spin-off work
-3. **Update ROADMAP.md** with revised timeline
-4. **Add notes to KNOWN-ISSUES.md** if limitations discovered
+3. **Update public/ROADMAP.md** with revised timeline
+4. **Add notes to public/KNOWN-ISSUES.md** if limitations discovered
 5. **Communicate** major changes in commit messages
 
 ### File Naming in todos/
@@ -214,20 +230,32 @@ If you discover during implementation that:
 When creating or updating todos:
 - Link to design docs in `template-system/`, `note-creation-architecture/`, etc.
 - Link to related todos (dependencies, follow-ups)
-- Link from ROADMAP.md to detailed todo files
+- Link from public/ROADMAP.md to detailed todo files
 - Keep todos/README.md index updated
 
-## Keeping docs/developer/ Root Clean (CRITICAL)
+## Keeping docs/developer/ Organized (CRITICAL)
+
+### GitHub Pages Structure
+
+The `docs/developer/` folder is split into **public** and **internal** documentation:
+
+**Public (Published on GitHub Pages):**
+- `docs/developer/public/` - Visible at https://fcskit.github.io/obsidian-eln-plugin/developer/public/
+- Contains: README.md, ROADMAP.md, KNOWN-ISSUES.md, index.md
+- For users and potential contributors
+
+**Internal (Hidden from GitHub Pages):**
+- All other `docs/developer/` subfolders
+- Hidden via `_config.yml` exclude rules
+- Available in git repo for contributors
+- Not visible on documentation website
 
 ### The Problem We're Avoiding
 
-The `docs/developer/` root previously accumulated many unsorted files:
-- Feature docs mixed with todos
-- Implementation plans scattered around
-- No clear organization
-- Hard to find relevant documentation
-
-**We fixed this in February 2026.** Don't let it happen again!
+Previously `docs/developer/` accumulated many unsorted files. **We reorganized this in February 2026.** The new structure keeps:
+- Public docs in `public/` subfolder
+- Internal docs in organized subfolders
+- Everything hidden from GitHub Pages except `public/`
 
 ### Rules for New Documentation
 
@@ -235,31 +263,37 @@ The `docs/developer/` root previously accumulated many unsorted files:
 
 1. **Is this a todo/task?**
    - YES → Goes in `todos/active/`, `todos/completed/`, or `todos/planned/`
-   - Update ROADMAP.md to link to it
+   - Update public/ROADMAP.md to link to it
 
-2. **Is this about the template system?**
+2. **Is this public-facing developer info?**
+   - YES → Goes in `public/`
+   - Update `public/index.md` to link to it
+   - Will be visible on GitHub Pages
+
+3. **Is this about the template system?**
    - YES → Goes in `template-system/`
    - Update `template-system/README.md` index
+   - Internal only (hidden from GitHub Pages)
 
-3. **Is this a testing/release guide?**
+4. **Is this a testing/release guide?**
    - YES → Goes in `guides/`
    - Update `guides/README.md` index
+   - Internal only (hidden from GitHub Pages)
 
-4. **Is this about note creation architecture?**
+5. **Is this about note creation architecture?**
    - YES → Goes in `note-creation-architecture/`
    - Update that folder's README.md
+   - Internal only (hidden from GitHub Pages)
 
-5. **Is this core architecture/setup/API docs?**
+6. **Is this core architecture/setup/API docs?**
    - YES → Goes in `core/`, `components/`, or `infrastructure/`
    - Update relevant README files
+   - Internal only (hidden from GitHub Pages)
 
-6. **Is this historical/completed/outdated?**
+7. **Is this historical/completed/outdated?**
    - YES → Goes in `archive/`
    - Not actively maintained
-
-7. **Is this an essential root file?**
-   - ONLY if it's `README.md`, `ROADMAP.md`, or `KNOWN-ISSUES.md`
-   - Everything else goes in subfolders!
+   - Internal only (hidden from GitHub Pages)
 
 ### What NOT to Do
 
@@ -275,12 +309,16 @@ The `docs/developer/` root previously accumulated many unsorted files:
 ❌ **Don't create**: `docs/developer/random-doc.md`  
 ✅ **Instead**: Figure out which subfolder it belongs in first!
 
+❌ **Don't create**: `docs/developer/public-facing-guide.md` in wrong location
+✅ **Instead create**: `docs/developer/public/public-facing-guide.md` if it should be on GitHub Pages
+
 ### If Unsure Where a Doc Goes
 
 1. Check existing README.md files in subfolders
-2. Look at ROADMAP.md to see where similar work is tracked
+2. Look at public/ROADMAP.md to see where similar work is tracked
 3. Ask: "Is this describing WHAT to do (→ todos/) or HOW it works (→ system folders)?"
-4. When in doubt, put in the most specific subfolder possible
+4. Ask: "Should this be public on GitHub Pages? (→ public/) or internal only?"
+5. When in doubt, put in the most specific subfolder possible
 
 ### Build and Configuration
 
