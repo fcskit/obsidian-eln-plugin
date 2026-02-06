@@ -1,20 +1,31 @@
 # ELN Plugin User Documentation
 
-Welcome to the comprehensive user documentation for the Obsidian ELN Plugin. This guide will help you get started, understand all features, and make the most of the plugin for your research workflow.
+Welcome to the comprehensive user### 📘 Practical Examples
+
+#### [Template Examples](template-examples/)
+Ready-to-use templates for common scenarios:
+- **[Analysis Template](template-examples/analysis-template.json)** - Analytical measurements and results
+- **[Chemical Template](template-examples/chemical-template.json)** - Chemical compound documentation
+- **[Process Template](template-examples/process-template.json)** - Laboratory processes and protocols
+- **[Project Template](template-examples/project-template.json)** - Research project organization
+
+> **Note**: Templates are JSON configuration files. See the [Template System Guide](TEMPLATE_SYSTEM.md) for how to use them.ation for the Obsidian ELN Plugin. This guide will help you get started, understand all features, and make the most of the plugin for your research workflow.
 
 ## 🚀 Getting Started
 
 ### New to the Plugin?
-1. **[Installation & Setup](installation.md)** - Install and configure the plugin
-2. **[Features Overview](features.md)** - Discover all plugin capabilities  
-3. **[Template Examples](template-examples/)** - Try ready-to-use templates
+1. **[Getting Started Guide](getting-started.md)** - Learn the basic workflow and concepts
+2. **[Installation & Setup](installation.md)** - Install and configure the plugin
+3. **[Features Overview](features.md)** - Discover all plugin capabilities  
+4. **[Template Examples](template-examples/)** - Try ready-to-use templates
 
 ### Quick Start Workflow
-1. Install the plugin from Obsidian's Community Plugin store
-2. Configure basic settings (author name, default note location)
-3. Create your first note using `Ctrl/Cmd+P` → "ELN: Create Note"
-4. Choose a template that matches your research type
-5. Fill in the structured form and create your note
+1. Install the plugin (see [installation guide](installation.md))
+2. Create your first **Project** to organize your work
+3. Document **Resources** (chemicals, devices, processes)
+4. Create **Samples** linked to your project and resources
+5. Document **Analyses** performed on your samples
+6. Review the [Getting Started Guide](getting-started.md) for detailed workflows
 
 ## 📚 Complete Documentation
 
@@ -35,7 +46,7 @@ Comprehensive overview of all plugin capabilities:
 - Advanced template features
 - Data export and integration options
 
-#### [Template System Guide](template-system.md)
+#### [Template System Guide](TEMPLATE_SYSTEM.md)
 Deep dive into the template system:
 - Understanding template structure
 - Field types and configurations

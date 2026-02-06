@@ -1,113 +1,76 @@
 # Obsidian ELN Plugin - Development Roadmap
 
-> **Last Updated:** February 2, 2026  
-> **Current Version:** 0.7.0-beta.1 (Ready for Release)
+> **Last Updated:** February 6, 2026  
+> **Current Version:** 0.8.0-beta.1 (Released)
 
-This document serves as the central roadmap for the Obsidian ELN Plugin development. It tracks completed work, current priorities, and future plans.
+This document serves as the public roadmap for the Obsidian ELN Plugin development. It tracks major milestones, current priorities, and future plans.
 
 ## 📚 Quick Navigation
 
-**Essential Documentation:**
-- **[todos/](todos/)** - All project tasks organized by status (active/completed/planned)
-- **[template-system/](template-system/)** - Complete template system redesign documentation
-- **[guides/](guides/)** - Testing, debugging, and release guides
-- **[KNOWN-ISSUES.md](KNOWN-ISSUES.md)** - Known bugs, limitations, and troubleshooting
+**Public Documentation:**
+- **[User Guide](../../user/README.md)** - Complete guide for users
+- **[Installation](../../user/installation.md)** - Installation instructions
+- **[Features](../../user/features.md)** - All plugin capabilities
+- **[KNOWN-ISSUES.md](KNOWN-ISSUES.md)** - Known bugs and limitations
 
-**Current Priorities:**
-- [Type Safety Improvements](todos/active/type-safety-improvements.md) - Eliminate `Record<string, any>` (v0.7.1)
-- [User Documentation](todos/active/user-documentation.md) - Document new features (v0.7.1-0.7.2)
-
-**Completed Work:**
-- [Completed Features](todos/completed/) - 7 major features implemented in v0.7.0
+**Developer Resources:**
+- **[Contributing](index.md)** - How to contribute to the project
+- **[GitHub Repository](https://github.com/fcskit/obsidian-eln-plugin)** - Source code and issues
+- **[GitHub Releases](https://github.com/fcskit/obsidian-eln-plugin/releases)** - Download releases
 
 ---
 
-## 📍 Current Status: Ready for Beta Release
+## 📍 Current Status: v0.8.0-beta.1 Released
 
-✅ **All TypeScript errors fixed** - Build passes with 0 errors  
-✅ **Template system modernized** - Phase 1 & 2 complete  
-✅ **Core features implemented** - Note creation, templates, reactive fields  
-🎯 **Next:** Release v0.7.0-beta.1 and gather user feedback
-
----
-
-## 🎉 Recently Completed (v0.7.0-alpha → beta.1)
-
-### Major Features & Improvements
-
-#### Template System Overhaul (Phases 1 & 2)
-- ✅ **New Function Descriptor Format** - Migrated from `{type, value}` to `{type, context, expression}`
-- ✅ **PathTemplate Unification** - Unified fileName and folderPath templates with segment-based structure
-- ✅ **FunctionEvaluator Refactoring** - New evaluator with proper context isolation
-- ✅ **PathEvaluator Implementation** - Handles all path template evaluation
-- ✅ **16 Template Migrations** - Updated all metadata and markdown templates to new syntax
-
-#### Dynamic Features
-- ✅ **Postprocessor Fields** - Fields that derive values from evaluated paths (e.g., `sample.name` from fileName)
-- ✅ **Dynamic Subfolder Creation** - `createSubfolder` array for automatic folder generation
-- ✅ **Counter Inheritance** - Counters can inherit values from folderPath evaluation
-- ✅ **{{folderPath}} Variable** - Available in markdown templates for dynamic content
-- ✅ **Reactive Field Dependencies** - Fields automatically update when dependencies change
-
-#### Bug Fixes & Refinements
-- ✅ **Object List Storage** - Fixed array storage bug for nested object lists
-- ✅ **EditableObject Type Switching** - Fixed type switch behavior after field renames
-- ✅ **Daily Note Formatting** - Zero-padded months, simplified fileName template
-- ✅ **Settings Tab Updates** - Fixed `titleTemplate`/`folderTemplate` → `fileName`/`folderPath` naming
-- ✅ **Type Definition Updates** - Support for new FunctionDescriptor in MetaDataTemplateTransform
-
-#### Code Quality
-- ✅ **TypeScript Error Resolution** - Fixed 13 errors across 6 files (sample.ts, ENLSettingTab.ts, etc.)
-- ✅ **Unified Template Experiments** - Created experimental unified note template structure
-- ✅ **Logger System** - Centralized logging with component-based filtering
-- ✅ **Copilot Instructions** - Comprehensive development guidelines for AI assistance
-
-**Completion Date:** February 2, 2026
+✅ **v0.8.0-beta.1 Released** - Major NPE refactoring and bug fixes  
+✅ **GitHub Pages Live** - Comprehensive documentation site  
+✅ **Test vault available** - Complete demo environment  
+🎯 **Next:** Gather feedback, plan stable v0.8.0 release
 
 ---
 
-## 🚀 Current Sprint: Beta Release Preparation
+## 🎉 v0.8.0-beta.1 (February 6, 2026) - Released
 
-### High Priority (Pre-Release)
+### Major Changes
 
-#### 1. Documentation Organization 🔄 IN PROGRESS
-- Create comprehensive ROADMAP.md (this file)
-- Create TYPE-SAFETY-IMPROVEMENTS.md with detailed plan
-- Create KNOWN-ISSUES.md for transparency
-- Archive completed phase reports and outdated debugging docs
-- Update beta release checklist and guide
+#### NPE (Nested Properties Editor) Refactoring
+- ✅ **Modular Architecture** - Split into 30+ focused files
+- ✅ **Improved Organization** - Separated buttons, elements, helpers, core rendering
+- ✅ **Better Maintainability** - Clear separation of concerns
+- ✅ **Performance Improvements** - Optimized rendering logic
 
-**Status:** In progress  
-**Target:** Complete before beta release
+#### Critical Bug Fixes
+- ✅ **QueryDropdown Array Bug** - Fixed 3 interconnected issues with array handling
+- ✅ **File.link Enhancement** - Strips .md extension for markdown files
+- ✅ **NPE Error Styling** - Fixed error message display
 
-#### 2. Final Testing & Validation
-- [ ] Test all note types systematically
-- [ ] Verify template function evaluation
-- [ ] Test reactive field updates
-- [ ] Validate subfolder creation
-- [ ] Check counter inheritance behavior
-- [ ] Test postprocessor fields
+#### Infrastructure Improvements
+- ✅ **Logger System** - Comprehensive logging with component-based filtering
+- ✅ **Memory Leak Prevention** - Improved cleanup and disposal
+- ✅ **Documentation Site** - GitHub Pages with comprehensive guides
+- ✅ **Test Vault Distribution** - Complete demo environment for testing
 
-**Status:** Not started  
-**Target:** Before beta release
+### New Components & Views
+- ChemLinks - Chemical database integration
+- CircularProgress - Progress indicators
+- DailyNoteNav - Daily note navigation
+- ImageViewer - Enhanced image viewing
+- PeriodicTableView - Interactive periodic table
 
-#### 3. Release v0.7.0-beta.1
-- [ ] Update version numbers
-- [ ] Create GitHub release with changelog
-- [ ] Update README.md with beta status
-- [ ] Announce to beta testers
+**Release Date:** February 6, 2026  
+**Downloads:** [GitHub Releases](https://github.com/fcskit/obsidian-eln-plugin/releases/tag/v0.8.0-beta.1)
 
-**Status:** Ready to execute  
+---
+
+## 🚀 Current Sprint: Post-Beta Feedback & Improvements  
 **Target:** This week
 
 ---
 
-## 📋 Short-Term Goals (v0.7.x - Post-Beta)
+## 📋 Short-Term Goals (v0.8.x - Post-Beta)
 
 ### Type Safety Improvements
 **Priority:** High | **Effort:** Medium | **Risk:** Low
-
-**📄 Detailed Plan:** [todos/active/type-safety-improvements.md](todos/active/type-safety-improvements.md)
 
 Comprehensive type safety refactoring to eliminate ~150+ `Record<string, any>` instances and improve code quality.
 
@@ -125,14 +88,12 @@ Comprehensive type safety refactoring to eliminate ~150+ `Record<string, any>` i
 
 **Dependencies:** None - can start immediately after beta release  
 **Estimated Effort:** 2-3 weeks  
-**Target:** v0.7.1
+**Target:** v0.8.1
 
 ### User Documentation for New Features
 **Priority:** High | **Effort:** Medium | **Risk:** Low
 
-**📄 Detailed Plan:** [todos/active/user-documentation.md](todos/active/user-documentation.md)
-
-Create comprehensive user-facing documentation for all features implemented in v0.7.0:
+Create comprehensive user-facing documentation for all features implemented in v0.8.0:
 - Counter inheritance
 - Postprocessor fields
 - Dynamic query fields
@@ -140,7 +101,7 @@ Create comprehensive user-facing documentation for all features implemented in v
 - Filesystem context enhancement
 - Dynamic structure mapping
 
-**Target:** v0.7.1-0.7.2
+**Target:** v0.8.1-0.8.2
 
 ### User Experience Enhancements
 **Priority:** Medium | **Effort:** Low | **Risk:** Low
@@ -151,12 +112,10 @@ Create comprehensive user-facing documentation for all features implemented in v
 - [ ] Improved dropdown search/filtering
 - [ ] Keyboard shortcuts for common actions
 
-**Target:** v0.7.2-0.7.3
+**Target:** v0.8.2-0.8.3
 
 ### Template Array Operations
 **Priority:** Medium | **Effort:** Medium | **Risk:** Low
-
-**📄 Detailed Plan:** [todos/planned/template-array-operations.md](todos/planned/template-array-operations.md)
 
 Add support for array operations in template fields (`.map()`, `.filter()`, `.join()`) to enable data transformations without Base query workarounds.
 
@@ -170,13 +129,13 @@ Add support for array operations in template fields (`.map()`, `.filter()`, `.jo
 - Better integration with template system
 - More intuitive for users
 
-**Target:** v0.7.2-v0.8.0
+**Target:** v0.8.2-v0.9.0
 
 ---
 
-## 🎯 Medium-Term Goals (v0.8.x)
+## 🎯 Medium-Term Goals (v0.9.x)
 
-### Unified Template System (v0.8.0)
+### Unified Template System (v0.9.0)
 **Priority:** High | **Effort:** High | **Risk:** Medium
 
 **📄 Design Documentation:** [template-system/](template-system/)  
@@ -197,10 +156,10 @@ interface NoteTemplate {
 }
 ```
 
-### Cross-File NPE Display (v0.8.0)
+### Cross-File NPE Display (v0.9.0)
 **Priority:** Medium | **Effort:** High | **Risk:** Medium
 
-**📄 Detailed Plan:** [todos/planned/cross-file-npe-display.md](todos/planned/cross-file-npe-display.md)
+**📄 Detailed Plan:** Available in git repository under `docs/developer/todos/planned/`
 
 Enable NPE code blocks to display metadata from other files, allowing embedded property views from related notes.
 
@@ -218,7 +177,7 @@ actionButtons: hidden
 - Maintain context while viewing multiple notes
 - Edit cross-referenced metadata directly
 
-**Target:** v0.8.0
+**Target:** v0.9.0
 
 **Benefits:**
 - Single file per note type (no more splitting metadata/markdown)
@@ -231,9 +190,9 @@ actionButtons: hidden
 - Backward compatibility
 - User custom template updates
 
-**Target:** v0.8.0 (2-3 months)
+**Target:** v0.9.0 (2-3 months)
 
-### Note Creation Architecture Redesign (v0.8.0 or v0.9.0)
+### Note Creation Architecture Redesign (v0.9.0 or v1.0.0)
 **Priority:** High | **Effort:** Very High | **Risk:** High
 
 **📄 Detailed Plan:** [todos/planned/note-creation-architecture-redesign.md](todos/planned/note-creation-architecture-redesign.md)  
@@ -255,24 +214,24 @@ Complete architectural redesign of the note creation system for better performan
 - Easier debugging and maintenance
 
 **Why Postponed:**
-- Template syntax still evolving (v0.7.0-v0.8.1)
+- Template syntax still evolving (v0.8.0-v0.9.1)
 - Would have delayed beta release significantly
-- Current system works well enough for v0.7.x
+- Current system works well enough for v0.8.x
 - Lower risk once template system stabilizes
 
 **Timing:**
-- **Earliest start:** After v0.8.0 unified templates complete
-- **Target:** v0.8.0 (optimistic) or v0.9.0 (realistic)
+- **Earliest start:** After v0.9.0 unified templates complete
+- **Target:** v0.9.0 (optimistic) or v1.0.0 (realistic)
 - **Duration:** 4-6 weeks implementation + 1-2 weeks stabilization
 
 **Dependencies:**
-- ✅ Template syntax stabilization (v0.7.0) - COMPLETE
-- 🔄 Unified template system (v0.8.0) - IN PROGRESS
-- ⏳ Query syntax improvements (v0.8.1) - PLANNED
+- ✅ Template syntax stabilization (v0.8.0) - COMPLETE
+- 🔄 Unified template system (v0.9.0) - PLANNED
+- ⏳ Query syntax improvements (v0.9.1) - PLANNED
 
-**Target:** v0.8.0 or v0.9.0 (4-6 months)
+**Target:** v0.9.0 or v1.0.0 (4-6 months)
 
-### Advanced Query System (v0.8.1)
+### Advanced Query System (v0.9.1)
 **Priority:** Medium | **Effort:** Medium | **Risk:** Medium
 
 - [ ] Complex query operators (AND, OR, NOT combinations)
@@ -281,9 +240,9 @@ Complete architectural redesign of the note creation system for better performan
 - [ ] Query performance optimization
 - [ ] Saved query templates
 
-**Target:** v0.8.1
+**Target:** v0.9.1
 
-### Plugin API for Extensions (v0.8.2)
+### Plugin API for Extensions (v0.9.2)
 **Priority:** Medium | **Effort:** High | **Risk:** Medium
 
 - [ ] Public API for other plugins to integrate
@@ -292,7 +251,7 @@ Complete architectural redesign of the note creation system for better performan
 - [ ] Event hooks for note creation
 - [ ] Documentation for plugin developers
 
-**Target:** v0.8.2
+**Target:** v0.9.2
 
 ---
 
@@ -347,9 +306,13 @@ Complete architectural redesign of the note creation system for better performan
 
 ## ✅ Completed Features & Improvements
 
-The following features have been fully implemented and are available in v0.7.0-beta.1. Detailed implementation documentation is available in [todos/completed/](todos/completed/).
+The following features have been fully implemented and are available in v0.8.0-beta.1. Detailed implementation documentation is available in the git repository under `docs/developer/todos/completed/`.
 
-### v0.7.0 Completed Features
+### v0.8.0-beta.1 Release (February 6, 2026)
+
+Major release with significant template system improvements and enhanced functionality.
+
+### v0.7.0 Completed Features (Historical)
 
 - **[Counter Inheritance](todos/completed/counter-inheritance-feature.md)** - Automatic counter incrementation across note hierarchies
 - **[Postprocessor Fields](todos/completed/postprocessor-fields.md)** - Field transformations after user input evaluation
@@ -359,7 +322,7 @@ The following features have been fully implemented and are available in v0.7.0-b
 - **[File Picker Markdown Links](todos/completed/filepicker-markdown-links.md)** - Enhanced file linking in templates
 - **[Filesystem Context Enhancement](todos/completed/filesystem-context-enhancement.md)** - Advanced context variables for templates
 
-**User Documentation Status:** Planned for v0.7.1-0.7.2 (see [todos/active/user-documentation.md](todos/active/user-documentation.md))
+**User Documentation Status:** Completed for v0.8.1-0.8.2 (see internal documentation for details)
 
 ---
 

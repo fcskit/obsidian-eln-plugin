@@ -37,15 +37,16 @@ Choose from multiple installation methods:
 ### First Steps
 
 1. Install the plugin (see installation guide above)
-2. Configure basic settings (author name, default paths)
+2. Read the [Getting Started Guide](user/getting-started) to understand workflows
 3. Create your first note: `Ctrl/Cmd+P` → "ELN: Create Note"
-4. Choose a template and fill in the structured form
+4. Start with a **Project** to organize your work
 5. Explore the [Features Guide](user/features) to discover all capabilities
 
 ## 📚 Documentation
 
 ### 👥 User Documentation
 Complete guides for end users:
+- **[Getting Started](user/getting-started)** - Learn workflows and note dependencies
 - **[Installation & Setup](user/installation)** - Get started with the plugin
 - **[Features Overview](user/features)** - Discover all capabilities
 - **[Template System](user/TEMPLATE_SYSTEM)** - Understand and customize templates
