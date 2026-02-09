@@ -1,7 +1,7 @@
 # Known Issues & Limitations
 
-> **Last Updated:** February 2, 2026  
-> **Version:** 0.7.0-beta.1
+> **Last Updated:** February 9, 2026  
+> **Version:** 0.8.0-beta.1
 
 This document tracks known issues, limitations, and areas for improvement in the Obsidian ELN Plugin. Issues are categorized by severity and impact.
 
@@ -9,8 +9,49 @@ This document tracks known issues, limitations, and areas for improvement in the
 
 ## 🔴 High Priority Issues
 
+### Settings Migration Not Implemented (Critical)
+**Status:** Planned for v0.8.1  
+**Impact:** User data loss risk, upgrade compatibility
+
+**Description:**  
+The plugin currently lacks a settings versioning and migration system. When users upgrade to a version with changed settings structure, their existing `data.json` file may become incompatible, leading to:
+- Missing new settings/features (e.g., new `sample.status` field)
+- Type errors if settings structure changed
+- Unexpected behavior with renamed/restructured settings
+- User customizations overwritten by defaults
+
+**Current Behavior:**
+1. User modifies settings → Obsidian creates `.obsidian/plugins/obsidian-eln-plugin/data.json`
+2. Plugin updates with new settings structure → old `data.json` loaded without migration
+3. New settings missing or type mismatches occur
+
+**Example Scenario:**
+- User has v0.7.0 with custom authors/operators configured
+- Updates to v0.8.1 which adds `note.sample.status` field
+- `data.json` doesn't have `status` field → feature broken
+- Or v0.9.0 restructures `process.class` → type error
+
+**Workaround:**  
+Manually edit `.obsidian/plugins/obsidian-eln-plugin/data.json` or reset to defaults (loses customizations).
+
+**Resolution Plan:**  
+Comprehensive migration system planned for v0.8.1. See detailed implementation plan in git repository under `docs/developer/todos/planned/settings-migration-system.md`.
+
+**Key Features:**
+- Automatic settings versioning
+- Migration framework for smooth upgrades
+- Backup mechanism for safety
+- Deep merge to preserve customizations
+
+**Why Critical:**  
+Must be implemented before ANY breaking settings changes in v0.8.x or v0.9.x.
+
+**Tracking:** Added to ROADMAP as top priority for v0.8.1
+
+---
+
 ### Type Safety Warnings (ESLint)
-**Status:** Planned for v0.7.1  
+**Status:** Planned for v0.8.1  
 **Impact:** Development experience, code quality
 
 **Description:**  
@@ -21,7 +62,9 @@ The codebase contains ~150+ instances of `Record<string, any>` and `Record<strin
 
 **Workaround:** None - these are development-time warnings only.
 
-**Resolution Plan:** See [TYPE-SAFETY-IMPROVEMENTS.md](TYPE-SAFETY-IMPROVEMENTS.md) for comprehensive plan.
+**Resolution Plan:** See ROADMAP Type Safety Improvements section.
+
+**Dependencies:** Settings Migration System (to ensure type changes can be migrated safely)
 
 **Tracking:** GitHub issue #XXX (create after beta release)
 
@@ -30,7 +73,7 @@ The codebase contains ~150+ instances of `Record<string, any>` and `Record<strin
 ## 🟡 Medium Priority Issues
 
 ### Template Syntax Error Messages
-**Status:** Improvement planned for v0.7.2  
+**Status:** Improvement planned for v0.8.2  
 **Impact:** User experience
 
 **Description:**  

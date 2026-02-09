@@ -69,6 +69,41 @@ This document serves as the public roadmap for the Obsidian ELN Plugin developme
 
 ## 📋 Short-Term Goals (v0.8.x - Post-Beta)
 
+### Settings Migration System ⚠️
+**Priority:** Critical | **Effort:** Medium | **Risk:** Medium
+
+**📄 Detailed Plan:** Available in git repository under `docs/developer/todos/planned/settings-migration-system.md`
+
+Implement versioning and migration system for plugin settings to prevent data loss when settings structure changes across versions.
+
+**Problem:**
+- User edits settings → Obsidian creates `data.json`
+- Plugin updates with new settings structure → old `data.json` incompatible
+- New features missing, type errors, or data corruption
+
+**Solution:**
+- Add `_version` field to track settings schema version
+- Implement migration framework for automated updates
+- Deep merge strategy for preserving user customizations
+- Backup mechanism before migration
+
+**Key Features:**
+- Automatic migration on plugin load
+- Version comparison and migration chains
+- Safe defaults for missing fields
+- User notification of migration events
+- Comprehensive testing with real data
+
+**Critical Because:**
+- **Must be implemented before ANY breaking settings changes**
+- Prevents user data loss and frustration
+- Enables safe evolution of settings structure
+- Standard pattern used by mature Obsidian plugins
+
+**Dependencies:** None - should be implemented immediately  
+**Estimated Effort:** 1-2 weeks  
+**Target:** v0.8.1 (Before any v0.8.x settings changes)
+
 ### Type Safety Improvements
 **Priority:** High | **Effort:** Medium | **Risk:** Low
 
@@ -86,7 +121,7 @@ Comprehensive type safety refactoring to eliminate ~150+ `Record<string, any>` i
 9. Review experimental unified template types
 10. Enable stricter ESLint rules
 
-**Dependencies:** None - can start immediately after beta release  
+**Dependencies:** Settings Migration System (to ensure type changes can be migrated)  
 **Estimated Effort:** 2-3 weeks  
 **Target:** v0.8.1
 
